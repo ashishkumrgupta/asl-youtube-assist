@@ -2,6 +2,12 @@
 
 All notable changes to this project are documented in this file.
 
+## [0.5.1] — 2026-11-06
+
+### CI
+
+- GitHub Actions `pr.yml` runs `npm run security-check` (matches local `npm run ci`)
+
 ## [0.5.0] — 2026-11-06
 
 ### Security & scale (SC-1…4 / SEC-1…7)

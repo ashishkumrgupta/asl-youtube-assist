@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "ASL YouTube Assist (partial)",
-  "version": "0.5.0",
+  "version": "0.5.1",
   "description": "ASL assist / partial overlay for YouTube watch pages. Runs locally in your browser. Not a human interpreter. Captions stay on.",
   "action": {
     "default_title": "ASL assist / partial",

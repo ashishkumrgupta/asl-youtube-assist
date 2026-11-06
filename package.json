@@ -1,6 +1,6 @@
 {
   "name": "asl-youtube-assist",
-  "version": "0.5.0",
+  "version": "0.5.1",
   "private": true,
   "description": "ASL + Indian ISL multi-lang-ready assist (partial) on YouTube. Client-local scale; secure-by-design. Not an interpreter.",
   "workspaces": [
