@@ -1,8 +1,8 @@
 {
   "name": "asl-youtube-assist",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "private": true,
-  "description": "Phase 1 Slice A — Chrome/Edge MV3 ASL assist (partial) overlay for YouTube. Not an interpreter.",
+  "description": "ASL assist (partial) on YouTube — Phase 1 Slice A shipped; Phases 1b–5 CapEx-free scaffolding. Not an interpreter.",
   "workspaces": [
     "packages/*",
     "apps/*"
@@ -11,7 +11,7 @@
     "node": ">=20"
   },
   "scripts": {
-    "build": "npm run build -w @asl/shared-types -w @asl/flags -w @asl/sync -w @asl/lint-copy -w @asl/critical-gate -w @asl/fingerspell -w @asl/gloss -w @asl/lexical -w @asl/stitch -w @asl/catalog -w @asl/extension",
+    "build": "npm run build -w @asl/shared-types -w @asl/flags -w @asl/sync -w @asl/lint-copy -w @asl/critical-gate -w @asl/fingerspell -w @asl/gloss -w @asl/lexical -w @asl/stitch -w @asl/catalog -w @asl/roadmap-scaffold -w @asl/extension",
     "typecheck": "tsc -b && npm run typecheck -w @asl/extension",
     "lint": "eslint . --max-warnings=0",
     "format": "prettier --write .",

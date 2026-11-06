@@ -1,16 +1,26 @@
 import { describe, expect, it } from "vitest";
-import { defaultsForEnv, experimentalSigningOffInProd, isEnabled } from "./index.js";
+import {
+  defaultsForEnv,
+  experimentalSigningOffInProd,
+  isEnabled,
+  laterPhaseFlagsOffInProd,
+} from "./index.js";
 
 describe("feature flags", () => {
-  it("enables Slice A overlay + lexical assist in local", () => {
+  it("enables Slice A overlay + lexical + gloss + stitch in local", () => {
     expect(isEnabled("local", "assist.overlay.v1")).toBe(true);
     expect(isEnabled("local", "assist.lexical.v1")).toBe(true);
+    expect(isEnabled("local", "assist.gloss.v1")).toBe(true);
+    expect(isEnabled("local", "assist.stitching.v2")).toBe(true);
   });
 
-  it("keeps neural avatar and stitching off in production", () => {
+  it("keeps neural / study / multi-lang / interpretation allow-list off in production", () => {
     expect(isEnabled("production", "avatar.neural")).toBe(false);
-    expect(isEnabled("production", "assist.stitching.v2")).toBe(false);
+    expect(isEnabled("production", "mode.study")).toBe(false);
+    expect(isEnabled("production", "i18n.sign_pairs")).toBe(false);
+    expect(isEnabled("production", "claim.interpretation_allowlist")).toBe(false);
     expect(experimentalSigningOffInProd("production")).toBe(true);
+    expect(laterPhaseFlagsOffInProd("production")).toBe(true);
   });
 
   it("honors explicit overrides", () => {

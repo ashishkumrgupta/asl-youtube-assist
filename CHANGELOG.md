@@ -2,6 +2,20 @@
 
 All notable changes to this project are documented in this file.
 
+## [0.3.0] — 2026-11-06
+
+### Added (Phases 1b–5 CapEx-free scaffolding)
+
+- `@asl/roadmap-scaffold` — typed stubs for Phase **1b** (cohort/ingest/companion), **2** (modes/study gate), **3** (latency/coverage), **4** (language pairs), **5** (empty interpretation allow-list)
+- Feature flags for later phases (default **off** in production)
+- `docs/phases/`, `evals/phases/`, free static `apps/companion/` stub
+- Catalog `previewTierAIngest` hook (accepts **0** until CapEx)
+
+### Notes
+
+- Scaffold ≠ shipped capability. No usefulness / study-ready / accuracy % / multi-language / north-star claims.
+- CapEx still required for cohort, Tier A media, gold pack, study packs, scale eng.
+
 ## [0.2.0] — 2026-11-06
 
 ### Added (Phase 1 Slice A — no new CapEx)

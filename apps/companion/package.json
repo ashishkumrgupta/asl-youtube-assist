@@ -1,0 +1,6 @@
+{
+  "name": "@asl/companion-stub",
+  "version": "0.3.0",
+  "private": true,
+  "description": "Free static companion stub (Phase 1b) — scaffolding only, not GTM"
+}

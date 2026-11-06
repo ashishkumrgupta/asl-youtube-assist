@@ -1,8 +1,8 @@
-# ASL YouTube Assist (Phase 1 · Slice A)
+# ASL YouTube Assist (Phase 1 · Slice A + 1b–5 scaffolds)
 
 Chrome/Edge **Manifest V3** extension that adds an **ASL assist / partial** PiP-style overlay on YouTube watch pages.
 
-**This is not a human interpreter.** Captions remain the reliability floor. No accuracy percentages. No “better than captions” claim until a funded Deaf/HH cohort (AC-1.3/1.4). Conservative gloss + Tier A/B routing (Tier A empty) + eval harness scaffolding ship **without new CapEx**. Lexical + fingerspell scaffolding is in; **approved clip pack is held** pending `docs/asl-clip-sources.md` + coordinator pick (no AI-persona default).
+**This is not a human interpreter.** Captions remain the reliability floor. No accuracy percentages. No “better than captions” claim until a funded Deaf/HH cohort (AC-1.3/1.4). Phase 1 Slice A (gloss, Tier routing UI, harness) shipped CapEx-free. **Phases 1b–5 are scaffolded only** (`@asl/roadmap-scaffold`, `docs/phases/`) — not shipped capabilities. Lexical + fingerspell scaffolding is in; **approved clip pack is held** pending `docs/asl-clip-sources.md` + coordinator pick (no AI-persona default).
 
 ## Workspace paths
 
@@ -35,8 +35,11 @@ Push to Origin/GitHub when ready — remotes are optional today. See `GIT_LOCATI
 | Named caption fixtures + sync verification                 | Done                                    |
 | Fixture smoke + manual sideload checklist                  | Done                                    |
 | Lint, unit tests, CI workflow                              | Done                                    |
-| Usefulness-vs-captions / paid Deaf cohort (AC-1.3/1.4)     | Deferred (budget)                       |
-| Companion web / store publish / neural / Tier A media      | Out of Slice A                          |
+| Usefulness-vs-captions / paid Deaf cohort (AC-1.3/1.4)     | Phase 1b stub — CapEx deferred          |
+| Phases 1b–5 roadmap scaffolds (`@asl/roadmap-scaffold`)    | Scaffold only (claims blocked)          |
+| Free companion static stub                                 | `apps/companion/` (cut unless free)     |
+| Study mode / multi-lang / interpretation allow-list        | Flags off; scaffold only                |
+| Store publish / neural default / Tier A media              | CapEx / eval deferred                   |
 
 ## Quick start (local)
 
@@ -92,7 +95,11 @@ packages/lexical/        Gloss index + playlist (media pack pending)
 packages/fingerspell/    OOV letter steps
 packages/stitch/         Cue-window timing fit
 packages/catalog/        Tier A/B routing (empty Tier A OK)
-evals/                   Harness scaffolding (AC-1.5; not Deaf proof)
+packages/roadmap-scaffold/ Phases 1b–5 CapEx-free stubs
+apps/companion/          Free static stub (not GTM)
+docs/phases/             Phase scaffold map
+evals/                   Harness scaffolding (not Deaf proof)
+evals/phases/            1b–5 fixture manifests
 fixtures/captions/       Named Phase 0 VTTs + sync expected JSON
 e2e/extension/           Fixture smoke (no live YouTube)
 .github/workflows/pr.yml CI ready for later push

@@ -16,8 +16,24 @@ export interface TierAEntry {
   readonly assetRef: string;
 }
 
-/** Phase 1 Slice A: no Tier A media shipped yet. */
+/** Phase 1 Slice A / 1b: no Tier A media shipped yet (ingest interface separate). */
 export const TIER_A_CATALOG: readonly TierAEntry[] = [];
+
+/**
+ * Phase 1b ingest hook — accepts qualified human records when CapEx/content lands.
+ * Does not mutate the live catalog until a funded review path exists.
+ */
+export function previewTierAIngest(records: readonly TierAEntry[]): {
+  readonly accepted: 0;
+  readonly pendingReview: readonly TierAEntry[];
+  readonly note: string;
+} {
+  return {
+    accepted: 0,
+    pendingReview: records,
+    note: "Tier A ingest scaffold — zero accepted until CapEx + human QA/Deaf-user gate.",
+  };
+}
 
 export interface TierRoute {
   readonly activeTier: ContentTier;

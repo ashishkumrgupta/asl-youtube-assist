@@ -9,9 +9,11 @@
 | `protocol.md`            | Qualitative protocol stub                 |
 | `fixtures/`              | Caption + expected gloss/routing fixtures |
 | `fixtures/manifest.json` | Fixture index                             |
+| `phases/`                | CapEx-free Phase 1b–5 scaffold manifests  |
 
 ## Explicit non-claims
 
 - Does not assert “better than captions”
 - Does not certify interpreter-grade or fluent ASL
 - Does not replace Deaf user review or a paid cohort
+- Phase 1b–5 fixtures are wiring only — not north-star or study-ready proof

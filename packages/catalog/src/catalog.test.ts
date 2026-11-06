@@ -1,6 +1,11 @@
 import { describe, expect, it } from "vitest";
 import { ASSIST_LABEL, HUMAN_INTERPRETATION_LABEL } from "@asl/shared-types";
-import { TIER_A_CATALOG, routeTiers, youtubeVideoIdFromLocation } from "./index.js";
+import {
+  TIER_A_CATALOG,
+  previewTierAIngest,
+  routeTiers,
+  youtubeVideoIdFromLocation,
+} from "./index.js";
 
 describe("Tier A/B routing (AC-1.2)", () => {
   it("exposes visible Tier B active + Tier A empty-state when catalog empty", () => {
@@ -21,5 +26,18 @@ describe("Tier A/B routing (AC-1.2)", () => {
     expect(
       youtubeVideoIdFromLocation("https://www.youtube.com/watch?v=abc123&t=10"),
     ).toBe("abc123");
+  });
+
+  it("Phase 1b ingest preview accepts zero until CapEx gate", () => {
+    const preview = previewTierAIngest([
+      {
+        youtubeVideoId: "example",
+        title: "Example",
+        assetRef: "pending://not-shipped",
+      },
+    ]);
+    expect(preview.accepted).toBe(0);
+    expect(preview.pendingReview).toHaveLength(1);
+    expect(TIER_A_CATALOG).toHaveLength(0);
   });
 });

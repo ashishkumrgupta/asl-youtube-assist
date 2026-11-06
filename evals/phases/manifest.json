@@ -1,0 +1,35 @@
+{
+  "version": "0.3.0",
+  "claimTier": "assist_partial_scaffolding",
+  "notDeafLedProof": true,
+  "phases": [
+    {
+      "id": "1b",
+      "fixtures": ["usefulness-protocol-stub", "tier-a-ingest-empty"],
+      "claimsBlocked": [
+        "helps follow better than captions alone",
+        "useful entertainment assist"
+      ]
+    },
+    {
+      "id": "2",
+      "fixtures": ["study-mode-not-ready", "comprehension-protocol-stub"],
+      "claimsBlocked": ["study-ready", "accuracy %"]
+    },
+    {
+      "id": "3",
+      "fixtures": ["latency-unmeasured", "coverage-unmeasured"],
+      "claimsBlocked": ["CC-like ubiquity", "100% accurate"]
+    },
+    {
+      "id": "4",
+      "fixtures": ["asl-only-active"],
+      "claimsBlocked": ["all major spoken languages"]
+    },
+    {
+      "id": "5",
+      "fixtures": ["interpretation-allowlist-empty"],
+      "claimsBlocked": ["interpreter-grade", "north-star proven"]
+    }
+  ]
+}

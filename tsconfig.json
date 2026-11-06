@@ -10,6 +10,7 @@
     { "path": "packages/gloss" },
     { "path": "packages/lexical" },
     { "path": "packages/stitch" },
-    { "path": "packages/catalog" }
+    { "path": "packages/catalog" },
+    { "path": "packages/roadmap-scaffold" }
   ]
 }
