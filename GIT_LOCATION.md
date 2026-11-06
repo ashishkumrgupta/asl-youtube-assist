@@ -22,4 +22,4 @@ npm test
 npm run build
 ```
 
-`git bundle verify` on the `.bundle` reports a complete history (`main` / `HEAD` → `887ab75`).
+`git bundle verify` on the `.bundle` reports a complete history. Tip branch: `cursor/phase-1-slice-a-95ae` (Phase 1 Slice A — feature commit `d75b1f6`).
