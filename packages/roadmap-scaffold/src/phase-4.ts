@@ -1,51 +1,30 @@
 /**
- * Phase 4 scaffolds: spoken→sign language pair registry.
- * ASL-only active until Phase 2 eval bar is solid (export gate).
+ * Phase 4 scaffolds — re-export language-pair registry (SSOT: @asl/language-pairs).
+ * ASL (ase) live habit shell; Indian ISL (ins) pending; Irish isg out of scope.
  */
 
-export type SignLanguageId = "asl" | "bsl" | "lsf" | "dgs" | "libras";
+import { liveLanguagePairs } from "@asl/language-pairs";
 
-export type LanguagePairStatus = "active" | "blocked_until_asl_eval" | "planned";
+export {
+  DEFAULT_LANGUAGE_PAIR_ID,
+  LANGUAGE_PAIRS,
+  MULTILANG_CLAIM_NOTE as PHASE_4_NOTE,
+  disabledLanguagePairs,
+  getLanguagePair,
+  indianSignLanguagePair,
+  isLivePairId,
+  liveLanguagePairs,
+  pickerLanguagePairs,
+  type LanguagePair,
+  type LanguagePairId,
+  type PairUiStatus as LanguagePairStatus,
+  type SignLanguageIso,
+} from "@asl/language-pairs";
 
-export interface LanguagePair {
-  readonly spoken: "en" | "fr" | "de" | "pt";
-  readonly sign: SignLanguageId;
-  readonly status: LanguagePairStatus;
-  readonly localDeafOwnership: boolean;
+/** @deprecated Use liveLanguagePairs() — kept for older scaffold tests. */
+export function activeLanguagePairs() {
+  return liveLanguagePairs();
 }
-
-export const LANGUAGE_PAIRS: readonly LanguagePair[] = [
-  {
-    spoken: "en",
-    sign: "asl",
-    status: "active",
-    localDeafOwnership: true,
-  },
-  {
-    spoken: "en",
-    sign: "bsl",
-    status: "blocked_until_asl_eval",
-    localDeafOwnership: false,
-  },
-  {
-    spoken: "fr",
-    sign: "lsf",
-    status: "blocked_until_asl_eval",
-    localDeafOwnership: false,
-  },
-  {
-    spoken: "de",
-    sign: "dgs",
-    status: "blocked_until_asl_eval",
-    localDeafOwnership: false,
-  },
-  {
-    spoken: "pt",
-    sign: "libras",
-    status: "blocked_until_asl_eval",
-    localDeafOwnership: false,
-  },
-] as const;
 
 export interface AslExportGate {
   readonly aslPhase2EvalSolid: boolean;
@@ -53,17 +32,9 @@ export interface AslExportGate {
 }
 
 export function aslExportGate(aslPhase2EvalSolid: boolean): AslExportGate {
-  // Scaffold: never export until a future wired eval flag lands (CapEx + Deaf-led).
   void aslPhase2EvalSolid;
   return {
     aslPhase2EvalSolid: false,
     mayExportProcessToOtherLanguages: false,
   };
 }
-
-export function activeLanguagePairs(): readonly LanguagePair[] {
-  return LANGUAGE_PAIRS.filter((p) => p.status === "active");
-}
-
-export const PHASE_4_NOTE =
-  "Multi-language scaffold — do not market additional sign languages until ASL eval bar + local Deaf ownership." as const;

@@ -2,6 +2,21 @@
 
 All notable changes to this project are documented in this file.
 
+## [0.4.0] — 2026-11-06
+
+### Added (Indian ISL + multi-lang architecture)
+
+- `@asl/language-pairs` registry SSOT: **ASL (`ase`)** live habit shell; **Indian Sign Language ISL (`ins`)** pending chrome; Irish (`isg`) **out of scope**
+- Popup language picker (ASL selectable live; ISL selectable pending; others disabled)
+- Per-pair clip-pack hooks (`lexical/ase`, `lexical/ins`); fail-closed `pairs.ins.live` flag
+- `docs/languages.md` — how to add a pair without ISO collisions
+
+### Honesty
+
+- No ISL production quality / fluency / multi-lang-live claims
+- ASL assets never play under ISL label
+- Gold packs still CapEx-deferred per language
+
 ## [0.3.0] — 2026-11-06
 
 ### Added (Phases 1b–5 CapEx-free scaffolding)

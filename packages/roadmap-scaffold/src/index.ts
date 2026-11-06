@@ -49,10 +49,13 @@ export {
   PHASE_4_NOTE,
   activeLanguagePairs,
   aslExportGate,
+  liveLanguagePairs,
+  pickerLanguagePairs,
   type AslExportGate,
   type LanguagePair,
+  type LanguagePairId,
   type LanguagePairStatus,
-  type SignLanguageId,
+  type SignLanguageIso,
 } from "./phase-4.js";
 
 export {

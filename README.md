@@ -1,8 +1,8 @@
-# ASL YouTube Assist (Phase 1 · Slice A + 1b–5 scaffolds)
+# ASL YouTube Assist (v0.4 · ASL live + Indian ISL pending)
 
-Chrome/Edge **Manifest V3** extension that adds an **ASL assist / partial** PiP-style overlay on YouTube watch pages.
+Chrome/Edge **Manifest V3** extension that adds an **ASL assist / partial** PiP-style overlay on YouTube watch pages. Multi-lang registry also lists **Indian Sign Language (ISL, `ins`)** as **pending** chrome (not live). Irish Sign Language (`isg`) is out of scope.
 
-**This is not a human interpreter.** Captions remain the reliability floor. No accuracy percentages. No “better than captions” claim until a funded Deaf/HH cohort (AC-1.3/1.4). Phase 1 Slice A (gloss, Tier routing UI, harness) shipped CapEx-free. **Phases 1b–5 are scaffolded only** (`@asl/roadmap-scaffold`, `docs/phases/`) — not shipped capabilities. Lexical + fingerspell scaffolding is in; **approved clip pack is held** pending `docs/asl-clip-sources.md` + coordinator pick (no AI-persona default).
+**This is not a human interpreter.** Captions remain the reliability floor. No accuracy percentages. No “better than captions” / multi-lang-live / ISL-ready claims without CapEx + Deaf-led eval. See `docs/languages.md`.
 
 ## Workspace paths
 

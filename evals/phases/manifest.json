@@ -23,8 +23,8 @@
     },
     {
       "id": "4",
-      "fixtures": ["asl-only-active"],
-      "claimsBlocked": ["all major spoken languages"]
+      "fixtures": ["ase-live", "ins-pending", "isg-out-of-scope"],
+      "claimsBlocked": ["all major spoken languages", "ISL ready", "Irish as ISL"]
     },
     {
       "id": "5",

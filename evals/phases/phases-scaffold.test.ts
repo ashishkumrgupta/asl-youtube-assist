@@ -29,7 +29,8 @@ describe("evals/phases scaffold (1b–5)", () => {
     expect(USEFULNESS_COHORT_PROTOCOL.allowedMarketingClaim).toBeNull();
     expect(modeChrome("study").studyReady).toBe(false);
     expect(INTERPRETATION_ALLOW_LIST).toHaveLength(0);
-    expect(activeLanguagePairs()[0]?.sign).toBe("asl");
+    expect(activeLanguagePairs()[0]?.signLanguageIso).toBe("ase");
+    expect(activeLanguagePairs().every((p) => p.liveAssistEnabled)).toBe(true);
     expect(laterPhaseFlagsOffInProd("production")).toBe(true);
     const audit = auditScaffoldClaims();
     expect(audit.allPhaseClaimsBlocked).toBe(true);

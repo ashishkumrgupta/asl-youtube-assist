@@ -16,6 +16,8 @@ export type FlagName =
   | "scale.mobile_companion"
   | "scale.creator_batch"
   | "i18n.sign_pairs"
+  /** Fail-closed: Indian ISL live assist path (requires pack + Deaf-led eval). */
+  | "pairs.ins.live"
   | "claim.interpretation_allowlist"
   | "label.interpreter_domains";
 
@@ -36,7 +38,8 @@ const LOCAL: FlagDefaults = {
   "eval.comprehension.v1": false,
   "scale.mobile_companion": false,
   "scale.creator_batch": false,
-  "i18n.sign_pairs": false,
+  "i18n.sign_pairs": true,
+  "pairs.ins.live": false,
   "claim.interpretation_allowlist": false,
   "label.interpreter_domains": true,
 };
@@ -53,7 +56,8 @@ const PRODUCTION: FlagDefaults = {
   "eval.comprehension.v1": false,
   "scale.mobile_companion": false,
   "scale.creator_batch": false,
-  "i18n.sign_pairs": false,
+  "i18n.sign_pairs": true,
+  "pairs.ins.live": false,
   "claim.interpretation_allowlist": false,
   "label.interpreter_domains": true,
 };
@@ -91,7 +95,7 @@ export function experimentalSigningOffInProd(env: EnvName): boolean {
   return (
     d["avatar.neural"] === false &&
     d["mode.study"] === false &&
-    d["i18n.sign_pairs"] === false &&
+    d["pairs.ins.live"] === false &&
     d["claim.interpretation_allowlist"] === false
   );
 }
@@ -105,7 +109,7 @@ export function laterPhaseFlagsOffInProd(env: EnvName): boolean {
     d["eval.comprehension.v1"] === false &&
     d["scale.mobile_companion"] === false &&
     d["scale.creator_batch"] === false &&
-    d["i18n.sign_pairs"] === false &&
+    d["pairs.ins.live"] === false &&
     d["claim.interpretation_allowlist"] === false
   );
 }

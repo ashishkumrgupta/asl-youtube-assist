@@ -39,6 +39,8 @@ describe("honesty labels", () => {
     expect(state.claimTier).toBe("assist_partial");
     expect(state.captionsFloorIntact).toBe(true);
     expect(state.placeholderMode).toBe(true); // defaults helper still placeholder until callers override
+    expect(state.languagePairId).toBe("en-ase");
+    expect(state.liveAssistEnabled).toBe(true);
   });
 
   it("assist disclaimer passes copy lint", () => {

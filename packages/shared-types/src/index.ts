@@ -1,9 +1,10 @@
 /**
  * Shared product types and honesty-label constants.
  * Deaf-user stop-ship: assist path must never claim interpreter / accuracy %.
+ * Per-pair copy lives in @asl/language-pairs; ASL constants remain defaults.
  */
 
-/** Visible claim tier for automated / lexical assist paths. */
+/** Visible claim tier for automated / lexical assist paths (ASL default). */
 export const ASSIST_LABEL = "ASL assist / partial" as const;
 
 /** Short UI badge text for assist (overlay chrome). */
@@ -39,7 +40,7 @@ export interface LabelCopy {
   readonly disclaimer: string;
 }
 
-/** Canonical assist copy for Slice A overlay / popup. */
+/** Canonical assist copy for ASL Slice A overlay / popup. */
 export const ASSIST_LABEL_COPY: LabelCopy = {
   badge: ASSIST_BADGE,
   claimTier: "assist_partial",
@@ -61,19 +62,31 @@ export interface CaptionCue {
   readonly text: string;
 }
 
+/** Default / ASL pair id string (mirrored from language-pairs to avoid cycles). */
+export const DEFAULT_PAIR_ID = "en-ase" as const;
+
 export interface OverlayState {
   readonly enabled: boolean;
   readonly claimTier: ClaimTier;
-  readonly label: typeof ASSIST_LABEL;
+  /** Active pair assist label (ASL assist / partial, or ISL pending copy). */
+  readonly label: string;
   readonly captionsFloorIntact: true;
   readonly criticalGateBlocked: boolean;
   readonly gateReason: string | null;
   readonly activeCueId: string | null;
   readonly placeholderMode: boolean;
+  /** Language pair id (e.g. en-ase, en-ins). */
+  readonly languagePairId: string;
+  /** True only when live assist playlist may run for the pair. */
+  readonly liveAssistEnabled: boolean;
 }
 
 export type RuntimeMessage =
   | { readonly type: "TOGGLE_OVERLAY"; readonly enabled: boolean }
+  | {
+      readonly type: "SET_LANGUAGE_PAIR";
+      readonly languagePairId: string;
+    }
   | { readonly type: "GET_STATE" }
   | { readonly type: "STATE"; readonly state: OverlayState }
   | {
@@ -94,6 +107,8 @@ export function assistOverlayDefaults(
     gateReason: null,
     activeCueId: null,
     placeholderMode: true,
+    languagePairId: DEFAULT_PAIR_ID,
+    liveAssistEnabled: true,
     ...overrides,
   };
 }

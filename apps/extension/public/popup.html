@@ -3,15 +3,20 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>ASL assist</title>
+    <title>Sign language assist</title>
     <link rel="stylesheet" href="popup.css" />
   </head>
   <body>
     <main>
       <h1 id="claim-label">ASL assist / partial</h1>
       <p id="disclaimer" class="disclaimer"></p>
+      <label class="row stack">
+        <span>Sign language</span>
+        <select id="language-pair" aria-label="Sign language pair"></select>
+      </label>
+      <p id="pair-hint" class="pair-hint" role="note"></p>
       <label class="row">
-        <span>Show ASL assist overlay</span>
+        <span id="toggle-label">Show assist overlay</span>
         <input id="toggle" type="checkbox" />
       </label>
       <p id="status" class="status" role="status"></p>

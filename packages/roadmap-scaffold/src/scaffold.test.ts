@@ -54,10 +54,12 @@ describe("roadmap scaffold Phases 1b–5", () => {
     expect(phaseMeta("3").status).toBe("scaffold_only");
   });
 
-  it("Phase 4 only activates ASL pair", () => {
+  it("Phase 4: ASL live; Indian ISL pending; no Irish isg", () => {
     expect(activeLanguagePairs()).toHaveLength(1);
-    expect(activeLanguagePairs()[0]?.sign).toBe("asl");
-    expect(LANGUAGE_PAIRS.filter((p) => p.status !== "active").length).toBeGreaterThan(0);
+    expect(activeLanguagePairs()[0]?.signLanguageIso).toBe("ase");
+    const isl = LANGUAGE_PAIRS.find((p) => p.signLanguageIso === "ins");
+    expect(isl?.uiStatus).toBe("pending");
+    expect(LANGUAGE_PAIRS.some((p) => String(p.signLanguageIso) === "isg")).toBe(false);
   });
 
   it("Phase 5 interpretation allow-list empty; accuracy % blocked", () => {

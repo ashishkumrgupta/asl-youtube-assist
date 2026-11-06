@@ -1,6 +1,12 @@
 import { routeTiers, youtubeVideoIdFromLocation } from "@asl/catalog";
 import { evaluateCriticalGate } from "@asl/critical-gate";
-import { conservativeGloss } from "@asl/gloss";
+import {
+  DEFAULT_LANGUAGE_PAIR_ID,
+  conservativeGlossForPair,
+  getLanguagePair,
+  isPickerPairId,
+  type LanguagePairId,
+} from "@asl/language-pairs";
 import { buildPlaylistFromGloss } from "@asl/lexical";
 import { stitchIntoCue, stepAtElapsedStitched } from "@asl/stitch";
 import { syncToCaptions } from "@asl/sync";
@@ -13,9 +19,14 @@ import {
 import { pageCaptionsStillPresent, renderOverlay } from "./overlay.js";
 
 let enabled = false;
+let pairId: LanguagePairId = DEFAULT_LANGUAGE_PAIR_ID;
 let raf = 0;
 let cueStartedAtMediaMs: number | null = null;
 let lastCueId: string | null = null;
+
+function currentPair() {
+  return getLanguagePair(pairId);
+}
 
 function emptyVm(
   partial: Partial<{
@@ -25,18 +36,39 @@ function emptyVm(
   }> = {},
 ) {
   const route = routeTiers(youtubeVideoIdFromLocation(location.href));
+  const pair = currentPair();
   return {
     enabled: false,
     blocked: false,
     gateMessage: null as string | null,
     activeCaption: null as string | null,
     activeStep: null,
-    placeholderMode: false,
+    placeholderMode: !pair.liveAssistEnabled,
     glossLine: null as string | null,
     routingLine: route.routingLine,
     tierAEmptyState: route.emptyState,
+    languagePairId: pair.id,
+    liveAssistEnabled: pair.liveAssistEnabled,
     ...partial,
   };
+}
+
+function renderPendingOrLiveBase(active: boolean): void {
+  const route = routeTiers(youtubeVideoIdFromLocation(location.href));
+  const pair = currentPair();
+  renderOverlay({
+    enabled: active,
+    blocked: false,
+    gateMessage: null,
+    activeCaption: null,
+    activeStep: null,
+    placeholderMode: !pair.liveAssistEnabled,
+    glossLine: null,
+    routingLine: active && pair.liveAssistEnabled ? route.routingLine : null,
+    tierAEmptyState: active && pair.liveAssistEnabled ? route.emptyState : null,
+    languagePairId: pair.id,
+    liveAssistEnabled: pair.liveAssistEnabled,
+  });
 }
 
 function onToggle(next: boolean): void {
@@ -62,20 +94,10 @@ function onToggle(next: boolean): void {
   }
 
   enabled = next;
-  const route = routeTiers(youtubeVideoIdFromLocation(location.href));
-  renderOverlay({
-    enabled,
-    blocked: false,
-    gateMessage: null,
-    activeCaption: null,
-    activeStep: null,
-    placeholderMode: false,
-    glossLine: null,
-    routingLine: enabled ? route.routingLine : null,
-    tierAEmptyState: enabled ? route.emptyState : null,
-  });
+  renderPendingOrLiveBase(enabled);
 
-  if (enabled) {
+  const pair = currentPair();
+  if (enabled && pair.liveAssistEnabled) {
     startClock();
   } else {
     stopClock();
@@ -86,9 +108,21 @@ function onToggle(next: boolean): void {
   }
 }
 
+function onPairChange(nextId: string): void {
+  if (!isPickerPairId(nextId)) return;
+  pairId = nextId;
+  // Re-apply current enabled state under new pair (ISL pending → no ASL playlist).
+  onToggle(enabled);
+}
+
 function startClock(): void {
   stopClock();
   const tick = (): void => {
+    const pair = currentPair();
+    if (!pair.liveAssistEnabled) {
+      stopClock();
+      return;
+    }
     const video = getVideoElement();
     if (!video || !enabled) {
       raf = requestAnimationFrame(tick);
@@ -113,6 +147,8 @@ function startClock(): void {
         glossLine: null,
         routingLine: route.routingLine,
         tierAEmptyState: route.emptyState,
+        languagePairId: pair.id,
+        liveAssistEnabled: true,
       });
       raf = requestAnimationFrame(tick);
       return;
@@ -128,8 +164,13 @@ function startClock(): void {
       mediaMs - (cueStartedAtMediaMs ?? activeCue.startMs),
     );
     const cueDurationMs = Math.max(0, activeCue.endMs - activeCue.startMs);
-    const gloss = conservativeGloss(activeCue.text);
-    const playlist = buildPlaylistFromGloss(gloss);
+    const pairGloss = conservativeGlossForPair(pair.id, activeCue.text);
+    if (!pairGloss.live || !pairGloss.gloss) {
+      renderPendingOrLiveBase(true);
+      raf = requestAnimationFrame(tick);
+      return;
+    }
+    const playlist = buildPlaylistFromGloss(pairGloss.gloss);
     const stitched = stitchIntoCue(playlist.steps, cueDurationMs || 2000);
     const step = stepAtElapsedStitched(stitched.steps, elapsedInCue);
 
@@ -140,9 +181,11 @@ function startClock(): void {
       activeCaption: activeCue.text,
       activeStep: step,
       placeholderMode: false,
-      glossLine: gloss.glossLine || null,
+      glossLine: pairGloss.gloss.glossLine || null,
       routingLine: route.routingLine,
       tierAEmptyState: route.emptyState,
+      languagePairId: pair.id,
+      liveAssistEnabled: true,
     });
     raf = requestAnimationFrame(tick);
   };
@@ -160,6 +203,9 @@ chrome.runtime.onMessage.addListener((message: RuntimeMessage) => {
   if (message.type === "TOGGLE_OVERLAY") {
     onToggle(message.enabled);
   }
+  if (message.type === "SET_LANGUAGE_PAIR") {
+    onPairChange(message.languagePairId);
+  }
 });
 
 const obs = new MutationObserver(() => {
@@ -172,7 +218,11 @@ obs.observe(document.documentElement, { childList: true, subtree: true });
 
 void chrome.runtime.sendMessage({ type: "GET_STATE" }).then((res: unknown) => {
   const msg = res as RuntimeMessage | undefined;
-  if (msg && msg.type === "STATE" && msg.state.enabled) {
-    onToggle(true);
+  if (msg && msg.type === "STATE") {
+    if (isPickerPairId(msg.state.languagePairId)) {
+      pairId = msg.state.languagePairId;
+    }
+    if (msg.state.enabled) onToggle(true);
+    else renderPendingOrLiveBase(false);
   }
 });

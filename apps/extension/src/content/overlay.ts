@@ -1,12 +1,9 @@
 import {
-  ASSIST_BADGE,
-  ASSIST_CLIP_STAGE_HINT,
-  ASSIST_DISCLAIMER,
-  ASSIST_LABEL,
-  GLOSS_UI_NOTE,
-} from "@asl/shared-types";
+  DEFAULT_LANGUAGE_PAIR_ID,
+  getLanguagePair,
+  type LanguagePairId,
+} from "@asl/language-pairs";
 import type { AssistPlaylistStep } from "@asl/lexical";
-import { CLIP_PACK_MANIFEST } from "@asl/lexical";
 
 const ROOT_ID = "asl-assist-overlay-root";
 
@@ -17,12 +14,11 @@ export interface OverlayViewModel {
   readonly activeCaption: string | null;
   readonly activeStep: AssistPlaylistStep | null;
   readonly placeholderMode: boolean;
-  /** Conservative gloss line for current cue (AC-1.1). */
   readonly glossLine: string | null;
-  /** Tier B active routing chrome (AC-1.2). */
   readonly routingLine: string | null;
-  /** Tier A empty / unavailable honesty (AC-1.2). */
   readonly tierAEmptyState: string | null;
+  readonly languagePairId: LanguagePairId | string;
+  readonly liveAssistEnabled: boolean;
 }
 
 let dragBound = false;
@@ -35,10 +31,11 @@ export function ensureOverlayHost(): HTMLElement {
   let root = document.getElementById(ROOT_ID);
   if (root) return root;
 
+  const pair = getLanguagePair(DEFAULT_LANGUAGE_PAIR_ID);
   root = document.createElement("div");
   root.id = ROOT_ID;
   root.setAttribute("role", "region");
-  root.setAttribute("aria-label", ASSIST_LABEL);
+  root.setAttribute("aria-label", pair.assistCopy.label);
   Object.assign(root.style, {
     position: "fixed",
     right: "16px",
@@ -99,6 +96,14 @@ export function ensureOverlayHost(): HTMLElement {
       }
       .claim { font-size: 14px; font-weight: 600; }
       .disclaimer { font-size: 12px; line-height: 1.35; opacity: 0.9; }
+      .pair-line {
+        font-size: 11px;
+        line-height: 1.35;
+        color: #b8c9dc;
+        border: 1px solid rgba(154, 208, 255, 0.25);
+        border-radius: 6px;
+        padding: 6px 8px;
+      }
       .tier-route {
         font-size: 11px;
         line-height: 1.35;
@@ -189,22 +194,23 @@ export function ensureOverlayHost(): HTMLElement {
           data-role="drag"
           role="button"
           tabindex="0"
-          aria-label="Move ASL assist overlay — drag so it does not cover captions"
+          aria-label="Move assist overlay — drag so it does not cover captions"
           title="Drag to move — keep captions visible"
         >Move</div>
-        <button type="button" class="close" aria-label="Hide ASL assist overlay">Hide</button>
+        <button type="button" class="close" aria-label="Hide assist overlay">Hide</button>
       </div>
-      <div class="badge">${escapeHtml(ASSIST_BADGE)}</div>
-      <div class="claim">${escapeHtml(ASSIST_LABEL)}</div>
-      <div class="disclaimer">${escapeHtml(ASSIST_DISCLAIMER)}</div>
+      <div class="badge" data-role="badge"></div>
+      <div class="claim" data-role="claim"></div>
+      <div class="disclaimer" data-role="disclaimer"></div>
+      <div class="pair-line" data-role="pair-line"></div>
       <div class="tier-route" data-role="routing" hidden></div>
       <div class="tier-empty" data-role="tier-a-empty" hidden></div>
-      <div class="gloss-note" data-role="gloss-note">${escapeHtml(GLOSS_UI_NOTE)}</div>
+      <div class="gloss-note" data-role="gloss-note"></div>
       <div class="stage" data-role="stage">
         <video data-role="clip" muted playsinline loop hidden></video>
         <div class="cue-glyph" data-role="glyph" aria-live="polite"></div>
         <div class="gloss" data-role="gloss"></div>
-        <div data-role="hint">${escapeHtml(ASSIST_CLIP_STAGE_HINT)}</div>
+        <div data-role="hint"></div>
       </div>
       <div class="cue" data-role="cue" hidden></div>
       <div class="gate" data-role="gate" hidden></div>
@@ -224,6 +230,8 @@ export function ensureOverlayHost(): HTMLElement {
       glossLine: null,
       routingLine: null,
       tierAEmptyState: null,
+      languagePairId: DEFAULT_LANGUAGE_PAIR_ID,
+      liveAssistEnabled: true,
     });
     void chrome.runtime.sendMessage({ type: "TOGGLE_OVERLAY", enabled: false });
   });
@@ -316,12 +324,38 @@ export function renderOverlay(vm: OverlayViewModel): void {
   const gateEl = shadow.querySelector('[data-role="gate"]');
   const routingEl = shadow.querySelector('[data-role="routing"]');
   const tierEmptyEl = shadow.querySelector('[data-role="tier-a-empty"]');
+  const badgeEl = shadow.querySelector('[data-role="badge"]');
+  const claimEl = shadow.querySelector('[data-role="claim"]');
+  const disclaimerEl = shadow.querySelector('[data-role="disclaimer"]');
+  const glossNoteEl = shadow.querySelector('[data-role="gloss-note"]');
+  const pairLineEl = shadow.querySelector('[data-role="pair-line"]');
   if (!(panel instanceof HTMLElement)) return;
+
+  const pair = getLanguagePair(vm.languagePairId);
+  root.setAttribute("aria-label", pair.assistCopy.label);
+
+  if (badgeEl instanceof HTMLElement) badgeEl.textContent = pair.assistCopy.badge;
+  if (claimEl instanceof HTMLElement) claimEl.textContent = pair.assistCopy.label;
+  if (disclaimerEl instanceof HTMLElement) {
+    disclaimerEl.textContent = pair.assistCopy.disclaimer;
+  }
+  if (glossNoteEl instanceof HTMLElement) {
+    glossNoteEl.textContent = pair.assistCopy.glossNote;
+  }
+  if (pairLineEl instanceof HTMLElement) {
+    const status =
+      pair.uiStatus === "live"
+        ? "live habit shell (assist / partial)"
+        : pair.uiStatus === "pending"
+          ? (pair.pickerHint ?? "pending")
+          : "not shipped";
+    pairLineEl.textContent = `Language · ${pair.displayName} (${pair.signLanguageIso}) · ${status}`;
+  }
 
   panel.dataset.visible = vm.enabled || vm.blocked ? "true" : "false";
 
   if (routingEl instanceof HTMLElement) {
-    if (vm.enabled && vm.routingLine) {
+    if (vm.enabled && vm.liveAssistEnabled && vm.routingLine) {
       routingEl.hidden = false;
       routingEl.textContent = vm.routingLine;
     } else {
@@ -331,7 +365,7 @@ export function renderOverlay(vm: OverlayViewModel): void {
   }
 
   if (tierEmptyEl instanceof HTMLElement) {
-    if (vm.enabled && vm.tierAEmptyState) {
+    if (vm.enabled && vm.liveAssistEnabled && vm.tierAEmptyState) {
       tierEmptyEl.hidden = false;
       tierEmptyEl.textContent = vm.tierAEmptyState;
     } else {
@@ -341,16 +375,17 @@ export function renderOverlay(vm: OverlayViewModel): void {
   }
 
   if (hintEl instanceof HTMLElement) {
-    hintEl.textContent =
-      CLIP_PACK_MANIFEST.status === "pending"
-        ? ASSIST_CLIP_STAGE_HINT
-        : ASSIST_CLIP_STAGE_HINT;
+    hintEl.textContent = pair.assistCopy.clipStageHint;
   }
 
   if (glossEl instanceof HTMLElement) {
     if (vm.blocked) {
       glossEl.textContent =
-        "ASL assist paused (critical-domain keyword stub — not content understanding).";
+        "Assist paused (critical-domain keyword stub — not content understanding).";
+    } else if (!vm.liveAssistEnabled && vm.enabled) {
+      glossEl.textContent =
+        pair.pickerHint ??
+        "Sign language path pending — no live gloss/clips for this pair.";
     } else if (vm.glossLine) {
       glossEl.textContent = `Assist gloss: ${vm.glossLine}`;
     } else if (vm.activeStep?.kind === "lexical") {
@@ -367,9 +402,19 @@ export function renderOverlay(vm: OverlayViewModel): void {
   }
 
   if (glyphEl instanceof HTMLElement) {
-    if (vm.enabled && !vm.blocked && vm.activeStep?.kind === "fingerspell") {
+    if (
+      vm.enabled &&
+      !vm.blocked &&
+      vm.liveAssistEnabled &&
+      vm.activeStep?.kind === "fingerspell"
+    ) {
       glyphEl.textContent = vm.activeStep.letter;
-    } else if (vm.enabled && !vm.blocked && vm.activeStep?.kind === "lexical") {
+    } else if (
+      vm.enabled &&
+      !vm.blocked &&
+      vm.liveAssistEnabled &&
+      vm.activeStep?.kind === "lexical"
+    ) {
       glyphEl.textContent = vm.activeStep.gloss;
     } else {
       glyphEl.textContent = "";
@@ -377,8 +422,12 @@ export function renderOverlay(vm: OverlayViewModel): void {
   }
 
   if (video instanceof HTMLVideoElement) {
-    const path = vm.activeStep?.assetPath ?? null;
-    if (vm.enabled && !vm.blocked && path) {
+    // Never play assets when pair is not live (blocks ASL media under ISL).
+    const path =
+      vm.liveAssistEnabled && vm.enabled && !vm.blocked
+        ? (vm.activeStep?.assetPath ?? null)
+        : null;
+    if (path) {
       const next = assetUrl(path);
       if (lastAssetPath !== next) {
         lastAssetPath = next;
@@ -395,7 +444,7 @@ export function renderOverlay(vm: OverlayViewModel): void {
   }
 
   if (cueEl instanceof HTMLElement) {
-    if (vm.activeCaption && vm.enabled && !vm.blocked) {
+    if (vm.activeCaption && vm.enabled && !vm.blocked && vm.liveAssistEnabled) {
       cueEl.hidden = false;
       cueEl.textContent = `Synced caption window: ${vm.activeCaption}`;
     } else {
@@ -413,14 +462,6 @@ export function renderOverlay(vm: OverlayViewModel): void {
       gateEl.textContent = "";
     }
   }
-}
-
-function escapeHtml(s: string): string {
-  return s
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;");
 }
 
 export function pageCaptionsStillPresent(): boolean {

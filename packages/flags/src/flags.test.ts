@@ -14,10 +14,11 @@ describe("feature flags", () => {
     expect(isEnabled("local", "assist.stitching.v2")).toBe(true);
   });
 
-  it("keeps neural / study / multi-lang / interpretation allow-list off in production", () => {
+  it("keeps neural / study / ISL-live / interpretation allow-list off in production", () => {
     expect(isEnabled("production", "avatar.neural")).toBe(false);
     expect(isEnabled("production", "mode.study")).toBe(false);
-    expect(isEnabled("production", "i18n.sign_pairs")).toBe(false);
+    expect(isEnabled("production", "pairs.ins.live")).toBe(false);
+    expect(isEnabled("production", "i18n.sign_pairs")).toBe(true);
     expect(isEnabled("production", "claim.interpretation_allowlist")).toBe(false);
     expect(experimentalSigningOffInProd("production")).toBe(true);
     expect(laterPhaseFlagsOffInProd("production")).toBe(true);

@@ -17,6 +17,7 @@
     "typecheck": "tsc -p tsconfig.json --noEmit"
   },
   "dependencies": {
+    "@asl/language-pairs": "0.4.0",
     "@asl/lint-copy": "0.1.0",
     "@asl/shared-types": "0.1.0"
   }
