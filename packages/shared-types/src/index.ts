@@ -9,9 +9,12 @@ export const ASSIST_LABEL = "ASL assist / partial" as const;
 /** Short UI badge text for assist (overlay chrome). */
 export const ASSIST_BADGE = "ASL assist" as const;
 
-/** Supporting honesty line shown under the badge. */
+/**
+ * Supporting honesty line under the badge.
+ * Slice A: placeholder only — do not claim curated/synced signs until Slice C dictionary ships.
+ */
 export const ASSIST_DISCLAIMER =
-  "Partial — curated signs synced to captions when available. Not a human interpreter. Captions stay on." as const;
+  "Partial prototype — signing clips not loaded yet (placeholder). Not a human interpreter. Captions stay on." as const;
 
 /** Label reserved for qualified human interpreter catalog (Tier A) — not used in Slice A assist. */
 export const HUMAN_INTERPRETATION_LABEL = "Human interpretation" as const;

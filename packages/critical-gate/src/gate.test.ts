@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import {
+  GATE_STUB_NOTICE,
   detectCriticalDomains,
   evaluateCriticalGate,
   isCriticalDomainBlocked,
@@ -26,6 +27,16 @@ describe("critical-domain hard gate", () => {
     ).toBe(true);
   });
 
+  it("user copy discloses keyword stub / not content understanding", () => {
+    const result = evaluateCriticalGate({
+      domains: ["medical"],
+      humanPathAvailable: false,
+    });
+    expect(result.userMessage).toContain(GATE_STUB_NOTICE);
+    expect(result.userMessage?.toLowerCase()).toContain("not content understanding");
+    expect(result.userMessage?.toLowerCase()).toContain("keyword");
+  });
+
   it("does not block entertainment topics", () => {
     const result = evaluateCriticalGate({
       domains: ["comedy", "music"],
@@ -42,5 +53,6 @@ describe("critical-domain hard gate", () => {
     });
     expect(result.blocked).toBe(false);
     expect(result.userMessage?.toLowerCase()).toContain("human interpretation");
+    expect(result.userMessage).toContain(GATE_STUB_NOTICE);
   });
 });

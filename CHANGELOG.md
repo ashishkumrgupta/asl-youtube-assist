@@ -9,10 +9,12 @@ All notable changes to this project are documented in this file.
 - Phase 0 Slice A habit skeleton: MV3 sideload extension for YouTube watch pages.
 - Toggleable **ASL assist / partial** overlay (placeholder signing UI; no clip CDN).
 - Caption floor preserved; best-effort sync to HTML5 text-track timestamps.
-- Critical-domain hard gate stub (health / legal / safety → block unsupervised assist as sole channel).
+- Draggable overlay (Move handle + keyboard arrows) so PiP need not cover captions.
+- Critical-domain hard gate stub (health / legal / safety → block unsupervised assist as sole channel); UI copy discloses keyword heuristic / not content understanding.
 - Shared packages: labels, flags, sync math, assist copy lint, critical gate.
 - Unit tests + GitHub Actions PR workflow (ready for later push).
 
 ### Notes
 
 - User-facing claim tier is assist only — not a human interpreter; no accuracy percentages.
+- Slice A disclaimer is placeholder-honest (no “curated signs” until dictionary ships).

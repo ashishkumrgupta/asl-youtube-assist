@@ -22,6 +22,13 @@ describe("honesty labels", () => {
     expect(lower).not.toContain("100%");
   });
 
+  it("Slice A disclaimer is placeholder-honest (no curated-signs claim yet)", () => {
+    const lower = ASSIST_DISCLAIMER.toLowerCase();
+    expect(lower).toContain("placeholder");
+    expect(lower).not.toContain("curated signs");
+    expect(lower).not.toContain("synced to captions");
+  });
+
   it("default overlay state is assist-only with captions floor intact", () => {
     const state = assistOverlayDefaults();
     expect(state.label).toBe(ASSIST_LABEL);

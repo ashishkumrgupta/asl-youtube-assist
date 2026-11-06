@@ -10,6 +10,8 @@ export interface OverlayViewModel {
   readonly placeholderMode: boolean;
 }
 
+let dragBound = false;
+
 export function ensureOverlayHost(): HTMLElement {
   let root = document.getElementById(ROOT_ID);
   if (root) return root;
@@ -22,6 +24,8 @@ export function ensureOverlayHost(): HTMLElement {
     position: "fixed",
     right: "16px",
     bottom: "96px",
+    left: "auto",
+    top: "auto",
     zIndex: "2147483646",
     width: "280px",
     maxWidth: "40vw",
@@ -46,6 +50,28 @@ export function ensureOverlayHost(): HTMLElement {
         gap: 8px;
       }
       .panel[data-visible="true"] { display: flex; }
+      .chrome {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 8px;
+      }
+      .drag-handle {
+        flex: 1;
+        cursor: grab;
+        user-select: none;
+        font-size: 11px;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+        color: #9ad0ff;
+        padding: 4px 0;
+        touch-action: none;
+      }
+      .drag-handle:active { cursor: grabbing; }
+      .drag-handle:focus-visible {
+        outline: 2px solid #9ad0ff;
+        outline-offset: 2px;
+      }
       .badge {
         font-size: 12px;
         font-weight: 700;
@@ -83,7 +109,6 @@ export function ensureOverlayHost(): HTMLElement {
         line-height: 1.4;
       }
       button.close {
-        align-self: flex-end;
         background: transparent;
         border: 1px solid rgba(255,255,255,0.25);
         color: #fff;
@@ -101,7 +126,17 @@ export function ensureOverlayHost(): HTMLElement {
       }
     </style>
     <div class="panel" data-visible="false" part="panel">
-      <button type="button" class="close" aria-label="Hide ASL assist overlay">Hide</button>
+      <div class="chrome">
+        <div
+          class="drag-handle"
+          data-role="drag"
+          role="button"
+          tabindex="0"
+          aria-label="Move ASL assist overlay — drag so it does not cover captions"
+          title="Drag to move — keep captions visible"
+        >Move</div>
+        <button type="button" class="close" aria-label="Hide ASL assist overlay">Hide</button>
+      </div>
       <div class="badge">${escapeHtml(ASSIST_BADGE)}</div>
       <div class="claim">${escapeHtml(ASSIST_LABEL)}</div>
       <div class="disclaimer">${escapeHtml(ASSIST_DISCLAIMER)}</div>
@@ -123,7 +158,83 @@ export function ensureOverlayHost(): HTMLElement {
     });
     void chrome.runtime.sendMessage({ type: "TOGGLE_OVERLAY", enabled: false });
   });
+  bindDrag(root, shadow);
   return root;
+}
+
+function bindDrag(root: HTMLElement, shadow: ShadowRoot): void {
+  if (dragBound) return;
+  const handle = shadow.querySelector('[data-role="drag"]');
+  if (!(handle instanceof HTMLElement)) return;
+  dragBound = true;
+
+  let dragging = false;
+  let offsetX = 0;
+  let offsetY = 0;
+
+  const onPointerDown = (event: PointerEvent): void => {
+    if (event.button !== 0) return;
+    dragging = true;
+    const rect = root.getBoundingClientRect();
+    offsetX = event.clientX - rect.left;
+    offsetY = event.clientY - rect.top;
+    // Switch from right/bottom anchoring to left/top for free placement.
+    root.style.right = "auto";
+    root.style.bottom = "auto";
+    root.style.left = `${rect.left}px`;
+    root.style.top = `${rect.top}px`;
+    handle.setPointerCapture(event.pointerId);
+    event.preventDefault();
+  };
+
+  const onPointerMove = (event: PointerEvent): void => {
+    if (!dragging) return;
+    const maxLeft = Math.max(0, window.innerWidth - root.offsetWidth);
+    const maxTop = Math.max(0, window.innerHeight - root.offsetHeight);
+    const left = clamp(event.clientX - offsetX, 0, maxLeft);
+    const top = clamp(event.clientY - offsetY, 0, maxTop);
+    root.style.left = `${left}px`;
+    root.style.top = `${top}px`;
+  };
+
+  const onPointerUp = (event: PointerEvent): void => {
+    if (!dragging) return;
+    dragging = false;
+    try {
+      handle.releasePointerCapture(event.pointerId);
+    } catch {
+      // ignore if already released
+    }
+  };
+
+  handle.addEventListener("pointerdown", onPointerDown);
+  handle.addEventListener("pointermove", onPointerMove);
+  handle.addEventListener("pointerup", onPointerUp);
+  handle.addEventListener("pointercancel", onPointerUp);
+
+  // Keyboard nudge — keeps overlay operable without trapping focus in PiP.
+  handle.addEventListener("keydown", (event: KeyboardEvent) => {
+    const step = event.shiftKey ? 40 : 12;
+    const rect = root.getBoundingClientRect();
+    let left = rect.left;
+    let top = rect.top;
+    if (event.key === "ArrowLeft") left -= step;
+    else if (event.key === "ArrowRight") left += step;
+    else if (event.key === "ArrowUp") top -= step;
+    else if (event.key === "ArrowDown") top += step;
+    else return;
+    event.preventDefault();
+    root.style.right = "auto";
+    root.style.bottom = "auto";
+    const maxLeft = Math.max(0, window.innerWidth - root.offsetWidth);
+    const maxTop = Math.max(0, window.innerHeight - root.offsetHeight);
+    root.style.left = `${clamp(left, 0, maxLeft)}px`;
+    root.style.top = `${clamp(top, 0, maxTop)}px`;
+  });
+}
+
+function clamp(n: number, min: number, max: number): number {
+  return Math.min(max, Math.max(min, n));
 }
 
 export function renderOverlay(vm: OverlayViewModel): void {
@@ -141,7 +252,8 @@ export function renderOverlay(vm: OverlayViewModel): void {
 
   if (stage instanceof HTMLElement) {
     if (vm.blocked) {
-      stage.textContent = "ASL assist paused (critical-domain gate).";
+      stage.textContent =
+        "ASL assist paused (critical-domain keyword stub — not content understanding).";
     } else if (vm.placeholderMode) {
       stage.textContent =
         "Placeholder signing — no clip CDN in Slice A. Label stays ASL assist / partial.";

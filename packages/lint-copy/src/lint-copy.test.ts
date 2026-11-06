@@ -4,7 +4,7 @@ import { assertAssistCopyClean, lintAssistCopy } from "./index.js";
 describe("lint-copy", () => {
   it("allows honest Phase 0 assist language", () => {
     const ok =
-      "ASL assist (partial) — curated signs synced to captions; not a human interpreter.";
+      "ASL assist (partial) — signing clips not loaded yet (placeholder); not a human interpreter.";
     expect(lintAssistCopy(ok, "assist")).toEqual([]);
     expect(() => assertAssistCopyClean(ok)).not.toThrow();
   });

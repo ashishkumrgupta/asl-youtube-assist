@@ -25,9 +25,10 @@ function applyState(state: OverlayState): void {
   if (status) {
     if (state.criticalGateBlocked) {
       status.textContent =
-        "Critical-domain gate blocked unsupervised assist. Captions remain available.";
+        "Keyword stub gate (not content understanding) blocked unsupervised assist. Captions remain available.";
     } else if (state.enabled) {
-      status.textContent = "ASL assist overlay on — partial, not an interpreter.";
+      status.textContent =
+        "ASL assist overlay on — placeholder only, not an interpreter. Drag Move to keep captions clear.";
     } else {
       status.textContent = "Overlay off. Captions stay available on YouTube.";
     }

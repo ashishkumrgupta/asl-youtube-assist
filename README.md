@@ -2,7 +2,7 @@
 
 Chrome/Edge **Manifest V3** extension that adds an **ASL assist / partial** PiP-style overlay on YouTube watch pages.
 
-**This is not a human interpreter.** Captions remain the reliability floor. No accuracy percentages. Placeholder signing UI is honest when no clip CDN is configured.
+**This is not a human interpreter.** Captions remain the reliability floor. No accuracy percentages. Slice A shows a **placeholder** signing stage only — no curated clip dictionary yet (that lands in Slice C).
 
 ## Workspace paths
 
@@ -17,20 +17,21 @@ Push to Origin/GitHub when ready — remotes are optional today. See `GIT_LOCATI
 
 ## What Slice A includes
 
-| Feature                                              | Status                          |
-| ---------------------------------------------------- | ------------------------------- |
-| Sideload MV3 extension (Chrome/Edge)                 | Done                            |
-| Toggle ASL assist overlay on YouTube watch           | Done                            |
-| Caption floor preserved (never strips CC)            | Done                            |
-| Sync to caption timestamps when text tracks exist    | Done (best-effort)              |
-| Honest labels: **ASL assist / partial** only         | Done                            |
-| Critical-domain hard gate stub (health/legal/safety) | Done                            |
-| Placeholder signing UI (no clip CDN)                 | Done                            |
-| Lint, unit tests, CI workflow                        | Done                            |
-| Lexical clip CDN / HF dictionary                     | Deferred (Slice C)              |
-| Tier A human catalog                                 | Deferred (Phase 1)              |
-| Chrome Web Store publish                             | Out of scope                    |
-| Neural avatar                                        | Out of scope (flag default off) |
+| Feature                                                    | Status                          |
+| ---------------------------------------------------------- | ------------------------------- |
+| Sideload MV3 extension (Chrome/Edge)                       | Done                            |
+| Toggle ASL assist overlay on YouTube watch                 | Done                            |
+| Caption floor preserved (never strips CC)                  | Done                            |
+| Sync to caption timestamps when text tracks exist          | Done (best-effort)              |
+| Honest labels: **ASL assist / partial** only               | Done                            |
+| Critical-domain keyword gate stub (disclosed as heuristic) | Done                            |
+| Movable overlay (drag / arrow keys)                        | Done                            |
+| Placeholder signing UI (no clip CDN)                       | Done                            |
+| Lint, unit tests, CI workflow                              | Done                            |
+| Lexical clip CDN / HF dictionary                           | Deferred (Slice C)              |
+| Tier A human catalog                                       | Deferred (Phase 1)              |
+| Chrome Web Store publish                                   | Out of scope                    |
+| Neural avatar                                              | Out of scope (flag default off) |
 
 ## Quick start (local)
 
@@ -51,7 +52,8 @@ Built unpacked extension: `apps/extension/dist/`
 4. **Load unpacked** → select `apps/extension/dist`.
 5. Open a **captioned** YouTube watch URL.
 6. Click the extension icon → enable **Show ASL assist overlay**.
-7. Confirm the overlay badge says **ASL assist / partial**, and YouTube captions still work.
+7. Confirm the overlay badge says **ASL assist / partial**, disclaimer says **placeholder**, and YouTube captions still work.
+8. Drag the **Move** handle (or focus it and use arrow keys) so the overlay does not cover captions.
 
 Permissions used (least privilege):
 
@@ -102,11 +104,17 @@ git push -u origin main
 
 If the remote does not exist yet, create an empty repo first, then push. See Project note `internal/development/repo-bootstrap.md` for prior remote-create blockers.
 
+## Critical-domain gate (Slice A stub)
+
+Detection is a **keyword stub** on YouTube title/description tokens (health / legal / safety word lists). It is **not** content understanding — false negatives and false positives are expected. When it matches and no human path exists, unsupervised assist is blocked and the UI says so explicitly (`Keyword stub only — not content understanding.`). Strengthen signals + fixtures before any store/RC; keep the honesty of the blocked copy.
+
 ## Labeling rules (stop-ship)
 
 Allowed: **ASL assist / partial**, captions-stay-on language, human interpretation only for real Tier A humans.
 
 Never: AI/digital interpreter for assist, accuracy %, “ASL captions” as the product, fluent-ASL-from-captions claims.
+
+Slice A disclaimer must stay placeholder-honest until curated clips ship — do not say “curated signs synced…” while the stage is still a placeholder.
 
 ## License
 

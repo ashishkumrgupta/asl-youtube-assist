@@ -3,7 +3,13 @@ import { CRITICAL_DOMAINS, type CriticalDomain } from "@asl/shared-types";
 /**
  * Critical-domain hard gate (Slice A stub).
  * Health / legal / safety must not run unsupervised assist as sole channel.
+ *
+ * Detection is a keyword heuristic on caller-supplied tokens (title/description) —
+ * not content understanding. User-facing copy must say so.
  */
+
+/** Prefix for all Slice A gate user messages — honesty about stub detection. */
+export const GATE_STUB_NOTICE = "Keyword stub only — not content understanding." as const;
 
 export interface GateInput {
   /** Detected or declared domain tags for the video / page. */
@@ -80,8 +86,7 @@ export function evaluateCriticalGate(input: GateInput): GateResult {
       blocked: false,
       matchedDomains,
       reason: null,
-      userMessage:
-        "Critical topic detected. Prefer a human interpretation path when available. Captions remain on.",
+      userMessage: `${GATE_STUB_NOTICE} Title/description keywords matched ${matchedDomains.join(", ")}. Prefer a human interpretation path when available. Captions remain on.`,
     };
   }
 
@@ -89,8 +94,7 @@ export function evaluateCriticalGate(input: GateInput): GateResult {
     blocked: true,
     matchedDomains,
     reason: `unsupervised_assist_blocked:${matchedDomains.join(",")}`,
-    userMessage:
-      "This video looks health, legal, or safety related. ASL assist stays off as the sole channel — use captions and seek a qualified human interpreter. This overlay is not an interpreter.",
+    userMessage: `${GATE_STUB_NOTICE} Title/description keywords matched ${matchedDomains.join(", ")}. ASL assist stays off as the sole channel — use captions and seek a qualified human interpreter. This overlay is not an interpreter.`,
   };
 }
 
