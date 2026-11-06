@@ -1,0 +1,10 @@
+{
+  "files": [],
+  "references": [
+    { "path": "packages/shared-types" },
+    { "path": "packages/flags" },
+    { "path": "packages/sync" },
+    { "path": "packages/lint-copy" },
+    { "path": "packages/critical-gate" }
+  ]
+}

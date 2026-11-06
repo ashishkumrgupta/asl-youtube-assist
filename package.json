@@ -1,0 +1,39 @@
+{
+  "name": "asl-youtube-assist",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Phase 0 Slice A — Chrome/Edge MV3 ASL assist (partial) overlay for YouTube. Not an interpreter.",
+  "workspaces": [
+    "packages/*",
+    "apps/*"
+  ],
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "build": "npm run build -w @asl/shared-types -w @asl/flags -w @asl/sync -w @asl/lint-copy -w @asl/critical-gate -w @asl/extension",
+    "typecheck": "tsc -b && npm run typecheck -w @asl/extension",
+    "lint": "eslint . --max-warnings=0",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "icons": "node scripts/generate-icons.mjs",
+    "prebuild": "npm run icons",
+    "ci": "npm run format:check && npm run lint && npm run typecheck && npm run test && npm run build"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.15.0",
+    "@types/chrome": "^0.0.287",
+    "@types/node": "^22.10.0",
+    "esbuild": "^0.24.0",
+    "eslint": "^9.15.0",
+    "globals": "^17.14.0",
+    "prettier": "^3.4.1",
+    "tsx": "^4.19.2",
+    "typescript": "^5.7.2",
+    "typescript-eslint": "^8.16.0",
+    "vitest": "^2.1.6"
+  },
+  "type": "module"
+}
