@@ -16,6 +16,9 @@
     { "path": "../../packages/lint-copy" },
     { "path": "../../packages/critical-gate" },
     { "path": "../../packages/fingerspell" },
-    { "path": "../../packages/lexical" }
+    { "path": "../../packages/gloss" },
+    { "path": "../../packages/lexical" },
+    { "path": "../../packages/stitch" },
+    { "path": "../../packages/catalog" }
   ]
 }

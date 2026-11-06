@@ -1,8 +1,8 @@
-# ASL YouTube Assist (Phase 0 · Slice A)
+# ASL YouTube Assist (Phase 1 · Slice A)
 
 Chrome/Edge **Manifest V3** extension that adds an **ASL assist / partial** PiP-style overlay on YouTube watch pages.
 
-**This is not a human interpreter.** Captions remain the reliability floor. No accuracy percentages. Lexical gloss + fingerspell OOV scaffolding is in; **approved clip pack is held** pending `docs/asl-clip-sources.md` + coordinator pick (no AI-persona default).
+**This is not a human interpreter.** Captions remain the reliability floor. No accuracy percentages. No “better than captions” claim until a funded Deaf/HH cohort (AC-1.3/1.4). Conservative gloss + Tier A/B routing (Tier A empty) + eval harness scaffolding ship **without new CapEx**. Lexical + fingerspell scaffolding is in; **approved clip pack is held** pending `docs/asl-clip-sources.md` + coordinator pick (no AI-persona default).
 
 ## Workspace paths
 
@@ -17,21 +17,26 @@ Push to Origin/GitHub when ready — remotes are optional today. See `GIT_LOCATI
 
 ## What Slice A includes
 
-| Feature                                                    | Status                              |
-| ---------------------------------------------------------- | ----------------------------------- |
-| Sideload MV3 extension (Chrome/Edge)                       | Done                                |
-| Toggle ASL assist overlay on YouTube watch                 | Done                                |
-| Caption floor preserved (never strips CC)                  | Done                                |
-| Sync to caption timestamps when text tracks exist          | Done (best-effort)                  |
-| Honest labels: **ASL assist / partial** only               | Done                                |
-| Critical-domain keyword gate stub (disclosed as heuristic) | Done                                |
-| Movable overlay (drag / arrow keys)                        | Done                                |
-| Lexical index + fingerspell OOV scaffolding                | Done                                |
-| Clip media pack (HF / open lexicon)                        | **Held** — pending coordinator pick |
-| Named caption fixtures + sync verification                 | Done                                |
-| Fixture smoke + manual sideload checklist                  | Done                                |
-| Lint, unit tests, CI workflow                              | Done                                |
-| Companion web / store publish / neural / Tier A            | Out of scope (Phase 0 cut)          |
+| Feature                                                    | Status                                  |
+| ---------------------------------------------------------- | --------------------------------------- |
+| Sideload MV3 extension (Chrome/Edge)                       | Done                                    |
+| Toggle ASL assist overlay on YouTube watch                 | Done                                    |
+| Caption floor preserved (never strips CC)                  | Done                                    |
+| Sync to caption timestamps when text tracks exist          | Done (best-effort)                      |
+| Honest labels: **ASL assist / partial** only               | Done                                    |
+| Critical-domain keyword gate stub (disclosed as heuristic) | Done                                    |
+| Movable overlay (drag / arrow keys)                        | Done                                    |
+| Lexical index + fingerspell OOV scaffolding                | Done                                    |
+| Conservative gloss (not English-on-the-hands as ASL)       | Done (Phase 1 · AC-1.1)                 |
+| Tier A/B routing UI (Tier A catalog empty / honest)        | Done (Phase 1 · AC-1.2)                 |
+| Stitch/timing into caption cue windows                     | Done (thin eng)                         |
+| Eval harness scaffolding (`evals/`)                        | Done (Phase 1 · AC-1.5; not Deaf proof) |
+| Clip media pack (Deaf-produced / licensed)                 | **Deferred** — CapEx / AC-0.5           |
+| Named caption fixtures + sync verification                 | Done                                    |
+| Fixture smoke + manual sideload checklist                  | Done                                    |
+| Lint, unit tests, CI workflow                              | Done                                    |
+| Usefulness-vs-captions / paid Deaf cohort (AC-1.3/1.4)     | Deferred (budget)                       |
+| Companion web / store publish / neural / Tier A media      | Out of Slice A                          |
 
 ## Quick start (local)
 
@@ -82,8 +87,12 @@ packages/flags/          Capability feature flags
 packages/sync/           Caption clock / lag math
 packages/lint-copy/      Banned-term checks for assist copy
 packages/critical-gate/  Health/legal/safety hard gate stub
+packages/gloss/          Conservative assist gloss (AC-1.1)
 packages/lexical/        Gloss index + playlist (media pack pending)
 packages/fingerspell/    OOV letter steps
+packages/stitch/         Cue-window timing fit
+packages/catalog/        Tier A/B routing (empty Tier A OK)
+evals/                   Harness scaffolding (AC-1.5; not Deaf proof)
 fixtures/captions/       Named Phase 0 VTTs + sync expected JSON
 e2e/extension/           Fixture smoke (no live YouTube)
 .github/workflows/pr.yml CI ready for later push

@@ -26,4 +26,9 @@ describe("lint-copy", () => {
     const text = "Human interpretation available when a catalog recording exists.";
     expect(lintAssistCopy(text, "human_tier_a")).toEqual([]);
   });
+
+  it("flags usefulness-vs-captions marketing before AC-1.3/1.4", () => {
+    const v = lintAssistCopy("Helps follow better than captions alone.", "assist");
+    expect(v.some((x) => /captions/i.test(x.term))).toBe(true);
+  });
 });

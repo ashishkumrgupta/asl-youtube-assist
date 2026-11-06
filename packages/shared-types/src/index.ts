@@ -20,6 +20,10 @@ export const ASSIST_DISCLAIMER =
 export const ASSIST_CLIP_STAGE_HINT =
   "Clip pack pending coordinator pick (see ATTRIBUTION). No AI-persona default. Showing gloss / fingerspell cues only — not Deaf-produced signing video." as const;
 
+/** Visible note: assist gloss is not fluent ASL (AC-1.1). */
+export const GLOSS_UI_NOTE =
+  "Assist gloss (conservative) — not fluent ASL; not English-on-the-hands sold as ASL." as const;
+
 /** Label reserved for qualified human interpreter catalog (Tier A) — not used in Slice A assist. */
 export const HUMAN_INTERPRETATION_LABEL = "Human interpretation" as const;
 

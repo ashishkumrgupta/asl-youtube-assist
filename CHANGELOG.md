@@ -2,6 +2,21 @@
 
 All notable changes to this project are documented in this file.
 
+## [0.2.0] — 2026-11-06
+
+### Added (Phase 1 Slice A — no new CapEx)
+
+- **AC-1.1** Conservative gloss (`@asl/gloss`) — TIME/content/WH heuristic; UI note that gloss is not fluent ASL / not English-on-the-hands.
+- **AC-1.2** Tier A/B routing UI (`@asl/catalog`) with honest empty Tier A (“human catalog unavailable… Not playing assist as human interpretation”).
+- Stitch/timing fit into caption cue windows (`@asl/stitch`) — thin eng improvement, no gold clips.
+- **AC-1.5** Eval harness scaffolding under `evals/` (fixture manifest + protocol stub; **not** Deaf-led proof).
+- Copy lint blocks usefulness-vs-captions / “useful entertainment assist” until AC-1.3/1.4.
+
+### Notes
+
+- Claim tier still **ASL assist / partial** + pack-pending. No usefulness-vs-captions marketing.
+- Gold clips, paid Deaf/HH cohort, Tier A catalog content, companion: deferred / cut-unless-free.
+
 ## [0.1.0] — 2026-11-06
 
 ### Added

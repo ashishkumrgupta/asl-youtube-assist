@@ -1,5 +1,8 @@
+import { routeTiers, youtubeVideoIdFromLocation } from "@asl/catalog";
 import { evaluateCriticalGate } from "@asl/critical-gate";
-import { buildAssistPlaylist, stepAtElapsed } from "@asl/lexical";
+import { conservativeGloss } from "@asl/gloss";
+import { buildPlaylistFromGloss } from "@asl/lexical";
+import { stitchIntoCue, stepAtElapsedStitched } from "@asl/stitch";
 import { syncToCaptions } from "@asl/sync";
 import type { RuntimeMessage } from "@asl/shared-types";
 import {
@@ -14,6 +17,28 @@ let raf = 0;
 let cueStartedAtMediaMs: number | null = null;
 let lastCueId: string | null = null;
 
+function emptyVm(
+  partial: Partial<{
+    enabled: boolean;
+    blocked: boolean;
+    gateMessage: string | null;
+  }> = {},
+) {
+  const route = routeTiers(youtubeVideoIdFromLocation(location.href));
+  return {
+    enabled: false,
+    blocked: false,
+    gateMessage: null as string | null,
+    activeCaption: null as string | null,
+    activeStep: null,
+    placeholderMode: false,
+    glossLine: null as string | null,
+    routingLine: route.routingLine,
+    tierAEmptyState: route.emptyState,
+    ...partial,
+  };
+}
+
 function onToggle(next: boolean): void {
   const gate = evaluateCriticalGate({
     domains: extractPageDomainTokens(),
@@ -23,12 +48,9 @@ function onToggle(next: boolean): void {
   if (gate.blocked) {
     enabled = false;
     renderOverlay({
-      enabled: false,
-      blocked: true,
-      gateMessage: gate.userMessage,
-      activeCaption: null,
-      activeStep: null,
-      placeholderMode: false,
+      ...emptyVm({ blocked: true, gateMessage: gate.userMessage }),
+      routingLine: null,
+      tierAEmptyState: null,
     });
     void chrome.runtime.sendMessage({
       type: "CRITICAL_GATE_RESULT",
@@ -40,6 +62,7 @@ function onToggle(next: boolean): void {
   }
 
   enabled = next;
+  const route = routeTiers(youtubeVideoIdFromLocation(location.href));
   renderOverlay({
     enabled,
     blocked: false,
@@ -47,6 +70,9 @@ function onToggle(next: boolean): void {
     activeCaption: null,
     activeStep: null,
     placeholderMode: false,
+    glossLine: null,
+    routingLine: enabled ? route.routingLine : null,
+    tierAEmptyState: enabled ? route.emptyState : null,
   });
 
   if (enabled) {
@@ -72,6 +98,7 @@ function startClock(): void {
     const mediaMs = video.currentTime * 1000;
     const sync = syncToCaptions(cues, mediaMs, mediaMs, 500);
     const activeCue = sync.activeCue;
+    const route = routeTiers(youtubeVideoIdFromLocation(location.href));
 
     if (!activeCue) {
       cueStartedAtMediaMs = null;
@@ -83,6 +110,9 @@ function startClock(): void {
         activeCaption: null,
         activeStep: null,
         placeholderMode: false,
+        glossLine: null,
+        routingLine: route.routingLine,
+        tierAEmptyState: route.emptyState,
       });
       raf = requestAnimationFrame(tick);
       return;
@@ -97,8 +127,11 @@ function startClock(): void {
       0,
       mediaMs - (cueStartedAtMediaMs ?? activeCue.startMs),
     );
-    const playlist = buildAssistPlaylist(activeCue.text);
-    const step = stepAtElapsed(playlist.steps, elapsedInCue);
+    const cueDurationMs = Math.max(0, activeCue.endMs - activeCue.startMs);
+    const gloss = conservativeGloss(activeCue.text);
+    const playlist = buildPlaylistFromGloss(gloss);
+    const stitched = stitchIntoCue(playlist.steps, cueDurationMs || 2000);
+    const step = stepAtElapsedStitched(stitched.steps, elapsedInCue);
 
     renderOverlay({
       enabled: true,
@@ -107,6 +140,9 @@ function startClock(): void {
       activeCaption: activeCue.text,
       activeStep: step,
       placeholderMode: false,
+      glossLine: gloss.glossLine || null,
+      routingLine: route.routingLine,
+      tierAEmptyState: route.emptyState,
     });
     raf = requestAnimationFrame(tick);
   };
@@ -129,14 +165,7 @@ chrome.runtime.onMessage.addListener((message: RuntimeMessage) => {
 const obs = new MutationObserver(() => {
   if (!location.pathname.startsWith("/watch")) {
     stopClock();
-    renderOverlay({
-      enabled: false,
-      blocked: false,
-      gateMessage: null,
-      activeCaption: null,
-      activeStep: null,
-      placeholderMode: false,
-    });
+    renderOverlay(emptyVm());
   }
 });
 obs.observe(document.documentElement, { childList: true, subtree: true });

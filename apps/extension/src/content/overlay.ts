@@ -3,6 +3,7 @@ import {
   ASSIST_CLIP_STAGE_HINT,
   ASSIST_DISCLAIMER,
   ASSIST_LABEL,
+  GLOSS_UI_NOTE,
 } from "@asl/shared-types";
 import type { AssistPlaylistStep } from "@asl/lexical";
 import { CLIP_PACK_MANIFEST } from "@asl/lexical";
@@ -16,6 +17,12 @@ export interface OverlayViewModel {
   readonly activeCaption: string | null;
   readonly activeStep: AssistPlaylistStep | null;
   readonly placeholderMode: boolean;
+  /** Conservative gloss line for current cue (AC-1.1). */
+  readonly glossLine: string | null;
+  /** Tier B active routing chrome (AC-1.2). */
+  readonly routingLine: string | null;
+  /** Tier A empty / unavailable honesty (AC-1.2). */
+  readonly tierAEmptyState: string | null;
 }
 
 let dragBound = false;
@@ -92,6 +99,25 @@ export function ensureOverlayHost(): HTMLElement {
       }
       .claim { font-size: 14px; font-weight: 600; }
       .disclaimer { font-size: 12px; line-height: 1.35; opacity: 0.9; }
+      .tier-route {
+        font-size: 11px;
+        line-height: 1.35;
+        color: #b8c9dc;
+        border: 1px solid rgba(154, 208, 255, 0.25);
+        border-radius: 6px;
+        padding: 6px 8px;
+      }
+      .tier-empty {
+        font-size: 11px;
+        line-height: 1.35;
+        color: #d7c9a8;
+        opacity: 0.95;
+      }
+      .gloss-note {
+        font-size: 11px;
+        line-height: 1.35;
+        color: #a8b8c8;
+      }
       .stage {
         min-height: 140px;
         border-radius: 8px;
@@ -171,6 +197,9 @@ export function ensureOverlayHost(): HTMLElement {
       <div class="badge">${escapeHtml(ASSIST_BADGE)}</div>
       <div class="claim">${escapeHtml(ASSIST_LABEL)}</div>
       <div class="disclaimer">${escapeHtml(ASSIST_DISCLAIMER)}</div>
+      <div class="tier-route" data-role="routing" hidden></div>
+      <div class="tier-empty" data-role="tier-a-empty" hidden></div>
+      <div class="gloss-note" data-role="gloss-note">${escapeHtml(GLOSS_UI_NOTE)}</div>
       <div class="stage" data-role="stage">
         <video data-role="clip" muted playsinline loop hidden></video>
         <div class="cue-glyph" data-role="glyph" aria-live="polite"></div>
@@ -192,6 +221,9 @@ export function ensureOverlayHost(): HTMLElement {
       activeCaption: null,
       activeStep: null,
       placeholderMode: false,
+      glossLine: null,
+      routingLine: null,
+      tierAEmptyState: null,
     });
     void chrome.runtime.sendMessage({ type: "TOGGLE_OVERLAY", enabled: false });
   });
@@ -282,9 +314,31 @@ export function renderOverlay(vm: OverlayViewModel): void {
   const hintEl = shadow.querySelector('[data-role="hint"]');
   const cueEl = shadow.querySelector('[data-role="cue"]');
   const gateEl = shadow.querySelector('[data-role="gate"]');
+  const routingEl = shadow.querySelector('[data-role="routing"]');
+  const tierEmptyEl = shadow.querySelector('[data-role="tier-a-empty"]');
   if (!(panel instanceof HTMLElement)) return;
 
   panel.dataset.visible = vm.enabled || vm.blocked ? "true" : "false";
+
+  if (routingEl instanceof HTMLElement) {
+    if (vm.enabled && vm.routingLine) {
+      routingEl.hidden = false;
+      routingEl.textContent = vm.routingLine;
+    } else {
+      routingEl.hidden = true;
+      routingEl.textContent = "";
+    }
+  }
+
+  if (tierEmptyEl instanceof HTMLElement) {
+    if (vm.enabled && vm.tierAEmptyState) {
+      tierEmptyEl.hidden = false;
+      tierEmptyEl.textContent = vm.tierAEmptyState;
+    } else {
+      tierEmptyEl.hidden = true;
+      tierEmptyEl.textContent = "";
+    }
+  }
 
   if (hintEl instanceof HTMLElement) {
     hintEl.textContent =
@@ -297,6 +351,8 @@ export function renderOverlay(vm: OverlayViewModel): void {
     if (vm.blocked) {
       glossEl.textContent =
         "ASL assist paused (critical-domain keyword stub — not content understanding).";
+    } else if (vm.glossLine) {
+      glossEl.textContent = `Assist gloss: ${vm.glossLine}`;
     } else if (vm.activeStep?.kind === "lexical") {
       glossEl.textContent = vm.activeStep.assetPath
         ? `Gloss: ${vm.activeStep.gloss}`

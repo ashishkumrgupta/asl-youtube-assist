@@ -28,7 +28,7 @@ function applyState(state: OverlayState): void {
         "Keyword stub gate (not content understanding) blocked unsupervised assist. Captions remain available.";
     } else if (state.enabled) {
       status.textContent =
-        "ASL assist overlay on — gloss/fingerspell cues (clip pack pending). Not an interpreter. Drag Move to keep captions clear.";
+        "ASL assist overlay on — conservative gloss + fingerspell (clip pack pending). Tier A human catalog empty. Not an interpreter. Drag Move to keep captions clear.";
     } else {
       status.textContent = "Overlay off. Captions stay available on YouTube.";
     }

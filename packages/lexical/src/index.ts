@@ -19,3 +19,4 @@ export {
   type LexicalClipStep,
   type PlaylistBuildResult,
 } from "./playlist.js";
+export { buildPlaylistFromGloss } from "./from-gloss.js";

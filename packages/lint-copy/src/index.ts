@@ -57,6 +57,21 @@ const ASSIST_BANNED: ReadonlyArray<{ pattern: RegExp; term: string; reason: stri
     term: "replaces interpreters",
     reason: "Never claim assist replaces interpreters",
   },
+  {
+    pattern: /\bbetter\s+than\s+captions\b/i,
+    term: "better than captions",
+    reason: "Usefulness-vs-captions blocked until AC-1.3/1.4 Deaf cohort",
+  },
+  {
+    pattern: /\bhelps\s+(follow|more)\s+than\s+captions\b/i,
+    term: "helps more than captions",
+    reason: "Usefulness-vs-captions blocked until AC-1.3/1.4 Deaf cohort",
+  },
+  {
+    pattern: /\buseful\s+entertainment\s+assist\b/i,
+    term: "useful entertainment assist",
+    reason: "Phase 1 usefulness fitness claim blocked until cohort evidence",
+  },
 ];
 
 const ALWAYS_BANNED_ON_TIER_A = new Set([

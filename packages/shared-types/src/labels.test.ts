@@ -4,6 +4,7 @@ import {
   ASSIST_DISCLAIMER,
   ASSIST_LABEL,
   ASSIST_LABEL_COPY,
+  GLOSS_UI_NOTE,
   assistOverlayDefaults,
 } from "./index.js";
 
@@ -42,5 +43,12 @@ describe("honesty labels", () => {
 
   it("assist disclaimer passes copy lint", () => {
     expect(ASSIST_DISCLAIMER.toLowerCase()).toContain("captions stay on");
+  });
+
+  it("gloss UI note refuses English-on-the-hands / fluent ASL framing (AC-1.1)", () => {
+    const lower = GLOSS_UI_NOTE.toLowerCase();
+    expect(lower).toContain("not fluent asl");
+    expect(lower).toContain("not english-on-the-hands");
+    expect(lower).not.toMatch(/better than captions/);
   });
 });

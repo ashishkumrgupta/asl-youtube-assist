@@ -6,6 +6,7 @@ export default defineConfig({
       "packages/**/src/**/*.test.ts",
       "apps/**/src/**/*.test.ts",
       "e2e/**/*.test.ts",
+      "evals/**/*.test.ts",
     ],
     environment: "node",
   },

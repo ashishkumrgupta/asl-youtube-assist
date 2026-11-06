@@ -6,5 +6,9 @@
   },
   "include": ["src/**/*.ts"],
   "exclude": ["src/**/*.test.ts"],
-  "references": [{ "path": "../fingerspell" }, { "path": "../shared-types" }]
+  "references": [
+    { "path": "../fingerspell" },
+    { "path": "../shared-types" },
+    { "path": "../gloss" }
+  ]
 }
