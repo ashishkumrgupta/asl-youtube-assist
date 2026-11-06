@@ -4,13 +4,16 @@ Chrome/Edge **Manifest V3** extension that adds an **ASL assist / partial** PiP-
 
 **This is not a human interpreter.** Captions remain the reliability floor. No accuracy percentages. Placeholder signing UI is honest when no clip CDN is configured.
 
-## Workspace path
+## Workspace paths
 
-```
-/cursor/stores/self/workspace/asl-youtube-assist/
-```
+| Role | Path |
+|---|---|
+| **Project browse / mirror** | `/cursor/stores/self/workspace/asl-youtube-assist/` |
+| **Git + npm working tree** | `/agent/asl-youtube-assist/` |
 
-(Local Project workspace — push to Origin/GitHub when ready; remotes are optional.)
+The Project store mount cannot host a real `.git` directory (permission / rename limits). **Local git is initialized and committed on `/agent/asl-youtube-assist`**. Source is mirrored into the Project workspace path for browsing. Prefer the `/agent` path for `git`, `npm install`, `npm test`, and `npm run build`.
+
+Push to Origin/GitHub when ready — remotes are optional today. See `GIT_LOCATION.md` in the store mirror.
 
 ## What Slice A includes
 
