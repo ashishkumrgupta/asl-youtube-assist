@@ -1,8 +1,14 @@
 # Fixtures
 
-Versioned caption samples for sync unit tests and future E2E.
+Versioned caption samples for sync + lexical playlist verification (AC-0.2).
 
-- `captions/sample.vtt` — simple timed text for `@asl/sync` parsing.
-- Video fixtures: deferred (QA ownership); regenerate intentionally only.
+| File                                 | Role                                 |
+| ------------------------------------ | ------------------------------------ |
+| `captions/sample.vtt`                | Legacy simple VTT                    |
+| `captions/phase0-hello.vtt`          | Named Phase 0 sync fixture           |
+| `captions/phase0-oov.vtt`            | OOV → fingerspell path               |
+| `captions/phase0-sync-expected.json` | Expected cue times + playlist checks |
 
-Provenance: synthetic demo captions for Phase 0 Slice A — not production content.
+Video / live YouTube fixtures: deferred (QA). Regenerate caption fixtures intentionally only.
+
+Provenance: synthetic demo captions for Phase 0 — not production content.

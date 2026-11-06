@@ -11,10 +11,14 @@ export const ASSIST_BADGE = "ASL assist" as const;
 
 /**
  * Supporting honesty line under the badge.
- * Slice A: placeholder only — do not claim curated/synced signs until Slice C dictionary ships.
+ * Lexical index + fingerspell OOV scaffolded; approved clip pack held pending coordinator pick.
  */
 export const ASSIST_DISCLAIMER =
-  "Partial prototype — signing clips not loaded yet (placeholder). Not a human interpreter. Captions stay on." as const;
+  "ASL assist / partial — lexical gloss cues + fingerspell for unknown words. Clip pack not bound yet (pending approved source). Not fluent ASL discourse. Not a human interpreter. Captions stay on." as const;
+
+/** Stage hint while clip media pack is pending. */
+export const ASSIST_CLIP_STAGE_HINT =
+  "Clip pack pending coordinator pick (see ATTRIBUTION). No AI-persona default. Showing gloss / fingerspell cues only — not Deaf-produced signing video." as const;
 
 /** Label reserved for qualified human interpreter catalog (Tier A) — not used in Slice A assist. */
 export const HUMAN_INTERPRETATION_LABEL = "Human interpretation" as const;

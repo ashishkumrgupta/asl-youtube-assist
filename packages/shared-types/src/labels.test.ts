@@ -22,11 +22,14 @@ describe("honesty labels", () => {
     expect(lower).not.toContain("100%");
   });
 
-  it("Slice A disclaimer is placeholder-honest (no curated-signs claim yet)", () => {
+  it("Phase 0 disclaimer is lexical-assist honest (pack pending; not fluent / not interpreter)", () => {
     const lower = ASSIST_DISCLAIMER.toLowerCase();
-    expect(lower).toContain("placeholder");
-    expect(lower).not.toContain("curated signs");
-    expect(lower).not.toContain("synced to captions");
+    expect(lower).toContain("lexical");
+    expect(lower).toContain("fingerspell");
+    expect(lower).toContain("pending");
+    expect(lower).toContain("not fluent asl discourse");
+    expect(lower).toContain("not a human interpreter");
+    expect(lower).not.toMatch(/\d+\s*%/);
   });
 
   it("default overlay state is assist-only with captions floor intact", () => {
@@ -34,6 +37,10 @@ describe("honesty labels", () => {
     expect(state.label).toBe(ASSIST_LABEL);
     expect(state.claimTier).toBe("assist_partial");
     expect(state.captionsFloorIntact).toBe(true);
-    expect(state.placeholderMode).toBe(true);
+    expect(state.placeholderMode).toBe(true); // defaults helper still placeholder until callers override
+  });
+
+  it("assist disclaimer passes copy lint", () => {
+    expect(ASSIST_DISCLAIMER.toLowerCase()).toContain("captions stay on");
   });
 });

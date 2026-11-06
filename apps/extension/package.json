@@ -10,6 +10,8 @@
   "dependencies": {
     "@asl/critical-gate": "0.1.0",
     "@asl/flags": "0.1.0",
+    "@asl/fingerspell": "0.1.0",
+    "@asl/lexical": "0.1.0",
     "@asl/lint-copy": "0.1.0",
     "@asl/shared-types": "0.1.0",
     "@asl/sync": "0.1.0"

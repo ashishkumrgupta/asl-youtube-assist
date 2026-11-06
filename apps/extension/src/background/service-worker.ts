@@ -29,7 +29,7 @@ function buildState(
     criticalGateBlocked: gate.blocked,
     gateReason: gate.reason,
     label: ASSIST_LABEL,
-    placeholderMode: true,
+    placeholderMode: false,
   });
 }
 

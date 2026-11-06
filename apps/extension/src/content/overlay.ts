@@ -1,4 +1,11 @@
-import { ASSIST_BADGE, ASSIST_DISCLAIMER, ASSIST_LABEL } from "@asl/shared-types";
+import {
+  ASSIST_BADGE,
+  ASSIST_CLIP_STAGE_HINT,
+  ASSIST_DISCLAIMER,
+  ASSIST_LABEL,
+} from "@asl/shared-types";
+import type { AssistPlaylistStep } from "@asl/lexical";
+import { CLIP_PACK_MANIFEST } from "@asl/lexical";
 
 const ROOT_ID = "asl-assist-overlay-root";
 
@@ -7,10 +14,15 @@ export interface OverlayViewModel {
   readonly blocked: boolean;
   readonly gateMessage: string | null;
   readonly activeCaption: string | null;
+  readonly activeStep: AssistPlaylistStep | null;
   readonly placeholderMode: boolean;
 }
 
 let dragBound = false;
+
+function assetUrl(relativePath: string): string {
+  return chrome.runtime.getURL(relativePath);
+}
 
 export function ensureOverlayHost(): HTMLElement {
   let root = document.getElementById(ROOT_ID);
@@ -27,13 +39,12 @@ export function ensureOverlayHost(): HTMLElement {
     left: "auto",
     top: "auto",
     zIndex: "2147483646",
-    width: "280px",
-    maxWidth: "40vw",
+    width: "300px",
+    maxWidth: "42vw",
     fontFamily: "system-ui, sans-serif",
     pointerEvents: "auto",
   } as CSSStyleDeclaration);
 
-  // Shadow DOM isolates styles; never touch YouTube caption nodes.
   const shadow = root.attachShadow({ mode: "open" });
   shadow.innerHTML = `
     <style>
@@ -82,16 +93,36 @@ export function ensureOverlayHost(): HTMLElement {
       .claim { font-size: 14px; font-weight: 600; }
       .disclaimer { font-size: 12px; line-height: 1.35; opacity: 0.9; }
       .stage {
-        min-height: 120px;
+        min-height: 140px;
         border-radius: 8px;
         background: linear-gradient(160deg, #1a2332, #0d121a);
         display: flex;
+        flex-direction: column;
         align-items: center;
         justify-content: center;
         text-align: center;
-        padding: 12px;
-        font-size: 13px;
+        padding: 10px;
+        font-size: 12px;
         color: #c9d4e3;
+        gap: 8px;
+      }
+      .stage video {
+        width: 100%;
+        max-height: 160px;
+        border-radius: 6px;
+        background: #0a0e14;
+      }
+      .cue-glyph {
+        font-size: 42px;
+        font-weight: 700;
+        letter-spacing: 0.06em;
+        color: #e8f1ff;
+        line-height: 1.1;
+      }
+      .gloss {
+        font-size: 13px;
+        font-weight: 600;
+        color: #e8f1ff;
       }
       .cue {
         font-size: 12px;
@@ -140,7 +171,12 @@ export function ensureOverlayHost(): HTMLElement {
       <div class="badge">${escapeHtml(ASSIST_BADGE)}</div>
       <div class="claim">${escapeHtml(ASSIST_LABEL)}</div>
       <div class="disclaimer">${escapeHtml(ASSIST_DISCLAIMER)}</div>
-      <div class="stage" data-role="stage">Placeholder signing — no clip CDN in Slice A. Label stays ASL assist / partial.</div>
+      <div class="stage" data-role="stage">
+        <video data-role="clip" muted playsinline loop hidden></video>
+        <div class="cue-glyph" data-role="glyph" aria-live="polite"></div>
+        <div class="gloss" data-role="gloss"></div>
+        <div data-role="hint">${escapeHtml(ASSIST_CLIP_STAGE_HINT)}</div>
+      </div>
       <div class="cue" data-role="cue" hidden></div>
       <div class="gate" data-role="gate" hidden></div>
     </div>
@@ -154,7 +190,8 @@ export function ensureOverlayHost(): HTMLElement {
       blocked: false,
       gateMessage: null,
       activeCaption: null,
-      placeholderMode: true,
+      activeStep: null,
+      placeholderMode: false,
     });
     void chrome.runtime.sendMessage({ type: "TOGGLE_OVERLAY", enabled: false });
   });
@@ -178,7 +215,6 @@ function bindDrag(root: HTMLElement, shadow: ShadowRoot): void {
     const rect = root.getBoundingClientRect();
     offsetX = event.clientX - rect.left;
     offsetY = event.clientY - rect.top;
-    // Switch from right/bottom anchoring to left/top for free placement.
     root.style.right = "auto";
     root.style.bottom = "auto";
     root.style.left = `${rect.left}px`;
@@ -191,10 +227,8 @@ function bindDrag(root: HTMLElement, shadow: ShadowRoot): void {
     if (!dragging) return;
     const maxLeft = Math.max(0, window.innerWidth - root.offsetWidth);
     const maxTop = Math.max(0, window.innerHeight - root.offsetHeight);
-    const left = clamp(event.clientX - offsetX, 0, maxLeft);
-    const top = clamp(event.clientY - offsetY, 0, maxTop);
-    root.style.left = `${left}px`;
-    root.style.top = `${top}px`;
+    root.style.left = `${clamp(event.clientX - offsetX, 0, maxLeft)}px`;
+    root.style.top = `${clamp(event.clientY - offsetY, 0, maxTop)}px`;
   };
 
   const onPointerUp = (event: PointerEvent): void => {
@@ -203,7 +237,7 @@ function bindDrag(root: HTMLElement, shadow: ShadowRoot): void {
     try {
       handle.releasePointerCapture(event.pointerId);
     } catch {
-      // ignore if already released
+      // ignore
     }
   };
 
@@ -211,17 +245,15 @@ function bindDrag(root: HTMLElement, shadow: ShadowRoot): void {
   handle.addEventListener("pointermove", onPointerMove);
   handle.addEventListener("pointerup", onPointerUp);
   handle.addEventListener("pointercancel", onPointerUp);
-
-  // Keyboard nudge — keeps overlay operable without trapping focus in PiP.
   handle.addEventListener("keydown", (event: KeyboardEvent) => {
-    const step = event.shiftKey ? 40 : 12;
+    const stepN = event.shiftKey ? 40 : 12;
     const rect = root.getBoundingClientRect();
     let left = rect.left;
     let top = rect.top;
-    if (event.key === "ArrowLeft") left -= step;
-    else if (event.key === "ArrowRight") left += step;
-    else if (event.key === "ArrowUp") top -= step;
-    else if (event.key === "ArrowDown") top += step;
+    if (event.key === "ArrowLeft") left -= stepN;
+    else if (event.key === "ArrowRight") left += stepN;
+    else if (event.key === "ArrowUp") top -= stepN;
+    else if (event.key === "ArrowDown") top += stepN;
     else return;
     event.preventDefault();
     root.style.right = "auto";
@@ -237,28 +269,72 @@ function clamp(n: number, min: number, max: number): number {
   return Math.min(max, Math.max(min, n));
 }
 
+let lastAssetPath: string | null = null;
+
 export function renderOverlay(vm: OverlayViewModel): void {
   const root = ensureOverlayHost();
   const shadow = root.shadowRoot;
   if (!shadow) return;
   const panel = shadow.querySelector(".panel");
-  const stage = shadow.querySelector('[data-role="stage"]');
+  const video = shadow.querySelector('[data-role="clip"]');
+  const glyphEl = shadow.querySelector('[data-role="glyph"]');
+  const glossEl = shadow.querySelector('[data-role="gloss"]');
+  const hintEl = shadow.querySelector('[data-role="hint"]');
   const cueEl = shadow.querySelector('[data-role="cue"]');
   const gateEl = shadow.querySelector('[data-role="gate"]');
   if (!(panel instanceof HTMLElement)) return;
 
-  const show = vm.enabled || vm.blocked;
-  panel.dataset.visible = show ? "true" : "false";
+  panel.dataset.visible = vm.enabled || vm.blocked ? "true" : "false";
 
-  if (stage instanceof HTMLElement) {
+  if (hintEl instanceof HTMLElement) {
+    hintEl.textContent =
+      CLIP_PACK_MANIFEST.status === "pending"
+        ? ASSIST_CLIP_STAGE_HINT
+        : ASSIST_CLIP_STAGE_HINT;
+  }
+
+  if (glossEl instanceof HTMLElement) {
     if (vm.blocked) {
-      stage.textContent =
+      glossEl.textContent =
         "ASL assist paused (critical-domain keyword stub — not content understanding).";
-    } else if (vm.placeholderMode) {
-      stage.textContent =
-        "Placeholder signing — no clip CDN in Slice A. Label stays ASL assist / partial.";
+    } else if (vm.activeStep?.kind === "lexical") {
+      glossEl.textContent = vm.activeStep.assetPath
+        ? `Gloss: ${vm.activeStep.gloss}`
+        : `Gloss cue: ${vm.activeStep.gloss} (clip pack pending)`;
+    } else if (vm.activeStep?.kind === "fingerspell") {
+      glossEl.textContent = `Fingerspell cue: ${vm.activeStep.letter}`;
+    } else if (vm.enabled) {
+      glossEl.textContent = "Waiting for caption window…";
     } else {
-      stage.textContent = "ASL assist clip slot";
+      glossEl.textContent = "";
+    }
+  }
+
+  if (glyphEl instanceof HTMLElement) {
+    if (vm.enabled && !vm.blocked && vm.activeStep?.kind === "fingerspell") {
+      glyphEl.textContent = vm.activeStep.letter;
+    } else if (vm.enabled && !vm.blocked && vm.activeStep?.kind === "lexical") {
+      glyphEl.textContent = vm.activeStep.gloss;
+    } else {
+      glyphEl.textContent = "";
+    }
+  }
+
+  if (video instanceof HTMLVideoElement) {
+    const path = vm.activeStep?.assetPath ?? null;
+    if (vm.enabled && !vm.blocked && path) {
+      const next = assetUrl(path);
+      if (lastAssetPath !== next) {
+        lastAssetPath = next;
+        video.hidden = false;
+        video.src = next;
+        void video.play().catch(() => undefined);
+      }
+    } else {
+      lastAssetPath = null;
+      video.hidden = true;
+      video.removeAttribute("src");
+      video.load();
     }
   }
 
@@ -291,9 +367,7 @@ function escapeHtml(s: string): string {
     .replace(/"/g, "&quot;");
 }
 
-/** Captions floor assertion helper for tests / smoke. */
 export function pageCaptionsStillPresent(): boolean {
-  // Native YouTube caption region or text tracks — we never remove these nodes.
   const ytCaption = document.querySelector(".ytp-caption-window-container");
   const video = document.querySelector("video");
   return ytCaption !== null || video !== null;

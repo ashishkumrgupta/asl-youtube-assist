@@ -51,6 +51,12 @@ for (const size of [16, 32, 48, 128]) {
   }
 }
 
+// Lexical MVP pack (attributed synthetic assist cards + fingerspell)
+const lexicalSrc = join(extRoot, "assets/lexical");
+if (existsSync(lexicalSrc)) {
+  cpSync(lexicalSrc, join(outDir, "lexical"), { recursive: true });
+}
+
 writeFileSync(
   join(outDir, "BUILD_INFO.json"),
   JSON.stringify({ version, gitSha: sha, builtAt }, null, 2),

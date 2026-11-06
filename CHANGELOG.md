@@ -6,16 +6,16 @@ All notable changes to this project are documented in this file.
 
 ### Added
 
-- Phase 0 Slice A habit skeleton: MV3 sideload extension for YouTube watch pages.
-- Toggleable **ASL assist / partial** overlay (placeholder signing UI; no clip CDN).
-- Caption floor preserved; best-effort sync to HTML5 text-track timestamps.
-- Draggable overlay (Move handle + keyboard arrows) so PiP need not cover captions.
-- Critical-domain hard gate stub (health / legal / safety → block unsupervised assist as sole channel); UI copy discloses keyword heuristic / not content understanding.
-- Shared packages: labels, flags, sync math, assist copy lint, critical gate.
-- Unit tests + GitHub Actions PR workflow (ready for later push).
+- Phase 0 habit skeleton: MV3 sideload extension for YouTube watch pages.
+- Toggleable **ASL assist / partial** overlay; caption floor; caption-timestamp sync.
+- Draggable overlay (Move handle + keyboard arrows).
+- Critical-domain hard gate stub with keyword-heuristic disclosure.
+- Lexical index + fingerspell OOV scaffolding (`@asl/lexical`, `@asl/fingerspell`).
+- Clip media pack **pending** coordinator pick (no AI-persona default; see ATTRIBUTION).
+- Named caption fixtures + fixture smoke + manual sideload checklist.
+- Unit tests + GitHub Actions PR workflow; `npm run audit` in CI.
 
 ### Notes
 
-- User-facing claim tier is assist only — not a human interpreter; no accuracy percentages.
-- Slice A disclaimer is placeholder-honest (no “curated signs” until dictionary ships).
-- Dev tooling: vitest 5.1 / vite 6.4; `npm run audit` fails CI on high/critical (0 vulns after upgrade).
+- Claim tier is assist only — not a human interpreter; no accuracy percentages.
+- Gloss/fingerspell cues only until an approved Deaf-produced / attributed pack is bound.

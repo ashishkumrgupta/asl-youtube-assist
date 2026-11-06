@@ -2,7 +2,7 @@
 
 Chrome/Edge **Manifest V3** extension that adds an **ASL assist / partial** PiP-style overlay on YouTube watch pages.
 
-**This is not a human interpreter.** Captions remain the reliability floor. No accuracy percentages. Slice A shows a **placeholder** signing stage only — no curated clip dictionary yet (that lands in Slice C).
+**This is not a human interpreter.** Captions remain the reliability floor. No accuracy percentages. Lexical gloss + fingerspell OOV scaffolding is in; **approved clip pack is held** pending `docs/asl-clip-sources.md` + coordinator pick (no AI-persona default).
 
 ## Workspace paths
 
@@ -17,21 +17,21 @@ Push to Origin/GitHub when ready — remotes are optional today. See `GIT_LOCATI
 
 ## What Slice A includes
 
-| Feature                                                    | Status                          |
-| ---------------------------------------------------------- | ------------------------------- |
-| Sideload MV3 extension (Chrome/Edge)                       | Done                            |
-| Toggle ASL assist overlay on YouTube watch                 | Done                            |
-| Caption floor preserved (never strips CC)                  | Done                            |
-| Sync to caption timestamps when text tracks exist          | Done (best-effort)              |
-| Honest labels: **ASL assist / partial** only               | Done                            |
-| Critical-domain keyword gate stub (disclosed as heuristic) | Done                            |
-| Movable overlay (drag / arrow keys)                        | Done                            |
-| Placeholder signing UI (no clip CDN)                       | Done                            |
-| Lint, unit tests, CI workflow                              | Done                            |
-| Lexical clip CDN / HF dictionary                           | Deferred (Slice C)              |
-| Tier A human catalog                                       | Deferred (Phase 1)              |
-| Chrome Web Store publish                                   | Out of scope                    |
-| Neural avatar                                              | Out of scope (flag default off) |
+| Feature                                                    | Status                              |
+| ---------------------------------------------------------- | ----------------------------------- |
+| Sideload MV3 extension (Chrome/Edge)                       | Done                                |
+| Toggle ASL assist overlay on YouTube watch                 | Done                                |
+| Caption floor preserved (never strips CC)                  | Done                                |
+| Sync to caption timestamps when text tracks exist          | Done (best-effort)                  |
+| Honest labels: **ASL assist / partial** only               | Done                                |
+| Critical-domain keyword gate stub (disclosed as heuristic) | Done                                |
+| Movable overlay (drag / arrow keys)                        | Done                                |
+| Lexical index + fingerspell OOV scaffolding                | Done                                |
+| Clip media pack (HF / open lexicon)                        | **Held** — pending coordinator pick |
+| Named caption fixtures + sync verification                 | Done                                |
+| Fixture smoke + manual sideload checklist                  | Done                                |
+| Lint, unit tests, CI workflow                              | Done                                |
+| Companion web / store publish / neural / Tier A            | Out of scope (Phase 0 cut)          |
 
 ## Quick start (local)
 
@@ -52,8 +52,10 @@ Built unpacked extension: `apps/extension/dist/`
 4. **Load unpacked** → select `apps/extension/dist`.
 5. Open a **captioned** YouTube watch URL.
 6. Click the extension icon → enable **Show ASL assist overlay**.
-7. Confirm the overlay badge says **ASL assist / partial**, disclaimer says **placeholder**, and YouTube captions still work.
-8. Drag the **Move** handle (or focus it and use arrow keys) so the overlay does not cover captions.
+7. Confirm **ASL assist / partial**, disclaimer notes **clip pack pending**, gloss/fingerspell cues, captions still work.
+8. Drag **Move** (or arrow keys) so the overlay does not cover captions.
+
+Full checklist: [`docs/sideload-checklist.md`](docs/sideload-checklist.md).
 
 Permissions used (least privilege):
 
@@ -80,9 +82,16 @@ packages/flags/          Capability feature flags
 packages/sync/           Caption clock / lag math
 packages/lint-copy/      Banned-term checks for assist copy
 packages/critical-gate/  Health/legal/safety hard gate stub
-fixtures/captions/       Sample VTT
+packages/lexical/        Gloss index + playlist (media pack pending)
+packages/fingerspell/    OOV letter steps
+fixtures/captions/       Named Phase 0 VTTs + sync expected JSON
+e2e/extension/           Fixture smoke (no live YouTube)
 .github/workflows/pr.yml CI ready for later push
 ```
+
+## Clip pack hold
+
+Do **not** bind AI-persona video or a specific third-party pack until research + coordinator relay. See `apps/extension/assets/lexical/ATTRIBUTION.md` and Project `internal/deaf-user-review/clip-source-stance.md`.
 
 ## Git remote (add later — not required today)
 
@@ -114,7 +123,7 @@ Allowed: **ASL assist / partial**, captions-stay-on language, human interpretati
 
 Never: AI/digital interpreter for assist, accuracy %, “ASL captions” as the product, fluent-ASL-from-captions claims.
 
-Slice A disclaimer must stay placeholder-honest until curated clips ship — do not say “curated signs synced…” while the stage is still a placeholder.
+While the clip pack is pending, do not claim Deaf-produced signing video is playing. Keep **ASL assist / partial**.
 
 ## License
 

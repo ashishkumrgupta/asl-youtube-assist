@@ -1,4 +1,5 @@
 import { evaluateCriticalGate } from "@asl/critical-gate";
+import { buildAssistPlaylist, stepAtElapsed } from "@asl/lexical";
 import { syncToCaptions } from "@asl/sync";
 import type { RuntimeMessage } from "@asl/shared-types";
 import {
@@ -10,6 +11,8 @@ import { pageCaptionsStillPresent, renderOverlay } from "./overlay.js";
 
 let enabled = false;
 let raf = 0;
+let cueStartedAtMediaMs: number | null = null;
+let lastCueId: string | null = null;
 
 function onToggle(next: boolean): void {
   const gate = evaluateCriticalGate({
@@ -24,7 +27,8 @@ function onToggle(next: boolean): void {
       blocked: true,
       gateMessage: gate.userMessage,
       activeCaption: null,
-      placeholderMode: true,
+      activeStep: null,
+      placeholderMode: false,
     });
     void chrome.runtime.sendMessage({
       type: "CRITICAL_GATE_RESULT",
@@ -41,7 +45,8 @@ function onToggle(next: boolean): void {
     blocked: false,
     gateMessage: null,
     activeCaption: null,
-    placeholderMode: true,
+    activeStep: null,
+    placeholderMode: false,
   });
 
   if (enabled) {
@@ -50,7 +55,6 @@ function onToggle(next: boolean): void {
     stopClock();
   }
 
-  // Captions floor: we never strip CC; assert presence for diagnostics only.
   if (!pageCaptionsStillPresent()) {
     console.warn("[asl-assist] video element missing; captions floor cannot be verified");
   }
@@ -67,12 +71,42 @@ function startClock(): void {
     const cues = readTextTrackCues(video);
     const mediaMs = video.currentTime * 1000;
     const sync = syncToCaptions(cues, mediaMs, mediaMs, 500);
+    const activeCue = sync.activeCue;
+
+    if (!activeCue) {
+      cueStartedAtMediaMs = null;
+      lastCueId = null;
+      renderOverlay({
+        enabled: true,
+        blocked: false,
+        gateMessage: null,
+        activeCaption: null,
+        activeStep: null,
+        placeholderMode: false,
+      });
+      raf = requestAnimationFrame(tick);
+      return;
+    }
+
+    if (lastCueId !== activeCue.id) {
+      lastCueId = activeCue.id;
+      cueStartedAtMediaMs = activeCue.startMs;
+    }
+
+    const elapsedInCue = Math.max(
+      0,
+      mediaMs - (cueStartedAtMediaMs ?? activeCue.startMs),
+    );
+    const playlist = buildAssistPlaylist(activeCue.text);
+    const step = stepAtElapsed(playlist.steps, elapsedInCue);
+
     renderOverlay({
       enabled: true,
       blocked: false,
       gateMessage: null,
-      activeCaption: sync.activeCue?.text ?? null,
-      placeholderMode: true,
+      activeCaption: activeCue.text,
+      activeStep: step,
+      placeholderMode: false,
     });
     raf = requestAnimationFrame(tick);
   };
@@ -82,6 +116,8 @@ function startClock(): void {
 function stopClock(): void {
   if (raf) cancelAnimationFrame(raf);
   raf = 0;
+  cueStartedAtMediaMs = null;
+  lastCueId = null;
 }
 
 chrome.runtime.onMessage.addListener((message: RuntimeMessage) => {
@@ -90,7 +126,6 @@ chrome.runtime.onMessage.addListener((message: RuntimeMessage) => {
   }
 });
 
-// Re-apply on SPA navigation (YouTube).
 const obs = new MutationObserver(() => {
   if (!location.pathname.startsWith("/watch")) {
     stopClock();
@@ -99,7 +134,8 @@ const obs = new MutationObserver(() => {
       blocked: false,
       gateMessage: null,
       activeCaption: null,
-      placeholderMode: true,
+      activeStep: null,
+      placeholderMode: false,
     });
   }
 });

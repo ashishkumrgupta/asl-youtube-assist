@@ -1,0 +1,34 @@
+{
+  "fixture": "phase0-hello.vtt",
+  "cues": [
+    { "id": "cue-0", "startMs": 0, "endMs": 2000, "text": "Hello friends" },
+    { "id": "cue-1", "startMs": 2000, "endMs": 4500, "text": "Welcome to the demo" },
+    {
+      "id": "cue-2",
+      "startMs": 4500,
+      "endMs": 7000,
+      "text": "This is ASL assist partial"
+    }
+  ],
+  "syncChecks": [
+    { "mediaTimeMs": 500, "expectedCueText": "Hello friends", "maxLagMs": 500 },
+    { "mediaTimeMs": 3000, "expectedCueText": "Welcome to the demo", "maxLagMs": 500 },
+    {
+      "mediaTimeMs": 5500,
+      "expectedCueText": "This is ASL assist partial",
+      "maxLagMs": 500
+    }
+  ],
+  "playlistChecks": [
+    {
+      "captionText": "Hello friends",
+      "minLexicalHits": 2,
+      "expectGloss": ["HELLO", "FRIEND"]
+    },
+    {
+      "captionText": "Hello Ada",
+      "minLexicalHits": 1,
+      "minFingerspellTokens": 1
+    }
+  ]
+}
