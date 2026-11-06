@@ -1,18 +1,25 @@
-# Git location
+# Git location + portable restore
 
-Project store mount (`/cursor/stores/self/workspace/asl-youtube-assist`) cannot host `.git` objects (`EPERM` / `ENOSYS` on this environment).
+Project store mount (`/cursor/stores/self/workspace/asl-youtube-assist`) cannot host `.git` objects (`EPERM` / `ENOSYS`). The VM tree `/agent/asl-youtube-assist` is **ephemeral**.
 
-**Canonical local git repo (init + commits on `main`):**
+## Durable artifacts (Project store)
 
-```
-/agent/asl-youtube-assist
-```
+| Artifact | Path |
+|---|---|
+| **Git bundle (full history)** | `/cursor/stores/self/workspace/asl-youtube-assist.bundle` |
+| Source tarball (no git) | `/cursor/stores/self/workspace/asl-youtube-assist-src.tgz` |
+| Source mirror (browse) | `/cursor/stores/self/workspace/asl-youtube-assist/` |
 
-Use that path for day-to-day git and npm. The store path mirrors source for Project browsing.
+## Restore
 
 ```sh
-cd /agent/asl-youtube-assist
-git log -1
+cd /cursor/stores/self/workspace
+git clone asl-youtube-assist.bundle asl-youtube-assist
+cd asl-youtube-assist
+git log --oneline
+npm install
 npm test
 npm run build
 ```
+
+`git bundle verify` on the `.bundle` reports a complete history (`main` / `HEAD` → `887ab75`).
