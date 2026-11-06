@@ -1,10 +1,12 @@
-# Extension permissions (Phase 0)
+# Extension permissions (SEC-1)
 
-| Permission                                  | Why                                                                                            |
-| ------------------------------------------- | ---------------------------------------------------------------------------------------------- |
-| `storage`                                   | Persist overlay toggle in `chrome.storage.session` across SW restarts                          |
-| Host `https://www.youtube.com/*`            | Content script on YouTube watch / SPA navigation                                               |
-| Host `https://youtube.com/*`                | Same site without `www`                                                                        |
-| `web_accessible_resources` → `lexical/**/*` | Reserved for approved clip/fingerspell media once a pack is bound; harmless while pack pending |
+| Permission                                  | Why                                                                             |
+| ------------------------------------------- | ------------------------------------------------------------------------------- |
+| `storage`                                   | Session keys only: overlay toggle + language pair id (`chrome.storage.session`) |
+| Host `https://www.youtube.com/*`            | Content script + tab messaging on YouTube                                       |
+| Host `https://youtube.com/*`                | Same site without `www`                                                         |
+| `web_accessible_resources` → `lexical/**/*` | Packaged clip/fingerspell media for page context when pack bound                |
 
-No broader `<all_urls>`, no remote code execution, no clipboard, no identity APIs. No AI-persona CDN hosts until coordinator-approved source.
+No `<all_urls>`, no remote code, no clipboard/identity APIs, no caption exfil endpoints.
+
+See also: [`security.md`](security.md), [`performance.md`](performance.md).

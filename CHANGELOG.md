@@ -2,6 +2,21 @@
 
 All notable changes to this project are documented in this file.
 
+## [0.5.0] — 2026-11-06
+
+### Security & scale (SC-1…4 / SEC-1…7)
+
+- Client-local scale docs + ADR 0002; `@asl/perf-budget` tick/cache budgets
+- Overlay clock: ~10 Hz ticks, cue-cached playlist, hidden-tab slowdown, debounced SPA observer
+- `parseRuntimeMessage` + trusted-sender checks (SEC-7); CSP on extension pages (SEC-2)
+- Caption sanitize hardened; session storage settings only (SEC-3/6)
+- CI: `npm run security-check` + existing high-advisory audit (SEC-1/2/5/6/7)
+- Docs: `docs/performance.md`, `docs/security.md`
+
+### Permissions (SEC-1)
+
+- Still: `storage` + YouTube host_permissions only (listed in changelog/docs)
+
 ## [0.4.0] — 2026-11-06
 
 ### Added (Indian ISL + multi-lang architecture)

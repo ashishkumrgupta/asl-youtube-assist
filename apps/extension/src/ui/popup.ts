@@ -5,7 +5,11 @@ import {
   isPickerPairId,
   pickerLanguagePairs,
 } from "@asl/language-pairs";
-import type { OverlayState, RuntimeMessage } from "@asl/shared-types";
+import {
+  parseRuntimeMessage,
+  type OverlayState,
+  type RuntimeMessage,
+} from "@asl/shared-types";
 import { BUILD_INFO } from "../shared/build-info.js";
 
 const toggle = document.getElementById("toggle") as HTMLInputElement | null;
@@ -86,7 +90,7 @@ function applyState(state: OverlayState): void {
 void chrome.runtime
   .sendMessage({ type: "GET_STATE" } satisfies RuntimeMessage)
   .then((res: unknown) => {
-    const msg = res as RuntimeMessage;
+    const msg = parseRuntimeMessage(res);
     if (msg?.type === "STATE") applyState(msg.state);
     else {
       fillPairSelect(DEFAULT_LANGUAGE_PAIR_ID);
@@ -99,7 +103,7 @@ toggle?.addEventListener("change", () => {
   void chrome.runtime
     .sendMessage({ type: "TOGGLE_OVERLAY", enabled } satisfies RuntimeMessage)
     .then((res: unknown) => {
-      const msg = res as RuntimeMessage;
+      const msg = parseRuntimeMessage(res);
       if (msg?.type === "STATE") applyState(msg.state);
     });
 });
@@ -116,7 +120,7 @@ pairSelect?.addEventListener("change", () => {
       languagePairId,
     } satisfies RuntimeMessage)
     .then((res: unknown) => {
-      const msg = res as RuntimeMessage;
+      const msg = parseRuntimeMessage(res);
       if (msg?.type === "STATE") applyState(msg.state);
     });
 });

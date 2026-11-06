@@ -16,6 +16,7 @@
     "@asl/language-pairs": "0.4.0",
     "@asl/lexical": "0.1.0",
     "@asl/lint-copy": "0.1.0",
+    "@asl/perf-budget": "0.5.0",
     "@asl/shared-types": "0.1.0",
     "@asl/stitch": "0.2.0",
     "@asl/sync": "0.1.0"

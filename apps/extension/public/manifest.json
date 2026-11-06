@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
   "name": "ASL YouTube Assist (partial)",
-  "version": "0.1.0",
-  "description": "ASL assist / partial overlay for YouTube watch pages. Not a human interpreter. Captions stay on.",
+  "version": "0.5.0",
+  "description": "ASL assist / partial overlay for YouTube watch pages. Runs locally in your browser. Not a human interpreter. Captions stay on.",
   "action": {
     "default_title": "ASL assist / partial",
     "default_popup": "popup.html",
@@ -26,6 +26,9 @@
   ],
   "permissions": ["storage"],
   "host_permissions": ["https://www.youtube.com/*", "https://youtube.com/*"],
+  "content_security_policy": {
+    "extension_pages": "script-src 'self'; object-src 'self'; frame-ancestors 'none'"
+  },
   "web_accessible_resources": [
     {
       "resources": ["lexical/**/*"],

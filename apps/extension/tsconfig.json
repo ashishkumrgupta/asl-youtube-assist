@@ -19,6 +19,7 @@
     { "path": "../../packages/gloss" },
     { "path": "../../packages/language-pairs" },
     { "path": "../../packages/lexical" },
+    { "path": "../../packages/perf-budget" },
     { "path": "../../packages/stitch" },
     { "path": "../../packages/catalog" }
   ]

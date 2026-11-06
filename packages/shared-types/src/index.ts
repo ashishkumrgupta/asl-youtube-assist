@@ -112,3 +112,5 @@ export function assistOverlayDefaults(
     ...overrides,
   };
 }
+
+export { isTrustedExtensionSender, parseRuntimeMessage } from "./messages.js";

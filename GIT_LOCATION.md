@@ -22,4 +22,4 @@ npm test
 npm run build
 ```
 
-`git bundle verify` on the `.bundle` reports a complete history. Tip branch: `cursor/isl-multilang-registry-95ae` (v0.4.0 Indian ISL + multi-lang registry; ASL live, ISL pending).
+`git bundle verify` on the `.bundle` reports a complete history. Tip branch: `cursor/scale-security-harden-95ae` (v0.5.0 client scale + security-by-design).

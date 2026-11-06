@@ -12,6 +12,7 @@
     { "path": "packages/lexical" },
     { "path": "packages/stitch" },
     { "path": "packages/catalog" },
+    { "path": "packages/perf-budget" },
     { "path": "packages/roadmap-scaffold" }
   ]
 }

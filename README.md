@@ -1,6 +1,8 @@
-# ASL YouTube Assist (v0.4 · ASL live + Indian ISL pending)
+# ASL YouTube Assist (v0.5 · client-local scale + secure-by-design)
 
-Chrome/Edge **Manifest V3** extension that adds an **ASL assist / partial** PiP-style overlay on YouTube watch pages. Multi-lang registry also lists **Indian Sign Language (ISL, `ins`)** as **pending** chrome (not live). Irish Sign Language (`isg`) is out of scope.
+Chrome/Edge **Manifest V3** extension that adds an **ASL assist / partial** PiP-style overlay on YouTube watch pages. Multi-lang registry lists **Indian Sign Language (ISL, `ins`)** as **pending** chrome (not live). Irish Sign Language (`isg`) is out of scope.
+
+**Runs locally in your browser** (many users ⇒ many independent clients; no Project backend for habit shell). See `docs/performance.md` + `docs/security.md`.
 
 **This is not a human interpreter.** Captions remain the reliability floor. No accuracy percentages. No “better than captions” / multi-lang-live / ISL-ready claims without CapEx + Deaf-led eval. See `docs/languages.md`.
 

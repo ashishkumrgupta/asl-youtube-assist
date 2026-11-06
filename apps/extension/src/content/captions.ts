@@ -38,12 +38,16 @@ export function readTextTrackCues(video: HTMLVideoElement): CaptionCue[] {
   return cues;
 }
 
+/** Strip tags/controls; cap length. Always assign via textContent — never HTML. */
 export function sanitizeCaptionText(raw: string): string {
-  return raw
-    .replace(/<[^>]+>/g, " ")
-    .replace(/\s+/g, " ")
-    .trim()
-    .slice(0, 500);
+  let out = "";
+  for (const ch of raw.replace(/<[^>]*>/g, " ")) {
+    const code = ch.charCodeAt(0);
+    if (code === 0x7f) continue;
+    if (code < 0x20 && ch !== "\t" && ch !== "\n" && ch !== "\r") continue;
+    out += ch;
+  }
+  return out.replace(/\s+/g, " ").trim().slice(0, 500);
 }
 
 /** Heuristic domain tokens from title + description for critical-gate stub. */
