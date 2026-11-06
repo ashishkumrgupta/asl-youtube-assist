@@ -18,3 +18,4 @@ All notable changes to this project are documented in this file.
 
 - User-facing claim tier is assist only — not a human interpreter; no accuracy percentages.
 - Slice A disclaimer is placeholder-honest (no “curated signs” until dictionary ships).
+- Dev tooling: vitest 5.1 / vite 6.4; `npm run audit` fails CI on high/critical (0 vulns after upgrade).
