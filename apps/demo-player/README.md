@@ -34,5 +34,6 @@ Documented origin (least-privilege host permission):
 
 ```sh
 npm run build -w @asl/demo-player
-npx serve apps/demo-player/dist -l 4173
+npx serve apps/demo-player/dist -l tcp://127.0.0.1:4173
+# Open only http://127.0.0.1:4173/ — not localhost (different Chrome origin)
 ```

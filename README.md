@@ -52,7 +52,7 @@ cd /workspace   # or the Project mirror / agent checkout
 npm install
 npm test
 npm run build
-npm run demo          # local theater at http://127.0.0.1:4173/
+npm run demo          # local theater — open ONLY http://127.0.0.1:4173/ (not localhost)
 ```
 
 Built unpacked extension: `apps/extension/dist/`

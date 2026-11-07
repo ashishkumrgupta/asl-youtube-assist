@@ -6,7 +6,7 @@
   "scripts": {
     "build": "tsx ../../scripts/build-demo-player.ts",
     "typecheck": "tsc -p tsconfig.json --noEmit",
-    "demo": "npm run build && npx --yes serve dist -l 4173"
+    "demo": "npm run build && node -e \"console.log('Local theater (open this URL): http://127.0.0.1:4173/')\" && npx --yes serve dist -l tcp://127.0.0.1:4173"
   },
   "dependencies": {
     "@asl/shared-types": "0.1.0",

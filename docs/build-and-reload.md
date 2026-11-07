@@ -42,13 +42,14 @@ Offline path for owner sideload checks against the same demo MP4s agents use. Ca
 
 ```bash
 npm run demo
-# → http://127.0.0.1:4173/
+# → open ONLY http://127.0.0.1:4173/  (not http://localhost:4173/)
 ```
 
-1. Open the library → pick a clip (watch page uses HTML5 video + English captions track)
-2. Reload the extension (above)
-3. Enable the overlay → gloss/fingerspell cues should advance with captions
-4. Drag **Move** so the overlay does not cover captions
+1. Open **`http://127.0.0.1:4173/`** in Chrome (the script binds and prints this origin — do not use `localhost`; Chrome treats it as a different origin and the extension will not inject)
+2. Pick a clip (watch page uses HTML5 video + English captions track)
+3. Reload the extension (above)
+4. Enable the overlay → gloss/fingerspell cues should advance with captions
+5. Drag **Move** so the overlay does not cover captions
 
 Host permission is least-privilege: `http://127.0.0.1:4173/*` only (documented static server). See [`permissions.md`](permissions.md).
 

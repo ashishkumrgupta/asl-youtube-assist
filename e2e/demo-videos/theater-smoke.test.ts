@@ -67,6 +67,26 @@ describe("local theater smoke", () => {
     expect(ASSIST_LABEL.toLowerCase()).not.toContain("interpreter");
   });
 
+  it("demo scripts bind 127.0.0.1:4173 (matches host_permissions)", () => {
+    const rootPkg = JSON.parse(readFileSync(join(root, "package.json"), "utf8")) as {
+      scripts: Record<string, string>;
+    };
+    const demoPkg = JSON.parse(
+      readFileSync(join(root, "apps/demo-player/package.json"), "utf8"),
+    ) as { scripts: Record<string, string> };
+    for (const script of [rootPkg.scripts.demo, demoPkg.scripts.demo]) {
+      expect(script).toContain("tcp://127.0.0.1:4173");
+      expect(script).toContain("http://127.0.0.1:4173/");
+      expect(script).not.toMatch(/-l\s+4173\b/);
+      expect(script.toLowerCase()).not.toContain("localhost");
+    }
+    const manifest = JSON.parse(
+      readFileSync(join(root, "apps/extension/public/manifest.json"), "utf8"),
+    ) as { host_permissions: string[] };
+    expect(manifest.host_permissions).toContain("http://127.0.0.1:4173/*");
+    expect(manifest.host_permissions.some((h) => /localhost/i.test(h))).toBe(false);
+  });
+
   afterAll(() => {
     // dist is gitignored; leave for local `npm run demo` convenience
   });

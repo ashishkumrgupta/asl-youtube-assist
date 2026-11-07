@@ -15,6 +15,12 @@ All notable changes to this project are documented in this file.
 
 - Demo player is theater-first (extension injects overlay); embedded offline assist chrome removed from the page itself
 - `npm run demo:player` aliases `npm run demo`
+- `npm run demo` binds `tcp://127.0.0.1:4173` and prints that URL (not `localhost`) so the banner matches `host_permissions`
+
+### Fixed
+
+- Demo server listen address aligned with extension match pattern (`127.0.0.1` only) — opening `localhost` would skip content-script injection
+- `pageCaptionsStillPresent` no longer falls back to generic `video`
 
 ### Honesty
 
