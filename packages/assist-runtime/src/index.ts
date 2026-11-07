@@ -106,6 +106,9 @@ export function advanceAssistFrame(input: AssistFrameInput): AssistFrameResult {
     };
   }
 
+  // Playlist rebuild is keyed on cue id. Callers (esp. YouTube DOM fallback)
+  // must keep `id` stable for the lifetime of one visual caption window so
+  // prefix growth / sliding endMs do not thrash stitch state. New window ⇒ new id.
   if (clock.lastCueId !== activeCue.id) {
     clock = {
       lastCueId: activeCue.id,

@@ -8,6 +8,13 @@ export type OverlayViewModel = AssistViewModel;
 let dragBound = false;
 let detailsOpen = false;
 
+/** Content-script registers this so Hide stops the tick clock synchronously. */
+let hideHandler: (() => void) | null = null;
+
+export function setOverlayHideHandler(handler: (() => void) | null): void {
+  hideHandler = handler;
+}
+
 function assetUrl(relativePath: string): string {
   return chrome.runtime.getURL(relativePath);
 }
@@ -253,6 +260,9 @@ export function ensureOverlayHost(): HTMLElement {
   const closeBtn = shadow.querySelector("button.close");
   closeBtn?.addEventListener("click", () => {
     detailsOpen = false;
+    // Synchronously clear content-script enabled + stopClock before SW round-trip
+    // so a pending 100ms tick cannot re-show the panel (Hide vs tick race).
+    hideHandler?.();
     renderOverlay({
       enabled: false,
       blocked: false,

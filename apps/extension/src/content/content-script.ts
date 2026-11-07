@@ -21,8 +21,13 @@ import {
   collectCaptionCues,
   extractPageDomainTokens,
   getVideoElement,
+  resetDomCaptionTracker,
 } from "./captions.js";
-import { pageCaptionsStillPresent, renderOverlay } from "./overlay.js";
+import {
+  pageCaptionsStillPresent,
+  renderOverlay,
+  setOverlayHideHandler,
+} from "./overlay.js";
 
 let enabled = false;
 let pairId: LanguagePairId = DEFAULT_LANGUAGE_PAIR_ID;
@@ -31,6 +36,15 @@ let clock: AssistClockState = emptyAssistClock();
 let lastRenderKey = "";
 let lastPathname = location.pathname;
 let navTimer = 0;
+
+/** Hide button: stop local clock immediately (do not wait for SW broadcast). */
+function onLocalHide(): void {
+  enabled = false;
+  stopClock();
+  resetDomCaptionTracker();
+}
+
+setOverlayHideHandler(onLocalHide);
 
 function currentPair() {
   return getLanguagePair(pairId);
