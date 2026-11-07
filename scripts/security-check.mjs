@@ -11,7 +11,13 @@ const root = join(fileURLToPath(new URL(".", import.meta.url)), "..");
 const errors = [];
 
 const ALLOWED_PERMISSIONS = new Set(["storage"]);
-const ALLOWED_HOST_PREFIXES = ["https://www.youtube.com/", "https://youtube.com/"];
+/** YouTube + documented local theater only (http://127.0.0.1:4173 — npm run demo). */
+const ALLOWED_HOST_PREFIXES = [
+  "https://www.youtube.com/",
+  "https://youtube.com/",
+  "http://127.0.0.1:4173/",
+];
+const LOCAL_THEATER_HOST = "http://127.0.0.1:4173/*";
 
 function walk(dir, out = []) {
   for (const name of readdirSync(dir)) {
@@ -47,6 +53,29 @@ for (const h of manifest.host_permissions ?? []) {
 }
 if (manifest.host_permissions?.includes("<all_urls>")) {
   errors.push("SEC-1: <all_urls> forbidden");
+}
+// Local theater must stay pinned to the documented static origin (not * ports / localhost alias).
+const hosts = manifest.host_permissions ?? [];
+if (hosts.some((h) => /127\.0\.0\.1/.test(h) || /localhost/i.test(h))) {
+  if (!hosts.includes(LOCAL_THEATER_HOST)) {
+    errors.push(`SEC-1: local theater host must be exactly "${LOCAL_THEATER_HOST}"`);
+  }
+  if (hosts.some((h) => /localhost/i.test(h))) {
+    errors.push("SEC-1: use 127.0.0.1 theater origin only (not localhost alias)");
+  }
+  if (hosts.some((h) => h.includes("127.0.0.1:*") || h === "http://127.0.0.1/*")) {
+    errors.push("SEC-1: local theater must not use wildcard ports");
+  }
+}
+
+const contentMatches = (manifest.content_scripts ?? []).flatMap((cs) => cs.matches ?? []);
+if (!contentMatches.includes(LOCAL_THEATER_HOST)) {
+  errors.push(
+    `SEC-1: content_scripts must include local theater "${LOCAL_THEATER_HOST}"`,
+  );
+}
+if (!contentMatches.includes("https://www.youtube.com/*")) {
+  errors.push("SEC-1: content_scripts must keep YouTube www host");
 }
 
 const csp = manifest.content_security_policy?.extension_pages;

@@ -14,8 +14,10 @@ Target: install → toggle ASL assist overlay on a captioned YouTube watch page 
    - Popup: **Captions stay on** + short status when on
 6. Optional: open a title with “medical/legal/safety” keywords → gate stub should block unsupervised assist.
 
-**Owner path:** this checklist is the real YouTube sideload. Do not skip it because local demos exist.
+**Owner path (YouTube):** this checklist is the live YouTube sideload. Do not skip it because the local theater exists.
 
-**Agents / CI / Deaf-user UAT offline:** `npm run demo:player` + `fixtures/demo-videos/` — caption→gloss UI only; **not** signing video (pack pending); **not** a substitute for owner YouTube testing.
+**Owner path (local theater):** `npm run demo` → `http://127.0.0.1:4173/` → same overlay toggle; VTT always on. See [`build-and-reload.md`](build-and-reload.md). Still **not** signing video (pack pending); still **not** a substitute for real YouTube.
+
+**Agents / CI / Deaf-user UAT offline:** theater + `fixtures/demo-videos/` — caption→gloss sync only.
 
 **Not required for this checklist:** approved clip pack playback (held pending coordinator pick).

@@ -3,58 +3,38 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>ASL assist · local demos</title>
+    <meta
+      name="description"
+      content="Local ASL assist theater — captioned demo clips for offline extension testing. Partial assist only; pack pending; not an interpreter."
+    />
+    <title>ASL assist · local theater</title>
     <link rel="stylesheet" href="./styles.css" />
   </head>
-  <body>
-    <div class="shell">
-      <header class="hero">
-        <p class="eyebrow">Local fixtures · no YouTube</p>
-        <h1 id="page-title">ASL assist / partial</h1>
-        <p class="lede">
-          Caption → gloss sync only. Pack pending — not signing video, not an interpreter.
-        </p>
-      </header>
+  <body class="page-library" data-asl-theater="library">
+    <div class="atmosphere" aria-hidden="true"></div>
+    <header class="brand-hero">
+      <p class="brand" id="brand-label">ASL assist / partial</p>
+      <h1 class="headline">Local theater</h1>
+      <p class="lede" id="brand-honesty">
+        Captioned demo clips for offline extension testing. Pack pending — not signing
+        video, not an interpreter.
+      </p>
+    </header>
 
-      <section class="player" aria-label="Demo video">
-        <video
-          id="asl-demo-video"
-          data-asl-demo-video
-          controls
-          playsinline
-          crossorigin="anonymous"
-        >
-          <track
-            id="asl-demo-track"
-            kind="captions"
-            srclang="en"
-            label="English"
-            default
-          />
-        </video>
-        <p id="demo-caption" class="burned-caption" aria-live="polite"></p>
-      </section>
+    <main class="library" aria-label="Demo video library">
+      <p class="section-note">
+        Open a clip, keep captions on, then toggle the Chrome extension overlay — same
+        assist path as YouTube.
+      </p>
+      <ul id="demo-grid" class="demo-grid"></ul>
+    </main>
 
-      <aside class="assist" aria-label="ASL assist chrome">
-        <div class="assist-top">
-          <strong id="assist-badge">ASL assist</strong>
-          <label class="toggle">
-            <input id="assist-toggle" type="checkbox" />
-            <span>Assist on</span>
-          </label>
-        </div>
-        <p id="assist-honesty" class="honesty"></p>
-        <p id="assist-chip" class="chip"></p>
-        <p id="assist-gloss" class="gloss">Assist off</p>
-        <p id="assist-cue" class="cue"></p>
-        <p id="assist-floor" class="floor"></p>
-      </aside>
-
-      <label class="picker">
-        <span>Demo clip</span>
-        <select id="demo-select"></select>
-      </label>
-    </div>
-    <script type="module" src="./main.js"></script>
+    <footer class="site-foot">
+      <p>
+        Serves at <code>http://127.0.0.1:4173/</code> · synthetic lavfi fixtures · real
+        YouTube remains the live check
+      </p>
+    </footer>
+    <script type="module" src="./library.js"></script>
   </body>
 </html>

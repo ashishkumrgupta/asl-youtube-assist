@@ -20,6 +20,7 @@ export const DOM_CAPTION_EMPTY_HOLD_TICKS = 3;
  * Never fall back to generic `video` (ads / endscreens).
  */
 export function getVideoElement(root: ParentNode = document): HTMLVideoElement | null {
+  // YouTube main player or explicit theater watch video only — never ads/thumbs.
   return (
     root.querySelector<HTMLVideoElement>("video.html5-main-video") ??
     root.querySelector<HTMLVideoElement>(DEMO_VIDEO_SELECTOR)

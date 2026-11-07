@@ -1,8 +1,8 @@
 {
   "name": "asl-youtube-assist",
-  "version": "0.6.0",
+  "version": "0.7.0",
   "private": true,
-  "description": "ASL + Indian ISL multi-lang-ready assist (partial) on YouTube. Client-local scale; secure-by-design. Not an interpreter.",
+  "description": "ASL + Indian ISL multi-lang-ready assist (partial) on YouTube + local theater. Client-local scale; secure-by-design. Not an interpreter.",
   "workspaces": [
     "packages/*",
     "apps/*"
@@ -20,7 +20,8 @@
     "test:watch": "vitest",
     "icons": "node scripts/generate-icons.mjs",
     "prebuild": "npm run icons",
-    "demo:player": "npm run build -w @asl/demo-player && npx --yes serve apps/demo-player/dist -l 4173",
+    "demo": "npm run build -w @asl/demo-player && node -e \"console.log('Local theater (open this URL): http://127.0.0.1:4173/')\" && npx --yes serve apps/demo-player/dist -l tcp://127.0.0.1:4173",
+    "demo:player": "npm run demo",
     "security-check": "node scripts/security-check.mjs",
     "ci": "npm run format:check && npm run lint && npm run typecheck && npm run test && npm run security-check && npm run audit && npm run build",
     "audit": "npm audit --audit-level=high"

@@ -1,9 +1,9 @@
 # Local demo videos (no live YouTube)
 
-Tiny **generated** clips + matching WebVTT for **agents/CI** and **Deaf-user UAT** offline.
+Tiny **generated** clips + matching WebVTT for **owner local theater**, **agents/CI**, and **Deaf-user UAT** offline.
 They prove **overlay / cue sync**, not signing video (clip pack still **pending**).
 
-**Not a substitute for the owner’s real YouTube sideload.** The extension content-script on YouTube `/watch` remains the owner path; keep that working. Use this harness when live YouTube is unavailable or for automated/UAT workflows.
+**Not a substitute for the owner’s real YouTube sideload.** The extension content-script on YouTube `/watch` remains the live path. Use the local theater when testing offline against these same fixtures.
 
 ## Contents
 
@@ -22,11 +22,11 @@ Provenance: ffmpeg `lavfi` color fields + drawtext titles. Captions authored her
 
 ```sh
 # From repo root
-npm test                 # includes e2e/demo-videos sync tests
-npm run demo:player      # serve apps/demo-player (see that README)
+npm test                 # includes demo + theater smoke tests
+npm run demo             # local theater → http://127.0.0.1:4173/
 ```
 
-Open the demo player, pick a clip, enable assist chrome — gloss cues should track VTT times.
+Open the library, pick a clip, sideload/reload the extension, enable assist — gloss cues should track VTT times.
 
 ## Regenerate
 

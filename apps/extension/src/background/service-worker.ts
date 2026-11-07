@@ -57,9 +57,16 @@ function buildState(
   });
 }
 
+/** YouTube + documented local theater origin only (SEC-1). */
+const CONTENT_TAB_URLS = [
+  "https://www.youtube.com/*",
+  "https://youtube.com/*",
+  "http://127.0.0.1:4173/*",
+] as const;
+
 async function broadcast(message: RuntimeMessage): Promise<void> {
   const tabs = await chrome.tabs.query({
-    url: ["https://www.youtube.com/*", "https://youtube.com/*"],
+    url: [...CONTENT_TAB_URLS],
   });
   for (const tab of tabs) {
     if (tab.id === undefined) continue;

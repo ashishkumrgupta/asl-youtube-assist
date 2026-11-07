@@ -1,41 +1,39 @@
-# Local demo player (no live YouTube)
+# Local theater (YouTube-like demos)
 
-Static page that plays `fixtures/demo-videos/*` with WebVTT and drives the same
-**caption → gloss assist-frame** used by the extension overlay.
+Polished **library + watch** pages that serve `fixtures/demo-videos/*` with
+**always-available WebVTT**. Sideload the Chrome extension and use the same
+assist overlay path as YouTube — content script injects on this origin.
 
-**Audience:** agents/CI and Deaf-user UAT offline — **not** a replacement for the
-owner’s real YouTube content-script testing. Sideload the extension on YouTube
-separately for that path.
-
-**Does not** prove signing video. Clip pack remains **pending**. Use this to
-verify cue sync / overlay state offline.
+**Audience:** owner offline extension testing; also agents/CI + Deaf-user UAT.
+**Does not** replace real YouTube validation. **Does not** prove signing video.
+Clip pack remains **pending**.
 
 ## Run
 
 ```sh
 # From repo root
-npm run demo:player
+npm run demo
 # → http://127.0.0.1:4173/
 ```
 
-Or:
+`npm run demo:player` is an alias of the same command.
 
-```sh
-npx serve apps/demo-player/dist -l 4173
-```
+Documented origin (least-privilege host permission):
 
-Build first (also runs via `npm run build` workspace script if wired):
-
-```sh
-npm run build -w @asl/demo-player
-```
+`http://127.0.0.1:4173/*`
 
 ## What you should see
 
-1. Pick a demo clip.
-2. Enable **ASL assist**.
-3. As captions play, gloss / fingerspell cues advance.
-4. Honesty chrome: **ASL assist** + `Partial · pack pending · not an interpreter`.
-5. Between cues (demo `05-gaps`), status returns to waiting — not stuck forever when captions are present.
+1. **Library** — intentional demo list (not a raw file dump).
+2. Open a clip → **watch** page with HTML5 video + English captions track on.
+3. Sideload / reload the extension → enable **Show ASL assist overlay**.
+4. Gloss / fingerspell cues advance with caption times.
+5. Honesty chrome stays assist/partial · pack pending · not an interpreter.
 
-Sideload the Chrome extension separately for YouTube; this player is the **offline** path for agents/CI.
+## Build only
+
+```sh
+npm run build -w @asl/demo-player
+npx serve apps/demo-player/dist -l tcp://127.0.0.1:4173
+# Open only http://127.0.0.1:4173/ — not localhost (different Chrome origin)
+```
