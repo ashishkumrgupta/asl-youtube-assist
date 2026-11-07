@@ -62,7 +62,7 @@ export function routeTiers(videoId: string | null): TierRoute {
       tierAEmpty: false,
       tierALabel: HUMAN_INTERPRETATION_LABEL,
       tierBLabel: ASSIST_LABEL,
-      routingLine: `Tier A · ${HUMAN_INTERPRETATION_LABEL} (active) · Tier B · ${ASSIST_LABEL} available`,
+      routingLine: `Human · Tier A`,
       emptyState: null,
     };
   }
@@ -72,10 +72,10 @@ export function routeTiers(videoId: string | null): TierRoute {
     tierAEmpty,
     tierALabel: HUMAN_INTERPRETATION_LABEL,
     tierBLabel: ASSIST_LABEL,
-    routingLine: `Tier B · ${ASSIST_LABEL} (active)`,
+    routingLine: `Assist · Tier B`,
     emptyState: tierAEmpty
-      ? `Tier A · ${HUMAN_INTERPRETATION_LABEL}: unavailable — human catalog empty (coming later). Not playing assist as human interpretation.`
-      : `Tier A · ${HUMAN_INTERPRETATION_LABEL}: unavailable for this video — no human catalog match.`,
+      ? `Tier A empty · not human interpretation`
+      : `Tier A unavailable · no catalog match`,
   };
 }
 

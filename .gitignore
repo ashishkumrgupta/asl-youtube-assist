@@ -11,4 +11,5 @@ coverage/
 .vite/
 *.tsbuildinfo
 apps/extension/dist/
+apps/demo-player/dist/
 packages/*/dist/

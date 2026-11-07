@@ -1,0 +1,20 @@
+{
+  "name": "@asl/demo-player",
+  "version": "0.6.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "tsx ../../scripts/build-demo-player.ts",
+    "typecheck": "tsc -p tsconfig.json --noEmit"
+  },
+  "dependencies": {
+    "@asl/assist-runtime": "0.6.0",
+    "@asl/catalog": "0.2.0",
+    "@asl/gloss": "0.2.0",
+    "@asl/language-pairs": "0.4.0",
+    "@asl/lexical": "0.1.0",
+    "@asl/shared-types": "0.1.0",
+    "@asl/stitch": "0.2.0",
+    "@asl/sync": "0.1.0"
+  }
+}

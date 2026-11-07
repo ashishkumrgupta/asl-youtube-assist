@@ -1,0 +1,16 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "composite": true,
+    "rootDir": "src",
+    "outDir": "dist"
+  },
+  "include": ["src/**/*.ts"],
+  "references": [
+    { "path": "../shared-types" },
+    { "path": "../sync" },
+    { "path": "../language-pairs" },
+    { "path": "../lexical" },
+    { "path": "../stitch" }
+  ]
+}

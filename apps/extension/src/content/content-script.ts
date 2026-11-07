@@ -2,34 +2,32 @@ import { routeTiers, youtubeVideoIdFromLocation } from "@asl/catalog";
 import { evaluateCriticalGate } from "@asl/critical-gate";
 import {
   DEFAULT_LANGUAGE_PAIR_ID,
-  conservativeGlossForPair,
   getLanguagePair,
   isPickerPairId,
   type LanguagePairId,
 } from "@asl/language-pairs";
-import { buildPlaylistFromGloss, type AssistPlaylistStep } from "@asl/lexical";
 import {
   NAV_OBSERVER_DEBOUNCE_MS,
   OVERLAY_HIDDEN_TICK_MS,
   OVERLAY_TICK_MS,
 } from "@asl/perf-budget";
-import { stitchIntoCue, stepAtElapsedStitched } from "@asl/stitch";
-import { syncToCaptions } from "@asl/sync";
 import { parseRuntimeMessage, type RuntimeMessage } from "@asl/shared-types";
 import {
+  advanceAssistFrame,
+  emptyAssistClock,
+  type AssistClockState,
+} from "@asl/assist-runtime";
+import {
+  collectCaptionCues,
   extractPageDomainTokens,
   getVideoElement,
-  readTextTrackCues,
 } from "./captions.js";
 import { pageCaptionsStillPresent, renderOverlay } from "./overlay.js";
 
 let enabled = false;
 let pairId: LanguagePairId = DEFAULT_LANGUAGE_PAIR_ID;
 let tickTimer = 0;
-let cueStartedAtMediaMs: number | null = null;
-let lastCueId: string | null = null;
-let cachedSteps: readonly AssistPlaylistStep[] = [];
-let cachedGlossLine: string | null = null;
+let clock: AssistClockState = emptyAssistClock();
 let lastRenderKey = "";
 let lastPathname = location.pathname;
 let navTimer = 0;
@@ -67,6 +65,7 @@ function renderPendingOrLiveBase(active: boolean): void {
   const route = routeTiers(youtubeVideoIdFromLocation(location.href));
   const pair = currentPair();
   lastRenderKey = "";
+  clock = emptyAssistClock();
   renderOverlay({
     enabled: active,
     blocked: false,
@@ -122,9 +121,7 @@ function onToggle(next: boolean): void {
 function onPairChange(nextId: string): void {
   if (!isPickerPairId(nextId)) return;
   pairId = nextId;
-  cachedSteps = [];
-  cachedGlossLine = null;
-  lastCueId = null;
+  clock = emptyAssistClock();
   onToggle(enabled);
 }
 
@@ -150,78 +147,23 @@ function runTick(): void {
     return;
   }
 
-  const cues = readTextTrackCues(video);
   const mediaMs = video.currentTime * 1000;
-  const sync = syncToCaptions(cues, mediaMs, mediaMs, 500);
-  const activeCue = sync.activeCue;
+  const collected = collectCaptionCues(video, { mediaTimeMs: mediaMs });
   const route = routeTiers(youtubeVideoIdFromLocation(location.href));
+  const frame = advanceAssistFrame({
+    enabled: true,
+    languagePairId: pair.id,
+    cues: collected.cues,
+    mediaMs,
+    routingLine: route.routingLine,
+    tierAEmptyState: route.emptyState,
+    clock,
+  });
+  clock = frame.clock;
 
-  if (!activeCue) {
-    cueStartedAtMediaMs = null;
-    lastCueId = null;
-    cachedSteps = [];
-    cachedGlossLine = null;
-    const key = "idle";
-    if (lastRenderKey !== key) {
-      lastRenderKey = key;
-      renderOverlay({
-        enabled: true,
-        blocked: false,
-        gateMessage: null,
-        activeCaption: null,
-        activeStep: null,
-        placeholderMode: false,
-        glossLine: null,
-        routingLine: route.routingLine,
-        tierAEmptyState: route.emptyState,
-        languagePairId: pair.id,
-        liveAssistEnabled: true,
-      });
-    }
-    scheduleTick(OVERLAY_TICK_MS);
-    return;
-  }
-
-  if (lastCueId !== activeCue.id) {
-    lastCueId = activeCue.id;
-    cueStartedAtMediaMs = activeCue.startMs;
-    const pairGloss = conservativeGlossForPair(pair.id, activeCue.text);
-    if (!pairGloss.live || !pairGloss.gloss) {
-      cachedSteps = [];
-      cachedGlossLine = null;
-    } else {
-      const playlist = buildPlaylistFromGloss(pairGloss.gloss);
-      const cueDurationMs = Math.max(0, activeCue.endMs - activeCue.startMs);
-      const stitched = stitchIntoCue(playlist.steps, cueDurationMs || 2000);
-      cachedSteps = stitched.steps;
-      cachedGlossLine = pairGloss.gloss.glossLine || null;
-    }
-  }
-
-  const elapsedInCue = Math.max(0, mediaMs - (cueStartedAtMediaMs ?? activeCue.startMs));
-  const step = stepAtElapsedStitched(cachedSteps, elapsedInCue);
-  const stepKey =
-    step?.kind === "lexical"
-      ? `L:${step.gloss}`
-      : step?.kind === "fingerspell"
-        ? `F:${step.letter}`
-        : "none";
-  const key = `${activeCue.id}|${stepKey}|${cachedGlossLine ?? ""}`;
-  if (key !== lastRenderKey) {
-    lastRenderKey = key;
-    renderOverlay({
-      enabled: true,
-      blocked: false,
-      gateMessage: null,
-      activeCaption: activeCue.text,
-      activeStep: step,
-      placeholderMode: false,
-      glossLine: cachedGlossLine,
-      routingLine: route.routingLine,
-      tierAEmptyState: route.emptyState,
-      languagePairId: pair.id,
-      liveAssistEnabled: true,
-    });
+  if (frame.renderKey !== lastRenderKey) {
+    lastRenderKey = frame.renderKey;
+    renderOverlay(frame.viewModel);
   }
   scheduleTick(OVERLAY_TICK_MS);
 }
@@ -234,10 +176,7 @@ function startClock(): void {
 function stopClock(): void {
   if (tickTimer) window.clearTimeout(tickTimer);
   tickTimer = 0;
-  cueStartedAtMediaMs = null;
-  lastCueId = null;
-  cachedSteps = [];
-  cachedGlossLine = null;
+  clock = emptyAssistClock();
   lastRenderKey = "";
 }
 
@@ -269,7 +208,6 @@ obs.observe(document.documentElement, { childList: true, subtree: true });
 document.addEventListener("visibilitychange", () => {
   if (!enabled) return;
   if (document.hidden) return;
-  // Resume promptly when tab visible again.
   if (currentPair().liveAssistEnabled && !tickTimer) startClock();
 });
 

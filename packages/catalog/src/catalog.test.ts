@@ -14,12 +14,9 @@ describe("Tier A/B routing (AC-1.2)", () => {
     expect(route.activeTier).toBe("B");
     expect(route.tierBLabel).toBe(ASSIST_LABEL);
     expect(route.tierALabel).toBe(HUMAN_INTERPRETATION_LABEL);
-    expect(route.routingLine).toContain("Tier B");
-    expect(route.emptyState?.toLowerCase()).toContain("tier a");
-    expect(route.emptyState?.toLowerCase()).toContain("unavailable");
-    expect(route.emptyState?.toLowerCase()).toContain(
-      "not playing assist as human interpretation",
-    );
+    expect(route.routingLine).toBe("Assist · Tier B");
+    expect(route.emptyState?.toLowerCase()).toContain("tier a empty");
+    expect(route.emptyState?.toLowerCase()).toContain("not human interpretation");
   });
 
   it("parses youtube video ids", () => {

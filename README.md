@@ -1,4 +1,4 @@
-# ASL YouTube Assist (v0.5 · client-local scale + secure-by-design)
+# ASL YouTube Assist (v0.6 · UI redesign + local demos)
 
 Chrome/Edge **Manifest V3** extension that adds an **ASL assist / partial** PiP-style overlay on YouTube watch pages. Multi-lang registry lists **Indian Sign Language (ISL, `ins`)** as **pending** chrome (not live). Irish Sign Language (`isg`) is out of scope.
 
@@ -24,7 +24,9 @@ Push to Origin/GitHub when ready — remotes are optional today. See `GIT_LOCATI
 | Sideload MV3 extension (Chrome/Edge)                       | Done                                    |
 | Toggle ASL assist overlay on YouTube watch                 | Done                                    |
 | Caption floor preserved (never strips CC)                  | Done                                    |
-| Sync to caption timestamps when text tracks exist          | Done (best-effort)                      |
+| Sync to caption timestamps (text tracks + YouTube DOM CC)  | Done (best-effort)                      |
+| Compact popup / overlay (badge + honesty line)             | Done (v0.6)                             |
+| Local demo videos + offline demo player (no live YT)       | Done (v0.6)                             |
 | Honest labels: **ASL assist / partial** only               | Done                                    |
 | Critical-domain keyword gate stub (disclosed as heuristic) | Done                                    |
 | Movable overlay (drag / arrow keys)                        | Done                                    |
@@ -46,13 +48,23 @@ Push to Origin/GitHub when ready — remotes are optional today. See `GIT_LOCATI
 ## Quick start (local)
 
 ```sh
-cd /cursor/stores/self/workspace/asl-youtube-assist
+cd /workspace   # or the Project mirror / agent checkout
 npm install
 npm test
 npm run build
+npm run demo:player   # offline caption→gloss UI at http://127.0.0.1:4173/
 ```
 
 Built unpacked extension: `apps/extension/dist/`
+
+### Testing paths (do not conflate)
+
+| Path                                                              | Who                                         | What it proves                          |
+| ----------------------------------------------------------------- | ------------------------------------------- | --------------------------------------- |
+| **YouTube sideload** (content script on `/watch`)                 | **Owner** real-world check; also manual QA  | Live CC → gloss overlay on real YouTube |
+| **Local demos** (`fixtures/demo-videos/` + `npm run demo:player`) | **Agents / CI** + **Deaf-user UAT** offline | Caption→gloss sync UI without live YT   |
+
+Local harness is **not** a replacement for the owner’s YouTube testing. Pack still **pending**; neither path claims signing video works.
 
 ### Sideload (Chrome or Edge)
 

@@ -1,9 +1,13 @@
 import { describe, expect, it } from "vitest";
 import {
   ASSIST_BADGE,
+  ASSIST_CAPTIONS_FLOOR,
+  ASSIST_DETAILS,
   ASSIST_DISCLAIMER,
+  ASSIST_HONESTY_LINE,
   ASSIST_LABEL,
   ASSIST_LABEL_COPY,
+  ASSIST_STATUS_ON,
   GLOSS_UI_NOTE,
   assistOverlayDefaults,
 } from "./index.js";
@@ -15,16 +19,16 @@ describe("honesty labels", () => {
     expect(ASSIST_LABEL_COPY.badge).toBe(ASSIST_BADGE);
   });
 
-  it("disclaimer never claims interpreter or accuracy percent", () => {
-    const lower = ASSIST_DISCLAIMER.toLowerCase();
-    expect(lower).toContain("not a human interpreter");
-    expect(lower).not.toMatch(/\d+\s*%/);
-    expect(lower).not.toContain("ai interpreter");
-    expect(lower).not.toContain("100%");
+  it("compact honesty line keeps pack-pending + not interpreter", () => {
+    const lower = ASSIST_HONESTY_LINE.toLowerCase();
+    expect(lower).toContain("partial");
+    expect(lower).toContain("pack pending");
+    expect(lower).toContain("not an interpreter");
+    expect(ASSIST_DISCLAIMER).toBe(ASSIST_HONESTY_LINE);
   });
 
-  it("Phase 0 disclaimer is lexical-assist honest (pack pending; not fluent / not interpreter)", () => {
-    const lower = ASSIST_DISCLAIMER.toLowerCase();
+  it("About details keep lexical / fingerspell / fluent-discourse honesty", () => {
+    const lower = ASSIST_DETAILS.toLowerCase();
     expect(lower).toContain("lexical");
     expect(lower).toContain("fingerspell");
     expect(lower).toContain("pending");
@@ -33,18 +37,19 @@ describe("honesty labels", () => {
     expect(lower).not.toMatch(/\d+\s*%/);
   });
 
+  it("popup floor + on-status stay compact and honest", () => {
+    expect(ASSIST_CAPTIONS_FLOOR.toLowerCase()).toContain("captions stay on");
+    expect(ASSIST_STATUS_ON.toLowerCase()).toContain("cues until pack binds");
+  });
+
   it("default overlay state is assist-only with captions floor intact", () => {
     const state = assistOverlayDefaults();
     expect(state.label).toBe(ASSIST_LABEL);
     expect(state.claimTier).toBe("assist_partial");
     expect(state.captionsFloorIntact).toBe(true);
-    expect(state.placeholderMode).toBe(true); // defaults helper still placeholder until callers override
+    expect(state.placeholderMode).toBe(true);
     expect(state.languagePairId).toBe("en-ase");
     expect(state.liveAssistEnabled).toBe(true);
-  });
-
-  it("assist disclaimer passes copy lint", () => {
-    expect(ASSIST_DISCLAIMER.toLowerCase()).toContain("captions stay on");
   });
 
   it("gloss UI note refuses English-on-the-hands / fluent ASL framing (AC-1.1)", () => {

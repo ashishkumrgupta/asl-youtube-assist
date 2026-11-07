@@ -1,0 +1,42 @@
+{
+  "title": "Local demo videos (no live YouTube)",
+  "purpose": "Caption→gloss sync UI fixtures for agents/CI. Not signing-video proof. Clip pack still pending.",
+  "license": "Synthetic generated color fields + demo titles (ffmpeg lavfi). Captions authored for this repo. Not third-party media.",
+  "demos": [
+    {
+      "id": "01-hello",
+      "video": "01-hello.mp4",
+      "captions": "01-hello.vtt",
+      "durationSec": 8,
+      "checks": ["lexical_hits", "cue_advance"]
+    },
+    {
+      "id": "02-welcome",
+      "video": "02-welcome.mp4",
+      "captions": "02-welcome.vtt",
+      "durationSec": 7,
+      "checks": ["cue_advance"]
+    },
+    {
+      "id": "03-oov",
+      "video": "03-oov.mp4",
+      "captions": "03-oov.vtt",
+      "durationSec": 6,
+      "checks": ["fingerspell_oov"]
+    },
+    {
+      "id": "04-wh-time",
+      "video": "04-wh-time.mp4",
+      "captions": "04-wh-time.vtt",
+      "durationSec": 8,
+      "checks": ["gloss_wh_time"]
+    },
+    {
+      "id": "05-gaps",
+      "video": "05-gaps.mp4",
+      "captions": "05-gaps.vtt",
+      "durationSec": 10,
+      "checks": ["idle_between_cues"]
+    }
+  ]
+}
