@@ -8,6 +8,12 @@ export type FlagName =
   | "assist.overlay.v1"
   | "assist.stitching.v2"
   | "assist.gloss.v1"
+  /** Volunteer Deaf clips — prod off until first donor bound with release+QA. */
+  | "assist.volunteer.v1"
+  /** Remote creator link-out (no CDN mirror). */
+  | "assist.remote_link.v1"
+  /** PopSign CC BY thin pack — prod off; bind only after per-gloss Deaf QA. */
+  | "assist.popsign.v1"
   | "avatar.neural"
   | "catalog.tierA"
   | "catalog.tierA.ingest"
@@ -31,6 +37,10 @@ const LOCAL: FlagDefaults = {
   "assist.overlay.v1": true,
   "assist.stitching.v2": true,
   "assist.gloss.v1": true,
+  // Media binds stay off until donor/QA; link-out chrome OK to exercise locally.
+  "assist.volunteer.v1": false,
+  "assist.remote_link.v1": true,
+  "assist.popsign.v1": false,
   "avatar.neural": false,
   "catalog.tierA": false,
   "catalog.tierA.ingest": false,
@@ -49,6 +59,9 @@ const PRODUCTION: FlagDefaults = {
   "assist.overlay.v1": true,
   "assist.stitching.v2": true,
   "assist.gloss.v1": true,
+  "assist.volunteer.v1": false,
+  "assist.remote_link.v1": true,
+  "assist.popsign.v1": false,
   "avatar.neural": false,
   "catalog.tierA": false,
   "catalog.tierA.ingest": false,
@@ -112,4 +125,13 @@ export function laterPhaseFlagsOffInProd(env: EnvName): boolean {
     d["pairs.ins.live"] === false &&
     d["claim.interpretation_allowlist"] === false
   );
+}
+
+/**
+ * real-video-0 media binds fail-closed in production:
+ * volunteer + PopSign off until release/QA; link-out may stay on (no bytes cached).
+ */
+export function realVideoMediaFlagsOffInProd(env: EnvName): boolean {
+  const d = defaultsForEnv(env);
+  return d["assist.volunteer.v1"] === false && d["assist.popsign.v1"] === false;
 }

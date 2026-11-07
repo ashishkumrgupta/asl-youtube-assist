@@ -1,5 +1,12 @@
 import type { AssistViewModel } from "@asl/assist-runtime";
+import { isEnabled } from "@asl/flags";
 import { DEFAULT_LANGUAGE_PAIR_ID, getLanguagePair } from "@asl/language-pairs";
+import {
+  CLIP_PACK_MANIFEST,
+  NO_CLIP_FOR_SIGN,
+  provenanceShortTag,
+  resolveLinkOutForStep,
+} from "@asl/lexical";
 
 const ROOT_ID = "asl-assist-overlay-root";
 
@@ -7,6 +14,7 @@ export type OverlayViewModel = AssistViewModel;
 
 let dragBound = false;
 let detailsOpen = false;
+let linkOutBound = false;
 
 /** Content-script registers this so Hide stops the tick clock synchronously. */
 let hideHandler: (() => void) | null = null;
@@ -176,6 +184,29 @@ export function ensureOverlayHost(): HTMLElement {
         position: relative;
         z-index: 1;
       }
+      .link-out {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+        font-size: 11px;
+        line-height: 1.35;
+        color: var(--mist);
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        padding: 8px;
+      }
+      .link-out[hidden] { display: none; }
+      .link-out button {
+        align-self: flex-start;
+        background: transparent;
+        border: 1px solid var(--line);
+        color: var(--amber);
+        border-radius: 6px;
+        padding: 4px 8px;
+        cursor: pointer;
+        font-size: 11px;
+        font-family: inherit;
+      }
       .cue {
         font-size: 11px;
         color: var(--mist);
@@ -250,6 +281,11 @@ export function ensureOverlayHost(): HTMLElement {
         <div class="gloss" data-role="gloss"></div>
         <div class="hint" data-role="hint"></div>
       </div>
+      <div class="link-out" data-role="link-out" hidden>
+        <div data-role="link-honesty"></div>
+        <div data-role="link-credit"></div>
+        <button type="button" data-role="link-open">Open sign video</button>
+      </div>
       <div class="cue" data-role="cue" hidden></div>
       <div class="gate" data-role="gate" hidden></div>
       <div class="about-body" data-role="about-body" hidden></div>
@@ -288,7 +324,21 @@ export function ensureOverlayHost(): HTMLElement {
     }
   });
   bindDrag(root, shadow);
+  bindLinkOut(shadow);
   return root;
+}
+
+function bindLinkOut(shadow: ShadowRoot): void {
+  if (linkOutBound) return;
+  const btn = shadow.querySelector('[data-role="link-open"]');
+  if (!(btn instanceof HTMLButtonElement)) return;
+  linkOutBound = true;
+  btn.addEventListener("click", () => {
+    const url = btn.dataset.href;
+    // Allowlist already enforced when dataset.href was set — never open raw crafted URLs.
+    if (!url) return;
+    window.open(url, "_blank", "noopener,noreferrer");
+  });
 }
 
 function bindDrag(root: HTMLElement, shadow: ShadowRoot): void {
@@ -379,6 +429,10 @@ export function renderOverlay(vm: OverlayViewModel): void {
   const badgeEl = shadow.querySelector('[data-role="badge"]');
   const honestyEl = shadow.querySelector('[data-role="honesty"]');
   const aboutBody = shadow.querySelector('[data-role="about-body"]');
+  const linkOutEl = shadow.querySelector('[data-role="link-out"]');
+  const linkHonestyEl = shadow.querySelector('[data-role="link-honesty"]');
+  const linkCreditEl = shadow.querySelector('[data-role="link-credit"]');
+  const linkBtn = shadow.querySelector('[data-role="link-open"]');
   if (!(panel instanceof HTMLElement)) return;
 
   const pair = getLanguagePair(vm.languagePairId);
@@ -386,10 +440,18 @@ export function renderOverlay(vm: OverlayViewModel): void {
 
   if (badgeEl instanceof HTMLElement) badgeEl.textContent = pair.assistCopy.badge;
   if (honestyEl instanceof HTMLElement) {
-    honestyEl.textContent = pair.assistCopy.honestyLine;
+    // Compact chrome: map provenance short tag onto redesigned honesty line (Deaf RV0-5).
+    honestyEl.textContent =
+      pair.id === "en-ase" && vm.enabled && vm.liveAssistEnabled
+        ? provenanceShortTag(CLIP_PACK_MANIFEST)
+        : pair.assistCopy.honestyLine;
   }
   if (aboutBody instanceof HTMLElement) {
-    aboutBody.textContent = `${pair.assistCopy.details} ${pair.assistCopy.glossNote}`;
+    const creditsNote =
+      CLIP_PACK_MANIFEST.provenance === "volunteer"
+        ? " Volunteer credits — names as consented (see popup About)."
+        : "";
+    aboutBody.textContent = `${pair.assistCopy.details} ${pair.assistCopy.glossNote}${creditsNote}`;
     aboutBody.hidden = !detailsOpen;
   }
 
@@ -430,7 +492,13 @@ export function renderOverlay(vm: OverlayViewModel): void {
     } else if (vm.glossLine) {
       glossEl.textContent = vm.glossLine;
     } else if (vm.activeStep?.kind === "lexical") {
-      glossEl.textContent = vm.activeStep.gloss;
+      if (vm.activeStep.assetPath) {
+        glossEl.textContent = vm.activeStep.gloss;
+      } else if (vm.activeStep.noClipFallback) {
+        glossEl.textContent = `${NO_CLIP_FOR_SIGN} · ${vm.activeStep.gloss}`;
+      } else {
+        glossEl.textContent = vm.activeStep.gloss;
+      }
     } else if (vm.activeStep?.kind === "fingerspell") {
       glossEl.textContent = `FS · ${vm.activeStep.letter}`;
     } else if (vm.enabled) {
@@ -478,6 +546,32 @@ export function renderOverlay(vm: OverlayViewModel): void {
       video.hidden = true;
       video.removeAttribute("src");
       video.load();
+    }
+  }
+
+  const link =
+    vm.enabled &&
+    !vm.blocked &&
+    vm.liveAssistEnabled &&
+    isEnabled("local", "assist.remote_link.v1")
+      ? resolveLinkOutForStep(vm.activeStep)
+      : null;
+  if (
+    linkOutEl instanceof HTMLElement &&
+    linkHonestyEl instanceof HTMLElement &&
+    linkCreditEl instanceof HTMLElement &&
+    linkBtn instanceof HTMLButtonElement
+  ) {
+    if (link) {
+      linkOutEl.hidden = false;
+      linkHonestyEl.textContent = link.honesty;
+      linkCreditEl.textContent = link.credit;
+      linkBtn.dataset.href = link.url;
+    } else {
+      linkOutEl.hidden = true;
+      linkHonestyEl.textContent = "";
+      linkCreditEl.textContent = "";
+      delete linkBtn.dataset.href;
     }
   }
 

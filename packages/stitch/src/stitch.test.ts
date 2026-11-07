@@ -7,6 +7,8 @@ function lex(gloss: string, durationMs: number): AssistPlaylistStep {
     kind: "lexical",
     gloss,
     assetPath: null,
+    remoteUrl: null,
+    noClipFallback: true,
     durationMs,
     surface: gloss.toLowerCase(),
   };

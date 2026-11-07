@@ -35,7 +35,7 @@ export const ASSIST_DISCLAIMER = ASSIST_HONESTY_LINE;
  * About / Details body — depth only; §1 chrome must still show without opening this.
  */
 export const ASSIST_DETAILS =
-  "ASL assist / partial — lexical gloss cues + fingerspell for unknown words. Clip pack not bound yet (pending approved source). Not fluent ASL discourse. Not a human interpreter. Captions stay on." as const;
+  "ASL assist / partial — lexical gloss cues + fingerspell for unknown words. Clip pack not bound yet (pending volunteer/QA’d source). Volunteer pipeline + allowlisted link-out ready; PopSign bytes wait on Deaf QA. Not fluent ASL discourse. Not a human interpreter. Captions stay on." as const;
 
 /** Stage hint while clip media pack is pending (compact). */
 export const ASSIST_CLIP_STAGE_HINT = "Cues only — no sign video yet" as const;
