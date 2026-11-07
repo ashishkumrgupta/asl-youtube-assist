@@ -73,7 +73,7 @@ const ASL_COPY: PairAssistCopy = {
   honestyLine: "Partial · pack pending · not an interpreter",
   disclaimer: "Partial · pack pending · not an interpreter",
   details:
-    "ASL assist / partial — lexical gloss cues + fingerspell for unknown words. Clip pack not bound yet (pending approved source). Not fluent ASL discourse. Not a human interpreter. Captions stay on.",
+    "ASL assist / partial — lexical gloss cues + fingerspell for unknown words. Clip pack not bound yet (pending volunteer/QA’d source). Volunteer pipeline + allowlisted link-out ready; PopSign bytes wait on Deaf QA. Not fluent ASL discourse. Not a human interpreter. Captions stay on.",
   glossNote:
     "Assist gloss (conservative) — not fluent ASL; not English-on-the-hands sold as ASL.",
   clipStageHint: "Cues only — no sign video yet",

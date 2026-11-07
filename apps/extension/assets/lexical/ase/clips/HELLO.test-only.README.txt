@@ -1,0 +1,1 @@
+TEST-ONLY fixture — not gold ASL; for CI/overlay path dry-run only. Do not market.

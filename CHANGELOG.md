@@ -2,6 +2,25 @@
 
 All notable changes to this project are documented in this file.
 
+## [0.8.0] — 2026-11-07
+
+### Added (real-video-0 — volunteer-first Tier B path)
+
+- Tier B pack ingest (`bindPairClipPack` / `ingestOpenDemoPack`) — fail-closed: rejects NC/synthetic/un-QA’d; volunteer needs `releaseOnFile`
+- Flags: `assist.volunteer.v1` (off), `assist.popsign.v1` (off), `assist.remote_link.v1` (link-out only, on)
+- Volunteer pipeline docs: release form, capture guide, outreach checklist; empty `CREDITS.json` + QA log schema
+- Overlay/popup: provenance honesty short tag, About credits, **Open sign video** link-out
+- Dictionary paths realigned to `lexical/ase/clips/`; TEST-ONLY fixture placeholder unbound by default
+- Honesty: assist/partial + “No clip for this sign” gloss fallback when unbound
+- Remote link-out **static allowlist** enforced on ingest + overlay (arbitrary https rejected)
+
+### Notes
+
+- **No PopSign media bytes bound** — waiting on per-gloss Deaf QA (AC-RV0.4 documented skip)
+- Pack remains `pending` in production defaults; CI dry-run uses `test-fixture-only` ingest
+- Still not an interpreter; gloss/fingerspell = gap fallback
+- Rebased onto v0.7.1 theater + compact UI chrome
+
 ## [0.7.1] — 2026-11-07
 
 ### Fixed
@@ -117,29 +136,12 @@ All notable changes to this project are documented in this file.
 
 - **AC-1.1** Conservative gloss (`@asl/gloss`) — TIME/content/WH heuristic; UI note that gloss is not fluent ASL / not English-on-the-hands.
 - **AC-1.2** Tier A/B routing UI (`@asl/catalog`) with honest empty Tier A (“human catalog unavailable… Not playing assist as human interpretation”).
-- Stitch/timing fit into caption cue windows (`@asl/stitch`) — thin eng improvement, no gold clips.
-- **AC-1.5** Eval harness scaffolding under `evals/` (fixture manifest + protocol stub; **not** Deaf-led proof).
-- Copy lint blocks usefulness-vs-captions / “useful entertainment assist” until AC-1.3/1.4.
-
-### Notes
-
-- Claim tier still **ASL assist / partial** + pack-pending. No usefulness-vs-captions marketing.
-- Gold clips, paid Deaf/HH cohort, Tier A catalog content, companion: deferred / cut-unless-free.
+- Stitch / timing fit into caption cue windows (`@asl/stitch`).
+- Eval harness scaffolding (`evals/`) — not Deaf-led cohort proof (AC-1.3/1.4 CapEx-gated).
 
 ## [0.1.0] — 2026-11-06
 
 ### Added
 
-- Phase 0 habit skeleton: MV3 sideload extension for YouTube watch pages.
-- Toggleable **ASL assist / partial** overlay; caption floor; caption-timestamp sync.
-- Draggable overlay (Move handle + keyboard arrows).
-- Critical-domain hard gate stub with keyword-heuristic disclosure.
-- Lexical index + fingerspell OOV scaffolding (`@asl/lexical`, `@asl/fingerspell`).
+- Phase 0 habit shell: Chrome MV3 extension, overlay, caption sync, fingerspell/gloss cues, critical-domain keyword stub, honesty labels (**ASL assist / partial**).
 - Clip media pack **pending** coordinator pick (no AI-persona default; see ATTRIBUTION).
-- Named caption fixtures + fixture smoke + manual sideload checklist.
-- Unit tests + GitHub Actions PR workflow; `npm run audit` in CI.
-
-### Notes
-
-- Claim tier is assist only — not a human interpreter; no accuracy percentages.
-- Gloss/fingerspell cues only until an approved Deaf-produced / attributed pack is bound.

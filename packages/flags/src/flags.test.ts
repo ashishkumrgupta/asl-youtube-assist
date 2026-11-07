@@ -4,6 +4,7 @@ import {
   experimentalSigningOffInProd,
   isEnabled,
   laterPhaseFlagsOffInProd,
+  realVideoMediaFlagsOffInProd,
 } from "./index.js";
 
 describe("feature flags", () => {
@@ -22,6 +23,15 @@ describe("feature flags", () => {
     expect(isEnabled("production", "claim.interpretation_allowlist")).toBe(false);
     expect(experimentalSigningOffInProd("production")).toBe(true);
     expect(laterPhaseFlagsOffInProd("production")).toBe(true);
+  });
+
+  it("real-video-0: PopSign + volunteer media flags off; link-out on (no CDN)", () => {
+    expect(isEnabled("production", "assist.popsign.v1")).toBe(false);
+    expect(isEnabled("production", "assist.volunteer.v1")).toBe(false);
+    expect(isEnabled("local", "assist.popsign.v1")).toBe(false);
+    expect(isEnabled("local", "assist.volunteer.v1")).toBe(false);
+    expect(isEnabled("production", "assist.remote_link.v1")).toBe(true);
+    expect(realVideoMediaFlagsOffInProd("production")).toBe(true);
   });
 
   it("honors explicit overrides", () => {

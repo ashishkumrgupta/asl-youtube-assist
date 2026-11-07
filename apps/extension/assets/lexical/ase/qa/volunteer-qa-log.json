@@ -1,0 +1,6 @@
+{
+  "schemaVersion": 1,
+  "pairId": "en-ase",
+  "description": "Deaf QA log for volunteer (and later open_cc) glosses. No gloss ships without a pass row + releaseOnFile when provenance is volunteer.",
+  "entries": []
+}

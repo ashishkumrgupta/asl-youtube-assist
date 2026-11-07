@@ -111,9 +111,18 @@ e2e/extension/           Fixture smoke (no live YouTube)
 .github/workflows/pr.yml CI ready for later push
 ```
 
-## Clip pack hold
+## Clip pack / real video (v0.8)
 
-Do **not** bind AI-persona video or a specific third-party pack until research + coordinator relay. See `apps/extension/assets/lexical/ATTRIBUTION.md` and Project `internal/deaf-user-review/clip-source-stance.md`.
+**ASL assist / partial** only. Gloss/fingerspell is the **fallback** when no clip exists.
+
+| Path                         | Status                                                                    |
+| ---------------------------- | ------------------------------------------------------------------------- |
+| Volunteer Deaf clips         | Pipeline ready (`docs/volunteer/`) — bind only with release + Deaf QA     |
+| Remote link-out              | Overlay **Open sign video** (allowlisted creator/CC pages; no YT→CDN)     |
+| PopSign CC BY thin pack      | Flag `assist.popsign.v1` **off** — no media bytes until per-gloss Deaf QA |
+| AI-persona / NC research CDN | **Forbidden**                                                             |
+
+Tier B ingest: `@asl/lexical` `bindPairClipPack` / `ingestOpenDemoPack`. See `apps/extension/assets/lexical/ATTRIBUTION.md`.
 
 ## Critical-domain gate (Slice A stub)
 
@@ -125,7 +134,7 @@ Allowed: **ASL assist / partial**, captions-stay-on language, human interpretati
 
 Never: AI/digital interpreter for assist, accuracy %, “ASL captions” as the product, fluent-ASL-from-captions claims.
 
-While the clip pack is pending, do not claim Deaf-produced signing video is playing. Keep **ASL assist / partial**.
+While the clip pack is pending, do not claim Deaf-produced signing video is playing. Keep **ASL assist / partial**. Gaps show **No clip for this sign** and fall back to gloss/fingerspell.
 
 ## License
 

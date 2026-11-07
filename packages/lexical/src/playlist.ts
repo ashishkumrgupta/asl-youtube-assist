@@ -1,11 +1,20 @@
 import { fingerspellToken, type FingerspellStep } from "@asl/fingerspell";
-import { CLIP_PACK_MANIFEST, clipPackIsPending } from "./clip-source.js";
+import {
+  CLIP_PACK_MANIFEST,
+  clipPackIsPending,
+  glossHasBoundClip,
+} from "./clip-source.js";
 import { LEXICAL_LOOKUP, type LexicalEntry } from "./dictionary.js";
+import { getBoundAssetPathForGloss, getRemoteUrlForGloss } from "./tier-b-ingest.js";
 
 export interface LexicalClipStep {
   readonly kind: "lexical";
   readonly gloss: string;
   readonly assetPath: string | null;
+  /** Creator-hosted link-out URL when allowlisted; never a CDN mirror. */
+  readonly remoteUrl: string | null;
+  /** True when pack is loaded but this gloss has no local clip (honest gap). */
+  readonly noClipFallback: boolean;
   readonly durationMs: number;
   readonly surface: string;
 }
@@ -59,9 +68,30 @@ export function tokenizeCaption(text: string): string[] {
     .filter((t) => t.length > 0);
 }
 
+function lexicalStep(entry: LexicalEntry, surface: string): LexicalClipStep {
+  const packPending = clipPackIsPending(CLIP_PACK_MANIFEST);
+  const bound = !packPending && glossHasBoundClip(entry.gloss);
+  // Only paths recorded by Tier B ingest — never invent a local file from dictionary alone.
+  const boundPath = bound ? getBoundAssetPathForGloss(entry.gloss) : null;
+  const remoteUrl = getRemoteUrlForGloss(entry.gloss);
+  const hasLocal = Boolean(boundPath);
+  const hasRemote = Boolean(remoteUrl);
+  return {
+    kind: "lexical",
+    gloss: entry.gloss,
+    assetPath: hasLocal ? boundPath : null,
+    remoteUrl: hasRemote ? remoteUrl : null,
+    // Gap honesty when pack is pending OR gloss not bound (and no remote).
+    noClipFallback: !hasLocal && !hasRemote,
+    durationMs: entry.durationMs,
+    surface,
+  };
+}
+
 /**
  * Caption → assist playlist (gloss cues + fingerspell OOV).
- * Media paths bind only when clip pack status is `loaded`.
+ * Local media paths bind only for QA'd glosses in a loaded Tier B pack.
+ * Gloss/fingerspell remains the fallback when no clip exists.
  */
 export function buildAssistPlaylist(
   captionText: string,
@@ -82,13 +112,7 @@ export function buildAssistPlaylist(
     const entry = lookup.get(token);
     if (entry) {
       lexicalHits += 1;
-      steps.push({
-        kind: "lexical",
-        gloss: entry.gloss,
-        assetPath: packLoaded ? entry.assetPath : null,
-        durationMs: entry.durationMs,
-        surface: token,
-      });
+      steps.push(lexicalStep(entry, token));
       continue;
     }
     const fs = fingerspellToken(token, 450, packLoaded);

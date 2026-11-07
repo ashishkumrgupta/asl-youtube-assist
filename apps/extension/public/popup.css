@@ -193,3 +193,24 @@ main {
     font-size: 20px;
   }
 }
+
+.about {
+  margin: 0;
+  padding: 8px 10px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.03);
+  font-size: 11px;
+  color: var(--muted);
+}
+
+.about summary {
+  cursor: pointer;
+  color: var(--accent);
+  font-weight: 600;
+}
+
+.about-body {
+  margin: 8px 0 0;
+  line-height: 1.4;
+}

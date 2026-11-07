@@ -5,6 +5,7 @@ import {
   isPickerPairId,
   pickerLanguagePairs,
 } from "@asl/language-pairs";
+import { CLIP_PACK_MANIFEST, VOLUNTEER_SOURCE_LINE, provenanceShortTag } from "@asl/lexical";
 import {
   ASSIST_CAPTIONS_FLOOR,
   ASSIST_STATUS_ON,
@@ -22,6 +23,8 @@ const pairHint = document.getElementById("pair-hint");
 const toggleLabel = document.getElementById("toggle-label");
 const honestyEl = document.getElementById("honesty");
 const aboutBody = document.getElementById("about-body");
+const aboutPack = document.getElementById("about-pack");
+const aboutCredits = document.getElementById("about-credits");
 const captionsFloor = document.getElementById("captions-floor");
 
 if (versionEl) {
@@ -30,6 +33,42 @@ if (versionEl) {
 if (captionsFloor) {
   captionsFloor.textContent = ASSIST_CAPTIONS_FLOOR;
 }
+
+function fillAboutExtras(): void {
+  if (aboutPack) {
+    const m = CLIP_PACK_MANIFEST;
+    aboutPack.textContent =
+      m.status === "loaded"
+        ? `Clip pack: loaded · ${m.provenance ?? "unknown"} · ${m.sourceId ?? "?"} · ${m.boundGlosses.length} gloss(es). ASL assist / partial — not gold.`
+        : "Clip pack: pending — gloss/fingerspell fallback. Volunteer + link-out ready; PopSign bytes wait on Deaf QA.";
+  }
+  void loadCredits();
+}
+
+async function loadCredits(): Promise<void> {
+  if (!aboutCredits) return;
+  try {
+    const url = chrome.runtime.getURL("lexical/ase/CREDITS.json");
+    const res = await fetch(url);
+    if (!res.ok) throw new Error("credits missing");
+    const data = (await res.json()) as {
+      contributors?: readonly { displayName?: string }[];
+      honesty?: string;
+    };
+    const names = (data.contributors ?? [])
+      .map((c) => c.displayName?.trim())
+      .filter((n): n is string => Boolean(n));
+    if (names.length === 0) {
+      aboutCredits.textContent = `${data.honesty ?? VOLUNTEER_SOURCE_LINE} No contributor names yet.`;
+    } else {
+      aboutCredits.textContent = `Credits: ${names.join(", ")}. ${data.honesty ?? VOLUNTEER_SOURCE_LINE}`;
+    }
+  } catch {
+    aboutCredits.textContent = `${VOLUNTEER_SOURCE_LINE} Credits file not loaded.`;
+  }
+}
+
+fillAboutExtras();
 
 function fillPairSelect(selectedId: string): void {
   if (!pairSelect) return;
@@ -60,7 +99,10 @@ function applyPairChrome(pairId: string): void {
   const pair = getLanguagePair(pairId);
   const labelEl = document.getElementById("claim-label");
   if (labelEl) labelEl.textContent = pair.assistCopy.label;
-  if (honestyEl) honestyEl.textContent = pair.assistCopy.honestyLine;
+  if (honestyEl) {
+    honestyEl.textContent =
+      pair.id === "en-ase" ? provenanceShortTag(CLIP_PACK_MANIFEST) : pair.assistCopy.honestyLine;
+  }
   if (aboutBody) {
     aboutBody.textContent = `${pair.assistCopy.details} ${pair.assistCopy.glossNote}`;
   }

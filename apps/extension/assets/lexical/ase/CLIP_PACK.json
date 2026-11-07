@@ -2,7 +2,12 @@
   "pairId": "en-ase",
   "signLanguageIso": "ase",
   "status": "pending",
+  "sourceId": null,
+  "provenance": null,
+  "license": null,
   "deafProduced": false,
   "syntheticPersona": false,
-  "note": "ASL gold pack CapEx-deferred. Habit-shell gloss/fingerspell cues only."
+  "attributionUrl": null,
+  "boundGlosses": [],
+  "note": "ASL Tier B pack pending. Volunteer pipeline + link-out ready; PopSign bytes wait on per-gloss Deaf QA. Habit-shell gloss/fingerspell cues only."
 }
