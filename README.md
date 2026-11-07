@@ -1,21 +1,10 @@
-# ASL YouTube Assist (v0.7 · local theater + YouTube)
+# ASL YouTube Assist (v0.7.1 · YouTube + local theater)
 
 Chrome/Edge **Manifest V3** extension that adds an **ASL assist / partial** PiP-style overlay on YouTube watch pages. Multi-lang registry lists **Indian Sign Language (ISL, `ins`)** as **pending** chrome (not live). Irish Sign Language (`isg`) is out of scope.
 
 **Runs locally in your browser** (many users ⇒ many independent clients; no Project backend for habit shell). See `docs/performance.md` + `docs/security.md`.
 
 **This is not a human interpreter.** Captions remain the reliability floor. No accuracy percentages. No “better than captions” / multi-lang-live / ISL-ready claims without CapEx + Deaf-led eval. See `docs/languages.md`.
-
-## Workspace paths
-
-| Role                        | Path                                                |
-| --------------------------- | --------------------------------------------------- |
-| **Project browse / mirror** | `/cursor/stores/self/workspace/asl-youtube-assist/` |
-| **Git + npm working tree**  | `/agent/asl-youtube-assist/`                        |
-
-The Project store mount cannot host a real `.git` directory (permission / rename limits). **Local git is initialized and committed on `/agent/asl-youtube-assist`**. Source is mirrored into the Project workspace path for browsing. Prefer the `/agent` path for `git`, `npm install`, `npm test`, and `npm run build`.
-
-Push to Origin/GitHub when ready — remotes are optional today. See `GIT_LOCATION.md` in the store mirror.
 
 ## What Slice A includes
 
@@ -48,42 +37,41 @@ Push to Origin/GitHub when ready — remotes are optional today. See `GIT_LOCATI
 ## Quick start (local)
 
 ```sh
-cd /workspace   # or the Project mirror / agent checkout
+git pull
 npm install
-npm test
 npm run build
-npm run demo          # local theater — open ONLY http://127.0.0.1:4173/ (not localhost)
 ```
 
 Built unpacked extension: `apps/extension/dist/`
 
-### Testing paths (do not conflate)
+Day-to-day steps (YouTube + local theater): [`docs/build-and-reload.md`](docs/build-and-reload.md).
 
-| Path                                                          | Who                                        | What it proves                           |
-| ------------------------------------------------------------- | ------------------------------------------ | ---------------------------------------- |
-| **YouTube sideload** (content script on `/watch`)             | **Owner** real-world check; also manual QA | Live CC → gloss overlay on real YouTube  |
-| **Local theater** (`npm run demo` → `http://127.0.0.1:4173/`) | **Owner** offline sideload; agents/CI/UAT  | Same extension overlay on captioned MP4s |
+### Test on YouTube (primary product path)
 
-Local theater uses the **same content script** as YouTube (host `http://127.0.0.1:4173/*` only). It is **not** a replacement for real YouTube validation. Pack still **pending**; neither path claims signing video works. Day-to-day steps: [`docs/build-and-reload.md`](docs/build-and-reload.md).
+1. `npm run build`
+2. `chrome://extensions` → Developer mode → **Load unpacked** → `apps/extension/dist` (or **Reload** if already loaded)
+3. Confirm site access is ON for YouTube
+4. Open a **captioned** YouTube `/watch` URL → turn **CC** on
+5. Extension icon → enable **Show ASL assist overlay**
+6. Confirm honesty line, cues advance with captions, captions stay on
 
-### Sideload (Chrome or Edge)
+### Test on local theater (offline / demo)
 
-1. Run `npm run build`.
-2. Open `chrome://extensions` (or `edge://extensions`).
-3. Enable **Developer mode**.
-4. **Load unpacked** → select `apps/extension/dist`.
-5. Open a **captioned** YouTube watch URL.
-6. Click the extension icon → enable **Show ASL assist overlay**.
-7. Confirm **ASL assist / partial**, disclaimer notes **clip pack pending**, gloss/fingerspell cues, captions still work.
-8. Drag **Move** (or arrow keys) so the overlay does not cover captions.
+Same overlay as YouTube, on demo MP4s. Server must **keep running**.
 
-Full checklist: [`docs/sideload-checklist.md`](docs/sideload-checklist.md).  
-Day-to-day on `main` (minimal git): [`docs/build-and-reload.md`](docs/build-and-reload.md).
+1. Load/reload the extension (above); site access ON for `http://127.0.0.1:4173`
+2. `npm run demo` → leave the terminal open
+3. Open **only** `http://127.0.0.1:4173/` (not `localhost`)
+4. Pick a clip → enable overlay → cues advance with captions
+
+Local theater is **not** a replacement for real YouTube validation. Pack still **pending**; neither path claims signing video works.
+
+Full checklist: [`docs/sideload-checklist.md`](docs/sideload-checklist.md).
 
 Permissions used (least privilege):
 
 - `storage` — overlay toggle persistence (session)
-- `host_permissions`: `https://www.youtube.com/*`, `https://youtube.com/*`
+- `host_permissions`: `https://www.youtube.com/*`, `https://youtube.com/*` — primary YouTube path
 - `host_permissions`: `http://127.0.0.1:4173/*` — local theater only (`npm run demo`)
 
 ## Scripts
@@ -126,26 +114,6 @@ e2e/extension/           Fixture smoke (no live YouTube)
 ## Clip pack hold
 
 Do **not** bind AI-persona video or a specific third-party pack until research + coordinator relay. See `apps/extension/assets/lexical/ATTRIBUTION.md` and Project `internal/deaf-user-review/clip-source-stance.md`.
-
-## Git remote (add later — not required today)
-
-This repo is initialized **locally**. No Origin/GitHub remote is required to develop or sideload.
-
-When you are ready to push:
-
-```sh
-cd /cursor/stores/self/workspace/asl-youtube-assist
-
-# Origin (preferred when available)
-git remote add origin https://origin.cursor.com/git/ashish-gupta-f4j90/asl-youtube-assist.git
-
-# Or GitHub
-# git remote add origin https://github.com/<owner>/asl-youtube-assist.git
-
-git push -u origin main
-```
-
-If the remote does not exist yet, create an empty repo first, then push. See Project note `internal/development/repo-bootstrap.md` for prior remote-create blockers.
 
 ## Critical-domain gate (Slice A stub)
 

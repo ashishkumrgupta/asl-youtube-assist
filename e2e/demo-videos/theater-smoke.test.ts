@@ -74,12 +74,21 @@ describe("local theater smoke", () => {
     const demoPkg = JSON.parse(
       readFileSync(join(root, "apps/demo-player/package.json"), "utf8"),
     ) as { scripts: Record<string, string> };
+    const serveScript = readFileSync(join(root, "scripts/serve-demo-player.mjs"), "utf8");
     for (const script of [rootPkg.scripts.demo, demoPkg.scripts.demo]) {
-      expect(script).toContain("tcp://127.0.0.1:4173");
-      expect(script).toContain("http://127.0.0.1:4173/");
-      expect(script).not.toMatch(/-l\s+4173\b/);
+      expect(script).toContain("scripts/serve-demo-player.mjs");
       expect(script.toLowerCase()).not.toContain("localhost");
+      expect(script).not.toMatch(/\bnpx\b/);
+      expect(script).not.toContain("tcp://");
     }
+    expect(serveScript).toContain('HOST = "127.0.0.1"');
+    expect(serveScript).toContain("PORT = 4173");
+    expect(serveScript).toMatch(
+      /http:\/\/\$\{HOST\}:\$\{PORT\}|http:\/\/127\.0\.0\.1:4173/,
+    );
+    // Must not bind the loopback alias Chrome treats as a different origin
+    expect(serveScript).not.toMatch(/HOST\s*=\s*["']localhost["']/);
+    expect(serveScript).not.toMatch(/\.listen\(\s*PORT\s*,\s*["']localhost["']/);
     const manifest = JSON.parse(
       readFileSync(join(root, "apps/extension/public/manifest.json"), "utf8"),
     ) as { host_permissions: string[] };

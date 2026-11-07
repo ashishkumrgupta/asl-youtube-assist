@@ -12,7 +12,7 @@ No `<all_urls>`, no remote code, no clipboard/identity APIs, no caption exfil en
 
 ## Local theater host (rationale)
 
-- **Pinned origin:** `http://127.0.0.1:4173/*` matches the documented static server from `npm run demo` / `npm run demo:player` (`serve -l tcp://127.0.0.1:4173`).
+- **Pinned origin:** `http://127.0.0.1:4173/*` matches the documented static server from `npm run demo` / `npm run demo:player` (`node scripts/serve-demo-player.mjs` binds `127.0.0.1:4173` only).
 - **Not** `http://127.0.0.1:*/*`, **not** `localhost`, **not** LAN IPs — least privilege for offline owner testing only.
 - Open **`http://127.0.0.1:4173/`** only. `http://localhost:4173/` is a different Chrome origin and will **not** receive the content script.
 - YouTube host permissions are **unchanged** and remain required for the live product path.

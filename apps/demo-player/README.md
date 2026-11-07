@@ -11,9 +11,9 @@ Clip pack remains **pending**.
 ## Run
 
 ```sh
-# From repo root
+# From repo root — leave the terminal open (server must stay running)
 npm run demo
-# → http://127.0.0.1:4173/
+# → Local theater (open this URL): http://127.0.0.1:4173/
 ```
 
 `npm run demo:player` is an alias of the same command.
@@ -21,6 +21,10 @@ npm run demo
 Documented origin (least-privilege host permission):
 
 `http://127.0.0.1:4173/*`
+
+Open **only** that URL — not `http://localhost:4173/` (different Chrome origin; extension will not inject).
+
+Owner steps for YouTube vs theater: [`docs/build-and-reload.md`](../../docs/build-and-reload.md).
 
 ## What you should see
 
@@ -34,6 +38,6 @@ Documented origin (least-privilege host permission):
 
 ```sh
 npm run build -w @asl/demo-player
-npx serve apps/demo-player/dist -l tcp://127.0.0.1:4173
+node scripts/serve-demo-player.mjs
 # Open only http://127.0.0.1:4173/ — not localhost (different Chrome origin)
 ```
