@@ -77,7 +77,8 @@ Local harness is **not** a replacement for the owner’s YouTube testing. Pack s
 7. Confirm **ASL assist / partial**, disclaimer notes **clip pack pending**, gloss/fingerspell cues, captions still work.
 8. Drag **Move** (or arrow keys) so the overlay does not cover captions.
 
-Full checklist: [`docs/sideload-checklist.md`](docs/sideload-checklist.md).
+Full checklist: [`docs/sideload-checklist.md`](docs/sideload-checklist.md).  
+Day-to-day on `main` (minimal git): [`docs/build-and-reload.md`](docs/build-and-reload.md).
 
 Permissions used (least privilege):
 
