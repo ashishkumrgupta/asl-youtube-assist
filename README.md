@@ -1,4 +1,4 @@
-# ASL YouTube Assist (v0.6 · UI redesign + local demos)
+# ASL YouTube Assist (v0.7 · local theater + YouTube)
 
 Chrome/Edge **Manifest V3** extension that adds an **ASL assist / partial** PiP-style overlay on YouTube watch pages. Multi-lang registry lists **Indian Sign Language (ISL, `ins`)** as **pending** chrome (not live). Irish Sign Language (`isg`) is out of scope.
 
@@ -26,7 +26,7 @@ Push to Origin/GitHub when ready — remotes are optional today. See `GIT_LOCATI
 | Caption floor preserved (never strips CC)                  | Done                                    |
 | Sync to caption timestamps (text tracks + YouTube DOM CC)  | Done (best-effort)                      |
 | Compact popup / overlay (badge + honesty line)             | Done (v0.6)                             |
-| Local demo videos + offline demo player (no live YT)       | Done (v0.6)                             |
+| Local YouTube-like theater + extension host (no live YT)   | Done (v0.7)                             |
 | Honest labels: **ASL assist / partial** only               | Done                                    |
 | Critical-domain keyword gate stub (disclosed as heuristic) | Done                                    |
 | Movable overlay (drag / arrow keys)                        | Done                                    |
@@ -52,19 +52,19 @@ cd /workspace   # or the Project mirror / agent checkout
 npm install
 npm test
 npm run build
-npm run demo:player   # offline caption→gloss UI at http://127.0.0.1:4173/
+npm run demo          # local theater at http://127.0.0.1:4173/
 ```
 
 Built unpacked extension: `apps/extension/dist/`
 
 ### Testing paths (do not conflate)
 
-| Path                                                              | Who                                         | What it proves                          |
-| ----------------------------------------------------------------- | ------------------------------------------- | --------------------------------------- |
-| **YouTube sideload** (content script on `/watch`)                 | **Owner** real-world check; also manual QA  | Live CC → gloss overlay on real YouTube |
-| **Local demos** (`fixtures/demo-videos/` + `npm run demo:player`) | **Agents / CI** + **Deaf-user UAT** offline | Caption→gloss sync UI without live YT   |
+| Path                                                          | Who                                        | What it proves                           |
+| ------------------------------------------------------------- | ------------------------------------------ | ---------------------------------------- |
+| **YouTube sideload** (content script on `/watch`)             | **Owner** real-world check; also manual QA | Live CC → gloss overlay on real YouTube  |
+| **Local theater** (`npm run demo` → `http://127.0.0.1:4173/`) | **Owner** offline sideload; agents/CI/UAT  | Same extension overlay on captioned MP4s |
 
-Local harness is **not** a replacement for the owner’s YouTube testing. Pack still **pending**; neither path claims signing video works.
+Local theater uses the **same content script** as YouTube (host `http://127.0.0.1:4173/*` only). It is **not** a replacement for real YouTube validation. Pack still **pending**; neither path claims signing video works. Day-to-day steps: [`docs/build-and-reload.md`](docs/build-and-reload.md).
 
 ### Sideload (Chrome or Edge)
 
@@ -84,6 +84,7 @@ Permissions used (least privilege):
 
 - `storage` — overlay toggle persistence (session)
 - `host_permissions`: `https://www.youtube.com/*`, `https://youtube.com/*`
+- `host_permissions`: `http://127.0.0.1:4173/*` — local theater only (`npm run demo`)
 
 ## Scripts
 
@@ -91,6 +92,8 @@ Permissions used (least privilege):
 | ---------------------- | ----------------------------------------------------------------- |
 | `npm test`             | Vitest unit tests (labels, sync, flags, critical gate, copy lint) |
 | `npm run build`        | Build packages + extension `dist/`                                |
+| `npm run demo`         | Build + serve local theater at `http://127.0.0.1:4173/`           |
+| `npm run demo:player`  | Alias of `npm run demo`                                           |
 | `npm run lint`         | ESLint (warnings as errors)                                       |
 | `npm run typecheck`    | Strict TypeScript project references                              |
 | `npm run format:check` | Prettier check                                                    |

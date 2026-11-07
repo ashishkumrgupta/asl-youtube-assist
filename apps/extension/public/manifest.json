@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
   "name": "ASL YouTube Assist (partial)",
-  "version": "0.6.0",
-  "description": "ASL assist / partial overlay for YouTube watch pages. Runs locally in your browser. Not a human interpreter. Captions stay on.",
+  "version": "0.7.0",
+  "description": "ASL assist / partial overlay for YouTube watch pages and the local demo theater. Runs locally in your browser. Not a human interpreter. Captions stay on.",
   "action": {
     "default_title": "ASL assist / partial",
     "default_popup": "popup.html",
@@ -19,20 +19,32 @@
   },
   "content_scripts": [
     {
-      "matches": ["https://www.youtube.com/*", "https://youtube.com/*"],
+      "matches": [
+        "https://www.youtube.com/*",
+        "https://youtube.com/*",
+        "http://127.0.0.1:4173/*"
+      ],
       "js": ["content-script.js"],
       "run_at": "document_idle"
     }
   ],
   "permissions": ["storage"],
-  "host_permissions": ["https://www.youtube.com/*", "https://youtube.com/*"],
+  "host_permissions": [
+    "https://www.youtube.com/*",
+    "https://youtube.com/*",
+    "http://127.0.0.1:4173/*"
+  ],
   "content_security_policy": {
     "extension_pages": "script-src 'self'; object-src 'self'; frame-ancestors 'none'"
   },
   "web_accessible_resources": [
     {
       "resources": ["lexical/**/*"],
-      "matches": ["https://www.youtube.com/*", "https://youtube.com/*"]
+      "matches": [
+        "https://www.youtube.com/*",
+        "https://youtube.com/*",
+        "http://127.0.0.1:4173/*"
+      ]
     }
   ],
   "icons": {

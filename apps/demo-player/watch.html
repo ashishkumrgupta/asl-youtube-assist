@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta
+      name="description"
+      content="Local ASL assist watch page — HTML5 video with always-on VTT captions. Partial assist; pack pending."
+    />
+    <title>Watch · ASL assist theater</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body class="page-watch" data-asl-theater="watch">
+    <div class="atmosphere" aria-hidden="true"></div>
+
+    <a class="back-link" href="./">← Library</a>
+
+    <section class="theater" aria-label="Watch">
+      <div class="stage-bleed">
+        <video
+          id="asl-demo-video"
+          class="theater-video"
+          data-asl-demo-video
+          controls
+          playsinline
+          crossorigin="anonymous"
+        >
+          <track
+            id="asl-demo-track"
+            kind="captions"
+            srclang="en"
+            label="English"
+            default
+          />
+        </video>
+        <p
+          id="demo-caption"
+          class="burned-caption"
+          data-asl-demo-caption
+          aria-live="polite"
+        ></p>
+      </div>
+
+      <div class="watch-meta">
+        <p class="brand-mini" id="watch-brand">ASL assist / partial</p>
+        <h1 id="watch-title">Demo</h1>
+        <p id="watch-honesty" class="honesty-line"></p>
+        <p class="captions-floor">Captions stay on · VTT always available</p>
+      </div>
+    </section>
+
+    <nav class="up-next" aria-label="More demos">
+      <p class="up-next-label">More demos</p>
+      <ul id="up-next-list" class="up-next-list"></ul>
+    </nav>
+
+    <script type="module" src="./watch.js"></script>
+  </body>
+</html>

@@ -504,6 +504,15 @@ export function renderOverlay(vm: OverlayViewModel): void {
 
 export function pageCaptionsStillPresent(): boolean {
   const ytCaption = document.querySelector(".ytp-caption-window-container");
-  const video = document.querySelector("video");
-  return ytCaption !== null || video !== null;
+  const theaterCaption = document.querySelector("[data-asl-demo-caption]");
+  const theaterTrack = document.querySelector("#asl-demo-track, track[kind='captions']");
+  const video = document.querySelector(
+    "video[data-asl-demo-video], #asl-demo-video, video.html5-main-video, video",
+  );
+  return (
+    ytCaption !== null ||
+    theaterCaption !== null ||
+    theaterTrack !== null ||
+    video !== null
+  );
 }

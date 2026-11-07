@@ -2,6 +2,28 @@
 
 All notable changes to this project are documented in this file.
 
+## [0.7.0] — 2026-11-07
+
+### Added
+
+- Local **YouTube-like theater** (`apps/demo-player`): library + watch pages with HTML5 video and always-on VTT; `npm run demo` → `http://127.0.0.1:4173/`
+- Extension content script + host permission for documented theater origin only: `http://127.0.0.1:4173/*` (YouTube hosts unchanged)
+- Theater smoke tests (`e2e/demo-videos/theater-smoke.test.ts`) — pages build and caption cues parse
+- Docs: `docs/build-and-reload.md` splits **Test on local theater** vs **Test on YouTube**; permissions/security rationale for the pinned local host
+
+### Changed
+
+- Demo player is theater-first (extension injects overlay); embedded offline assist chrome removed from the page itself
+- `npm run demo:player` aliases `npm run demo`
+
+### Honesty
+
+- Still **ASL assist / partial** only; pack **pending**; theater does **not** claim signing video or replace real YouTube validation
+
+### Security
+
+- SEC-1: least-privilege local host pinned to `127.0.0.1:4173` (not wildcard ports, not `localhost`); static gate updated
+
 ## [0.6.0] — 2026-11-07
 
 ### Fixed

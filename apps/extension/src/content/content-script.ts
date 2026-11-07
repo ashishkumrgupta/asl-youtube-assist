@@ -95,6 +95,11 @@ function renderPendingOrLiveBase(active: boolean): void {
   });
 }
 
+/** YouTube `/watch` and local theater `/watch` (same assist path; `.html` ok too). */
+function isWatchPath(pathname: string = location.pathname): boolean {
+  return pathname === "/watch" || pathname.startsWith("/watch.");
+}
+
 function onToggle(next: boolean): void {
   const gate = evaluateCriticalGate({
     domains: extractPageDomainTokens(),
@@ -121,13 +126,14 @@ function onToggle(next: boolean): void {
   renderPendingOrLiveBase(enabled);
 
   const pair = currentPair();
-  if (enabled && pair.liveAssistEnabled) {
+  // Library / non-watch pages: show chrome state only; do not bind random videos.
+  if (enabled && pair.liveAssistEnabled && isWatchPath()) {
     startClock();
   } else {
     stopClock();
   }
 
-  if (!pageCaptionsStillPresent()) {
+  if (isWatchPath() && !pageCaptionsStillPresent()) {
     console.warn("[asl-assist] video element missing; captions floor cannot be verified");
   }
 }
@@ -211,9 +217,11 @@ const obs = new MutationObserver(() => {
   navTimer = window.setTimeout(() => {
     if (location.pathname === lastPathname) return;
     lastPathname = location.pathname;
-    if (!location.pathname.startsWith("/watch")) {
+    if (!isWatchPath()) {
       stopClock();
       renderOverlay(emptyVm());
+    } else if (enabled && currentPair().liveAssistEnabled && !tickTimer) {
+      startClock();
     }
   }, NAV_OBSERVER_DEBOUNCE_MS);
 });
@@ -222,7 +230,7 @@ obs.observe(document.documentElement, { childList: true, subtree: true });
 document.addEventListener("visibilitychange", () => {
   if (!enabled) return;
   if (document.hidden) return;
-  if (currentPair().liveAssistEnabled && !tickTimer) startClock();
+  if (currentPair().liveAssistEnabled && isWatchPath() && !tickTimer) startClock();
 });
 
 void chrome.runtime.sendMessage({ type: "GET_STATE" }).then((res: unknown) => {

@@ -9,8 +9,11 @@ Static gate: `npm run security-check` (`scripts/security-check.mjs`).
 | ------------------------------------------------------------------------ | -------------------------------------------- |
 | `storage`                                                                | Session toggle + language pair id only       |
 | `host_permissions`: `https://www.youtube.com/*`, `https://youtube.com/*` | Inject content script + message YouTube tabs |
+| `host_permissions`: `http://127.0.0.1:4173/*`                            | Local demo theater (`npm run demo`) only     |
 
 No `<all_urls>`, no tabs/history/cookies. Changelog/PR must list any permission change.
+
+**Local theater:** host is pinned to `127.0.0.1:4173` (documented static server). Not wildcard ports, not `localhost`, not LAN. YouTube permissions stay. See [`permissions.md`](permissions.md).
 
 ## SEC-2 — No remote code + CSP
 
