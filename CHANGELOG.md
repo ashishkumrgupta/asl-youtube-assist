@@ -2,6 +2,13 @@
 
 All notable changes to this project are documented in this file.
 
+## [0.7.1] — 2026-11-07
+
+### Fixed
+
+- `npm run demo` now keeps serving via `scripts/serve-demo-player.mjs` on `127.0.0.1:4173` only (no `npx serve` exit / silent port switch)
+- Owner docs: **Test on YouTube** (primary) vs **Test on local theater** with exact steps only (`docs/build-and-reload.md`, README)
+
 ## [0.7.0] — 2026-11-07
 
 ### Added
