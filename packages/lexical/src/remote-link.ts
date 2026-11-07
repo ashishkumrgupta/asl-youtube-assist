@@ -54,9 +54,7 @@ export function normalizeRemoteUrl(url: string): string | null {
 export function findAllowlistedRemoteUrl(url: string): RemoteLinkAllowEntry | null {
   const norm = normalizeRemoteUrl(url);
   if (!norm) return null;
-  return (
-    REMOTE_LINK_ALLOWLIST.find((e) => normalizeRemoteUrl(e.url) === norm) ?? null
-  );
+  return REMOTE_LINK_ALLOWLIST.find((e) => normalizeRemoteUrl(e.url) === norm) ?? null;
 }
 
 export function isAllowlistedRemoteUrl(url: string): boolean {

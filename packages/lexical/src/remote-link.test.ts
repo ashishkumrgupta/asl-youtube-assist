@@ -8,10 +8,7 @@ import {
   validateRemoteUrl,
 } from "./remote-link.js";
 
-function lex(
-  gloss: string,
-  remoteUrl: string | null,
-): AssistPlaylistStep {
+function lex(gloss: string, remoteUrl: string | null): AssistPlaylistStep {
   return {
     kind: "lexical",
     gloss,

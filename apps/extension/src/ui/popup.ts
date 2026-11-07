@@ -5,7 +5,11 @@ import {
   isPickerPairId,
   pickerLanguagePairs,
 } from "@asl/language-pairs";
-import { CLIP_PACK_MANIFEST, VOLUNTEER_SOURCE_LINE, provenanceShortTag } from "@asl/lexical";
+import {
+  CLIP_PACK_MANIFEST,
+  VOLUNTEER_SOURCE_LINE,
+  provenanceShortTag,
+} from "@asl/lexical";
 import {
   ASSIST_CAPTIONS_FLOOR,
   ASSIST_STATUS_ON,
@@ -101,7 +105,9 @@ function applyPairChrome(pairId: string): void {
   if (labelEl) labelEl.textContent = pair.assistCopy.label;
   if (honestyEl) {
     honestyEl.textContent =
-      pair.id === "en-ase" ? provenanceShortTag(CLIP_PACK_MANIFEST) : pair.assistCopy.honestyLine;
+      pair.id === "en-ase"
+        ? provenanceShortTag(CLIP_PACK_MANIFEST)
+        : pair.assistCopy.honestyLine;
   }
   if (aboutBody) {
     aboutBody.textContent = `${pair.assistCopy.details} ${pair.assistCopy.glossNote}`;
