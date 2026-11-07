@@ -29,7 +29,8 @@ describe("eval harness scaffolding (AC-1.5)", () => {
     const tierFx = manifest.fixtures.find((f) => f.id === "p1a-tier-empty")!;
     const route = routeTiers(String(tierFx.youtubeVideoId));
     expect(route.activeTier).toBe("B");
-    expect(route.emptyState?.toLowerCase()).toContain("unavailable");
+    expect(route.emptyState?.toLowerCase()).toContain("tier a empty");
+    expect(route.emptyState?.toLowerCase()).toContain("not human interpretation");
 
     expect(CLIP_PACK_MANIFEST.status).toBe("pending");
     const playlist = buildPlaylistFromGloss(gloss);

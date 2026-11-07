@@ -21,6 +21,7 @@
     { "path": "../../packages/lexical" },
     { "path": "../../packages/perf-budget" },
     { "path": "../../packages/stitch" },
-    { "path": "../../packages/catalog" }
+    { "path": "../../packages/catalog" },
+    { "path": "../../packages/assist-runtime" }
   ]
 }

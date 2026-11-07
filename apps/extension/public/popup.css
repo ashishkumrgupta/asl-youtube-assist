@@ -1,10 +1,12 @@
 :root {
-  color-scheme: light dark;
-  --bg: #0f141c;
-  --fg: #f2f5f8;
-  --muted: #a8b3c2;
-  --accent: #6eb6ff;
-  --border: rgba(255, 255, 255, 0.14);
+  color-scheme: dark;
+  --ink: #07131a;
+  --foam: #e7f3f1;
+  --mist: #9bb8b4;
+  --amber: #e2a35a;
+  --line: rgba(231, 243, 241, 0.16);
+  --font-display: Georgia, "Iowan Old Style", "Palatino Linotype", Palatino, serif;
+  --font-ui: "Avenir Next", "Century Gothic", Futura, "Gill Sans", sans-serif;
 }
 
 * {
@@ -13,90 +15,181 @@
 
 body {
   margin: 0;
-  min-width: 320px;
-  font:
-    14px/1.4 "Segoe UI",
-    system-ui,
-    sans-serif;
-  background: radial-gradient(120% 100% at 0% 0%, #1a2740, var(--bg));
-  color: var(--fg);
+  min-width: 300px;
+  max-width: 360px;
+  font: 14px/1.4 var(--font-ui);
+  color: var(--foam);
+  background:
+    radial-gradient(120% 90% at 0% 0%, rgba(46, 110, 98, 0.42), transparent 55%),
+    radial-gradient(80% 70% at 100% 100%, rgba(226, 163, 90, 0.16), transparent 55%),
+    linear-gradient(165deg, #0c2228 0%, #07131a 60%, #0a1814 100%);
+  animation: wash-in 420ms ease-out;
 }
 
 main {
-  padding: 16px;
+  padding: 18px 16px 14px;
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 12px;
 }
 
-h1 {
+.hero {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.brand {
   margin: 0;
-  font-size: 16px;
+  font-family: var(--font-display);
+  font-size: 22px;
   font-weight: 700;
-  letter-spacing: 0.01em;
+  letter-spacing: -0.02em;
+  line-height: 1.15;
+  animation: rise 360ms ease-out;
 }
 
-.disclaimer {
+.honesty {
   margin: 0;
-  color: var(--muted);
+  color: var(--mist);
   font-size: 12px;
+  line-height: 1.35;
 }
 
-.row {
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.field-label {
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--mist);
+}
+
+.field select {
+  width: 100%;
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 1px solid var(--line);
+  background: rgba(0, 0, 0, 0.28);
+  color: var(--foam);
+  font: inherit;
+}
+
+.toggle-row {
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 12px;
-  padding: 10px 12px;
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  background: rgba(255, 255, 255, 0.04);
+  padding: 10px 0 2px;
+  font-size: 13px;
 }
 
-.row.stack {
-  flex-direction: column;
-  align-items: stretch;
-}
-
-.row select {
-  width: 100%;
-  margin-top: 6px;
-  padding: 8px;
-  border-radius: 6px;
-  border: 1px solid var(--border);
-  background: rgba(0, 0, 0, 0.25);
-  color: var(--fg);
-  font: inherit;
-}
-
-.row input {
+.toggle-row input {
   width: 18px;
   height: 18px;
-  accent-color: var(--accent);
+  accent-color: var(--amber);
 }
 
 .pair-hint {
   margin: 0;
   font-size: 11px;
-  color: var(--muted);
+  color: var(--mist);
   line-height: 1.4;
+}
+
+.pair-hint[hidden] {
+  display: none;
 }
 
 .status {
   margin: 0;
   font-size: 12px;
-  color: var(--fg);
+  color: var(--foam);
+  min-height: 1.2em;
 }
 
 .floor {
   margin: 0;
   font-size: 11px;
-  color: var(--muted);
+  color: var(--mist);
+}
+
+.about {
+  border-top: 1px solid var(--line);
+  padding-top: 8px;
+  font-size: 12px;
+  color: var(--mist);
+}
+
+.about summary {
+  cursor: pointer;
+  color: var(--foam);
+  font-size: 12px;
+  list-style: none;
+}
+
+.about summary::-webkit-details-marker {
+  display: none;
+}
+
+.about summary::after {
+  content: " ›";
+  color: var(--amber);
+}
+
+.about[open] summary::after {
+  content: " ˅";
+}
+
+.about-body {
+  margin: 8px 0 0;
+  line-height: 1.45;
+  color: var(--mist);
 }
 
 .version {
   margin: 0;
   font-size: 10px;
-  color: var(--muted);
-  opacity: 0.8;
+  color: var(--mist);
+  opacity: 0.75;
+}
+
+@keyframes wash-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  body,
+  .brand {
+    animation: none;
+  }
+}
+
+@media (max-width: 340px) {
+  body {
+    min-width: 260px;
+  }
+  .brand {
+    font-size: 20px;
+  }
 }

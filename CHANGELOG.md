@@ -2,6 +2,30 @@
 
 All notable changes to this project are documented in this file.
 
+## [0.6.0] — 2026-11-07
+
+### Fixed
+
+- Caption cue detection on YouTube: fall back to live DOM caption window when HTML5 `textTracks` are empty, so gloss cues advance while CC is on (no multi-minute “Waiting for caption window…” stall)
+
+### Changed (UI)
+
+- Popup + floating overlay redesigned: compact **badge + one honesty line**, atmospheric teal/ink chrome, expressive display/UI fonts (not Inter/Roboto/system defaults)
+- Pack-pending / not-interpreter stay always visible; long copy moved to **About**
+- Tier A empty / routing collapsed to short chips (`Assist · Tier B`, `Tier A empty · not human interpretation`)
+- Status copy shortened (`Assist on · cues until pack binds`)
+
+### Added
+
+- Local demo videos + VTT under `fixtures/demo-videos/` (generated lavfi clips; not signing media) for **agents/CI** and **Deaf-user UAT** offline — not a replacement for owner YouTube sideload
+- `apps/demo-player` offline player + `npm run demo:player`
+- `@asl/assist-runtime` shared caption→gloss frame (extension + demo player)
+- Automated tests drive caption→gloss / overlay state against local fixtures (`e2e/demo-videos/`, assist-runtime + DOM caption unit tests)
+
+### Honesty
+
+- Still **ASL assist / partial** only; pack **pending**; demos do **not** claim signing video works
+
 ## [0.5.1] — 2026-11-06
 
 ### CI

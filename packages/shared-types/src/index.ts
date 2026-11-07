@@ -2,6 +2,9 @@
  * Shared product types and honesty-label constants.
  * Deaf-user stop-ship: assist path must never claim interpreter / accuracy %.
  * Per-pair copy lives in @asl/language-pairs; ASL constants remain defaults.
+ *
+ * Compact chrome (badge + one short line) per Deaf minimal-ui constraints;
+ * long copy lives in About / Details — never as the only honesty surface.
  */
 
 /** Visible claim tier for automated / lexical assist paths (ASL default). */
@@ -11,17 +14,33 @@ export const ASSIST_LABEL = "ASL assist / partial" as const;
 export const ASSIST_BADGE = "ASL assist" as const;
 
 /**
- * Supporting honesty line under the badge.
- * Lexical index + fingerspell OOV scaffolded; approved clip pack held pending coordinator pick.
+ * Always-visible honesty line (overlay + popup).
+ * Must keep assist/partial framing, pack-pending, and not-interpreter without About.
  */
-export const ASSIST_DISCLAIMER =
+export const ASSIST_HONESTY_LINE = "Partial · pack pending · not an interpreter" as const;
+
+/** Popup captions-floor one-liner. */
+export const ASSIST_CAPTIONS_FLOOR = "Captions stay on" as const;
+
+/** Compact status when overlay is on and pack unbound. */
+export const ASSIST_STATUS_ON = "Assist on · cues until pack binds" as const;
+
+/**
+ * Supporting honesty line under the badge (alias of compact chrome line).
+ * Prefer ASSIST_HONESTY_LINE in new UI; kept for callers/tests.
+ */
+export const ASSIST_DISCLAIMER = ASSIST_HONESTY_LINE;
+
+/**
+ * About / Details body — depth only; §1 chrome must still show without opening this.
+ */
+export const ASSIST_DETAILS =
   "ASL assist / partial — lexical gloss cues + fingerspell for unknown words. Clip pack not bound yet (pending approved source). Not fluent ASL discourse. Not a human interpreter. Captions stay on." as const;
 
-/** Stage hint while clip media pack is pending. */
-export const ASSIST_CLIP_STAGE_HINT =
-  "Clip pack pending coordinator pick (see ATTRIBUTION). No AI-persona default. Showing gloss / fingerspell cues only — not Deaf-produced signing video." as const;
+/** Stage hint while clip media pack is pending (compact). */
+export const ASSIST_CLIP_STAGE_HINT = "Cues only — no sign video yet" as const;
 
-/** Visible note: assist gloss is not fluent ASL (AC-1.1). */
+/** Visible note: assist gloss is not fluent ASL (AC-1.1) — About depth. */
 export const GLOSS_UI_NOTE =
   "Assist gloss (conservative) — not fluent ASL; not English-on-the-hands sold as ASL." as const;
 

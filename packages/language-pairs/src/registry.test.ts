@@ -45,14 +45,22 @@ describe("language-pair registry (ASL live + ISL pending)", () => {
   it("ISL copy refuses ASL mix and live product claims", () => {
     const isl = getLanguagePair("en-ins");
     const blob =
-      `${isl.assistCopy.label} ${isl.assistCopy.disclaimer} ${isl.assistCopy.glossNote}`.toLowerCase();
+      `${isl.assistCopy.label} ${isl.assistCopy.honestyLine} ${isl.assistCopy.details} ${isl.assistCopy.glossNote}`.toLowerCase();
     expect(blob).toContain("indian sign language");
     expect(blob).toContain("not asl");
     expect(blob).toContain("pending");
+    expect(isl.assistCopy.honestyLine.toLowerCase()).toContain("not live");
     expect(blob).not.toContain("irish");
     expect(isl.assetNamespace).toBe("ins");
     expect(clipPackForPair("en-ins").assetNamespace).toBe("ins");
     expect(clipPackForPair("en-ase").assetNamespace).toBe("ase");
+  });
+
+  it("ASL chrome stays compact: honesty line + pack pending", () => {
+    const asl = getLanguagePair("en-ase");
+    expect(asl.assistCopy.honestyLine.toLowerCase()).toContain("pack pending");
+    expect(asl.assistCopy.honestyLine.toLowerCase()).toContain("not an interpreter");
+    expect(asl.assistCopy.clipStageHint.toLowerCase()).toContain("cues only");
   });
 
   it("does not run ASL gloss/fingerspell under ISL pair id", () => {

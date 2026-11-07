@@ -6,6 +6,8 @@ import {
   pickerLanguagePairs,
 } from "@asl/language-pairs";
 import {
+  ASSIST_CAPTIONS_FLOOR,
+  ASSIST_STATUS_ON,
   parseRuntimeMessage,
   type OverlayState,
   type RuntimeMessage,
@@ -18,9 +20,15 @@ const versionEl = document.getElementById("version");
 const pairSelect = document.getElementById("language-pair") as HTMLSelectElement | null;
 const pairHint = document.getElementById("pair-hint");
 const toggleLabel = document.getElementById("toggle-label");
+const honestyEl = document.getElementById("honesty");
+const aboutBody = document.getElementById("about-body");
+const captionsFloor = document.getElementById("captions-floor");
 
 if (versionEl) {
-  versionEl.textContent = `v${BUILD_INFO.version} (${BUILD_INFO.gitSha})`;
+  versionEl.textContent = `v${BUILD_INFO.version} · ${BUILD_INFO.gitSha}`;
+}
+if (captionsFloor) {
+  captionsFloor.textContent = ASSIST_CAPTIONS_FLOOR;
 }
 
 function fillPairSelect(selectedId: string): void {
@@ -35,14 +43,13 @@ function fillPairSelect(selectedId: string): void {
         : pair.uiStatus === "live"
           ? ""
           : " — unavailable";
-    opt.textContent = `${pair.displayName} (${pair.signLanguageIso})${suffix}`;
+    opt.textContent = `${pair.shortName}${suffix}`;
     pairSelect.appendChild(opt);
   }
-  // Disabled pairs listed for honesty (not selectable).
   for (const pair of disabledLanguagePairs()) {
     const opt = document.createElement("option");
     opt.value = pair.id;
-    opt.textContent = `${pair.displayName} — not evaluated / not shipped`;
+    opt.textContent = `${pair.shortName} — not shipped`;
     opt.disabled = true;
     pairSelect.appendChild(opt);
   }
@@ -52,18 +59,23 @@ function fillPairSelect(selectedId: string): void {
 function applyPairChrome(pairId: string): void {
   const pair = getLanguagePair(pairId);
   const labelEl = document.getElementById("claim-label");
-  const disclaimerEl = document.getElementById("disclaimer");
   if (labelEl) labelEl.textContent = pair.assistCopy.label;
-  if (disclaimerEl) disclaimerEl.textContent = pair.assistCopy.disclaimer;
+  if (honestyEl) honestyEl.textContent = pair.assistCopy.honestyLine;
+  if (aboutBody) {
+    aboutBody.textContent = `${pair.assistCopy.details} ${pair.assistCopy.glossNote}`;
+  }
   if (pairHint) {
-    pairHint.textContent = pair.liveAssistEnabled
-      ? `Active path: ${pair.shortName} assist / partial (pack may still be pending). Irish Sign Language is out of scope.`
-      : (pair.pickerHint ??
-        "Coming later / pending Deaf-led eval — not a live overlay for this language.");
+    if (pair.liveAssistEnabled) {
+      pairHint.hidden = true;
+      pairHint.textContent = "";
+    } else {
+      pairHint.hidden = false;
+      pairHint.textContent = pair.pickerHint ?? "Coming later · not live";
+    }
   }
   if (toggleLabel) {
     toggleLabel.textContent = pair.liveAssistEnabled
-      ? `Show ${pair.shortName} assist overlay`
+      ? `Show ${pair.shortName} assist`
       : `Show ${pair.shortName} pending chrome`;
   }
 }
@@ -75,14 +87,13 @@ function applyState(state: OverlayState): void {
   const pair = getLanguagePair(state.languagePairId);
   if (status) {
     if (state.criticalGateBlocked) {
-      status.textContent =
-        "Keyword stub gate (not content understanding) blocked unsupervised assist. Captions remain available.";
+      status.textContent = "Assist paused · critical topic · use captions";
     } else if (state.enabled && !pair.liveAssistEnabled) {
-      status.textContent = `${pair.displayName} pending chrome on — not a live ISL/product path. ASL assets are not used. Captions stay on.`;
+      status.textContent = `${pair.shortName} pending chrome on · not live`;
     } else if (state.enabled) {
-      status.textContent = `${pair.shortName} assist overlay on — conservative gloss + fingerspell (clip pack pending). Tier A empty. Not an interpreter. Drag Move to keep captions clear.`;
+      status.textContent = ASSIST_STATUS_ON;
     } else {
-      status.textContent = "Overlay off. Captions stay available on YouTube.";
+      status.textContent = "Overlay off";
     }
   }
 }

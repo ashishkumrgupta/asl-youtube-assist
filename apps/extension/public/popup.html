@@ -3,26 +3,35 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Sign language assist</title>
+    <title>ASL assist / partial</title>
     <link rel="stylesheet" href="popup.css" />
   </head>
   <body>
     <main>
-      <h1 id="claim-label">ASL assist / partial</h1>
-      <p id="disclaimer" class="disclaimer"></p>
-      <label class="row stack">
-        <span>Sign language</span>
+      <header class="hero">
+        <p class="brand" id="claim-label">ASL assist / partial</p>
+        <p id="honesty" class="honesty"></p>
+      </header>
+
+      <label class="field">
+        <span class="field-label">Language</span>
         <select id="language-pair" aria-label="Sign language pair"></select>
       </label>
-      <p id="pair-hint" class="pair-hint" role="note"></p>
-      <label class="row">
+      <p id="pair-hint" class="pair-hint" role="note" hidden></p>
+
+      <label class="toggle-row">
         <span id="toggle-label">Show assist overlay</span>
         <input id="toggle" type="checkbox" />
       </label>
+
       <p id="status" class="status" role="status"></p>
-      <p class="floor">
-        Captions remain the reliability floor. This overlay never replaces them.
-      </p>
+      <p id="captions-floor" class="floor">Captions stay on</p>
+
+      <details class="about">
+        <summary>About</summary>
+        <p id="about-body" class="about-body"></p>
+      </details>
+
       <p id="version" class="version"></p>
     </main>
     <script type="module" src="popup.js"></script>

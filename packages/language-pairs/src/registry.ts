@@ -34,7 +34,12 @@ export type PairClipPackStatus = "pending" | "bound";
 export interface PairAssistCopy {
   readonly badge: string;
   readonly label: string;
+  /** Always-visible one-liner (badge companion). */
+  readonly honestyLine: string;
+  /** @deprecated Prefer honestyLine for chrome; kept as alias. */
   readonly disclaimer: string;
+  /** About / Details depth. */
+  readonly details: string;
   readonly glossNote: string;
   readonly clipStageHint: string;
   readonly shortName: string;
@@ -65,12 +70,13 @@ const ASL_COPY: PairAssistCopy = {
   shortName: "ASL",
   badge: "ASL assist",
   label: "ASL assist / partial",
-  disclaimer:
+  honestyLine: "Partial · pack pending · not an interpreter",
+  disclaimer: "Partial · pack pending · not an interpreter",
+  details:
     "ASL assist / partial — lexical gloss cues + fingerspell for unknown words. Clip pack not bound yet (pending approved source). Not fluent ASL discourse. Not a human interpreter. Captions stay on.",
   glossNote:
     "Assist gloss (conservative) — not fluent ASL; not English-on-the-hands sold as ASL.",
-  clipStageHint:
-    "ASL clip pack pending coordinator pick. No AI-persona default. Showing gloss / fingerspell cues only — not Deaf-produced signing video.",
+  clipStageHint: "Cues only — no sign video yet",
 };
 
 /** Pending chrome only — not a live ISL product path. */
@@ -78,12 +84,13 @@ const ISL_PENDING_COPY: PairAssistCopy = {
   shortName: "ISL",
   badge: "ISL pending",
   label: "Indian Sign Language (ISL) — pending",
-  disclaimer:
+  honestyLine: "Coming later · not live · not ASL",
+  disclaimer: "Coming later · not live · not ASL",
+  details:
     "Indian Sign Language (ISL, ISO ins) is registered for multi-lang architecture. Coming later / pending Deaf-led ISL eval and local ISL-community ownership. Not a live ISL overlay. Not ASL. Not an interpreter. Captions stay on.",
   glossNote:
     "ISL path pending — no ISL gloss or clips yet. ASL assets are not used as ISL.",
-  clipStageHint:
-    "ISL gold clip pack CapEx-blocked. No synthetic persona. No ASL clips under ISL label.",
+  clipStageHint: "ISL pending — no live cues",
 };
 
 const DISABLED =
@@ -146,7 +153,9 @@ export const LANGUAGE_PAIRS: readonly LanguagePair[] = [
       shortName: "BSL",
       badge: "BSL",
       label: "BSL — not shipped",
+      honestyLine: DISABLED,
       disclaimer: DISABLED,
+      details: DISABLED,
       glossNote: DISABLED,
       clipStageHint: DISABLED,
     },
@@ -171,7 +180,9 @@ export const LANGUAGE_PAIRS: readonly LanguagePair[] = [
       shortName: "LSF",
       badge: "LSF",
       label: "LSF — not shipped",
+      honestyLine: DISABLED,
       disclaimer: DISABLED,
+      details: DISABLED,
       glossNote: DISABLED,
       clipStageHint: DISABLED,
     },
@@ -196,7 +207,9 @@ export const LANGUAGE_PAIRS: readonly LanguagePair[] = [
       shortName: "DGS",
       badge: "DGS",
       label: "DGS — not shipped",
+      honestyLine: DISABLED,
       disclaimer: DISABLED,
+      details: DISABLED,
       glossNote: DISABLED,
       clipStageHint: DISABLED,
     },
@@ -221,7 +234,9 @@ export const LANGUAGE_PAIRS: readonly LanguagePair[] = [
       shortName: "Libras",
       badge: "Libras",
       label: "Libras — not shipped",
+      honestyLine: DISABLED,
       disclaimer: DISABLED,
+      details: DISABLED,
       glossNote: DISABLED,
       clipStageHint: DISABLED,
     },
