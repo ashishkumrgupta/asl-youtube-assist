@@ -10,6 +10,7 @@ import {
   getAiBinding,
   getRealBinding,
   resolveMediaForGloss,
+  setAiAllowlist,
   stopShippingAiForGloss,
   stopShippingAiWave,
 } from "./dual-path.js";
@@ -145,7 +146,7 @@ describe("dual-path-0 prefer-real + AI fail-closed", () => {
     }
   });
 
-  it("flag ON + testOnly: plays AI with Deaf honesty string", () => {
+  it("flag ON + testOnly: plays AI with Deaf honesty string when allowTestOnlyAi true", () => {
     bindPairClipPack({
       ...baseAi,
       glossFiles: [
@@ -169,6 +170,64 @@ describe("dual-path-0 prefer-real + AI fail-closed", () => {
       expect(hello.honestyShortTag).toBe(AI_SOURCE_SHORT);
       expect(hello.stageHint).toBe(AI_INTERIM_STAGE_HINT);
     }
+  });
+
+  it("flag ON + testOnly + allowTestOnlyAi false: does not play AI (testOnly ≠ allowlist)", () => {
+    bindPairClipPack({
+      ...baseAi,
+      glossFiles: [
+        {
+          gloss: "HELLO",
+          relativePath: "lexical/ase/clips/HELLO.ai-test-only.webm",
+          qaPass: true,
+          testOnly: true,
+        },
+      ],
+    });
+    // Even if mistakenly allowlisted, testOnly must not count as Deaf allowlist.
+    setAiAllowlist(["HELLO"]);
+    const resolved = resolveMediaForGloss("HELLO", {
+      aiFlagEnabled: true,
+      allowTestOnlyAi: false,
+    });
+    expect(resolved.kind).not.toBe("ai_generated");
+    expect(resolved.assetPath).toBeNull();
+
+    // Playlist / from-gloss default allowTestOnlyAi to false.
+    const playlist = buildAssistPlaylist("Hello", undefined, {
+      aiFlagEnabled: true,
+    });
+    const hello = playlist.steps.find((s) => s.kind === "lexical" && s.gloss === "HELLO");
+    expect(hello?.kind).toBe("lexical");
+    if (hello?.kind === "lexical") {
+      expect(hello.mediaKind).not.toBe("ai_generated");
+      expect(hello.assetPath).toBeNull();
+    }
+  });
+
+  it("flag ON + Deaf allowlisted non-test gloss: plays AI with honesty string", () => {
+    bindPairClipPack({
+      ...baseAi,
+      glossFiles: [
+        {
+          gloss: "HELLO",
+          relativePath: "lexical/ase/clips/HELLO.ai-test-only.webm",
+          qaPass: true,
+          testOnly: false,
+          deafDisposition: "pass",
+        },
+      ],
+    });
+    setAiAllowlist(["HELLO"]);
+    const resolved = resolveMediaForGloss("HELLO", {
+      aiFlagEnabled: true,
+      allowTestOnlyAi: false,
+    });
+    expect(resolved.kind).toBe("ai_generated");
+    expect(resolved.assetPath).toBe("lexical/ase/clips/HELLO.ai-test-only.webm");
+    expect(resolved.honestyShortTag).toBe(AI_SOURCE_SHORT);
+    expect(resolved.stageHint).toBe(AI_INTERIM_STAGE_HINT);
+    expect(resolved.testOnly).toBe(false);
   });
 
   it("prefer-real: real bind demotes AI for the same gloss", () => {

@@ -162,8 +162,8 @@ export interface ResolveMediaOptions {
   /** When false, AI path is skipped even if files exist (flag off). */
   readonly aiFlagEnabled: boolean;
   /**
-   * Production bind policy: AI only for allowlisted + disposition pass.
-   * Test-only fixtures may play in CI when `allowTestOnlyAi` is true.
+   * When true, allow `testOnly` AI fixtures to play (CI/unit only).
+   * Defaults to false in playlist / from-gloss — testOnly never counts as Deaf allowlist.
    */
   readonly allowTestOnlyAi?: boolean;
 }
@@ -207,7 +207,8 @@ export function resolveMediaForGloss(
   const ai = aiByGloss[g];
   if (ai) {
     const dispositionOk = ai.disposition === "pass";
-    const allowlisted = isAiAllowlisted(g) || ai.testOnly;
+    // testOnly never counts as Deaf allowlist — only explicit allowTestOnlyAi may play fixtures.
+    const allowlisted = isAiAllowlisted(g) && !ai.testOnly;
     const testOk = Boolean(options.allowTestOnlyAi && ai.testOnly);
     const canPlay =
       options.aiFlagEnabled && dispositionOk && !real && (allowlisted || testOk);

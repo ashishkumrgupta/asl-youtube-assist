@@ -85,7 +85,8 @@ export interface PlaylistMediaOptions {
 function resolveOptions(options?: PlaylistMediaOptions) {
   return {
     aiFlagEnabled: options?.aiFlagEnabled ?? isEnabled("local", "assist.ai_generated.v1"),
-    allowTestOnlyAi: options?.allowTestOnlyAi ?? true,
+    // Default false — content-script must not auto-play CI fixtures if flag flips ON.
+    allowTestOnlyAi: options?.allowTestOnlyAi ?? false,
   };
 }
 

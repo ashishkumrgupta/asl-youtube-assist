@@ -32,7 +32,7 @@ export function buildPlaylistFromGloss(
       lexicalHits += 1;
       const resolved = resolveMediaForGloss(entry.gloss, {
         aiFlagEnabled,
-        allowTestOnlyAi: mediaOptions?.allowTestOnlyAi ?? true,
+        allowTestOnlyAi: mediaOptions?.allowTestOnlyAi ?? false,
       });
       const assetPath =
         resolved.kind === "real" || resolved.kind === "ai_generated"
