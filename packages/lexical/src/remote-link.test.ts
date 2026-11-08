@@ -15,6 +15,12 @@ function lex(gloss: string, remoteUrl: string | null): AssistPlaylistStep {
     assetPath: null,
     remoteUrl,
     noClipFallback: remoteUrl === null,
+    mediaKind: remoteUrl ? "remote_link" : "none",
+    mediaProvenance: remoteUrl ? "remote_link" : null,
+    honestyShortTag: remoteUrl
+      ? "Opening creator-hosted media — not our pack · not an interpreter"
+      : "Partial · pack pending · not an interpreter",
+    stageHint: null,
     durationMs: 800,
     surface: gloss.toLowerCase(),
   };

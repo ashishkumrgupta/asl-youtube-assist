@@ -2,6 +2,24 @@
 
 All notable changes to this project are documented in this file.
 
+## [0.9.0] — 2026-11-08
+
+### Added (dual-path-0 — labeled AI interim + real preferred)
+
+- Provenance `ai_generated` (+ commissioned stub) distinct from real `volunteer` / `open_cc` / `remote_link`
+- Dual-path resolver: **real → AI → remote_link → cues**; real bind demotes AI for that gloss
+- Compact AI honesty: `Partial · AI-generated · not an interpreter` · stage `AI interim — not Deaf video`
+- Flag `assist.ai_generated.v1` **default OFF** (local + prod) until Deaf clears thin HF allowlist
+- Fail-closed AI ingest: requires `aiGenerated: true` + `generatorModelId`; rejects unlabeled `syntheticPersona`; AC-DP0.10 blocks production AI sourceIds (CI: `ai-hf-test-fixture` + `HELLO.ai-test-only.webm` only)
+- AI QA log scaffold `lexical/ase/qa/ai-qa-log.json` (empty — zero clips approved)
+- Stop-shipping helpers for gloss/wave AI on Deaf fail disposition
+- Copy-lint: AI gold/interpreter-grade, “as good as a person”, AI-replaces-outreach bans
+
+### Notes
+
+- **Not gold / not an interpreter.** AI path is interim scaffold only.
+- Outreach A–C / volunteer pipeline unchanged — AI does not replace real recruitment.
+
 ## [0.8.0] — 2026-11-07
 
 ### Added (real-video-0 — volunteer-first Tier B path)

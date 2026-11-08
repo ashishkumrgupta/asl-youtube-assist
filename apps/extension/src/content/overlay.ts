@@ -2,6 +2,8 @@ import type { AssistViewModel } from "@asl/assist-runtime";
 import { isEnabled } from "@asl/flags";
 import { DEFAULT_LANGUAGE_PAIR_ID, getLanguagePair } from "@asl/language-pairs";
 import {
+  AI_ABOUT_NOTE,
+  AI_INTERIM_STAGE_HINT,
   CLIP_PACK_MANIFEST,
   NO_CLIP_FOR_SIGN,
   provenanceShortTag,
@@ -440,18 +442,33 @@ export function renderOverlay(vm: OverlayViewModel): void {
 
   if (badgeEl instanceof HTMLElement) badgeEl.textContent = pair.assistCopy.badge;
   if (honestyEl instanceof HTMLElement) {
-    // Compact chrome: map provenance short tag onto redesigned honesty line (Deaf RV0-5).
-    honestyEl.textContent =
-      pair.id === "en-ase" && vm.enabled && vm.liveAssistEnabled
-        ? provenanceShortTag(CLIP_PACK_MANIFEST)
-        : pair.assistCopy.honestyLine;
+    // Compact chrome: per-step dual-path honesty when a lexical media path is active
+    // (Deaf dual-path §1); else pack-level short tag (RV0-5).
+    if (pair.id === "en-ase" && vm.enabled && vm.liveAssistEnabled) {
+      const step = vm.activeStep;
+      honestyEl.textContent =
+        step?.kind === "lexical" && step.honestyShortTag
+          ? step.honestyShortTag
+          : provenanceShortTag(CLIP_PACK_MANIFEST);
+    } else {
+      honestyEl.textContent = pair.assistCopy.honestyLine;
+    }
   }
   if (aboutBody instanceof HTMLElement) {
     const creditsNote =
       CLIP_PACK_MANIFEST.provenance === "volunteer"
         ? " Volunteer credits — names as consented (see popup About)."
         : "";
-    aboutBody.textContent = `${pair.assistCopy.details} ${pair.assistCopy.glossNote}${creditsNote}`;
+    const aiNote =
+      CLIP_PACK_MANIFEST.provenance === "ai_generated" ||
+      (vm.activeStep?.kind === "lexical" && vm.activeStep.mediaKind === "ai_generated")
+        ? ` ${AI_ABOUT_NOTE}${
+            CLIP_PACK_MANIFEST.generatorModelId
+              ? ` Model: ${CLIP_PACK_MANIFEST.generatorModelId}.`
+              : ""
+          }`
+        : "";
+    aboutBody.textContent = `${pair.assistCopy.details} ${pair.assistCopy.glossNote}${creditsNote}${aiNote}`;
     aboutBody.hidden = !detailsOpen;
   }
 
@@ -478,10 +495,17 @@ export function renderOverlay(vm: OverlayViewModel): void {
   }
 
   if (hintEl instanceof HTMLElement) {
-    hintEl.textContent =
-      vm.enabled && vm.liveAssistEnabled && !vm.blocked
-        ? pair.assistCopy.clipStageHint
-        : "";
+    if (vm.enabled && vm.liveAssistEnabled && !vm.blocked) {
+      const step = vm.activeStep;
+      hintEl.textContent =
+        step?.kind === "lexical" && step.stageHint
+          ? step.stageHint
+          : step?.kind === "lexical" && step.mediaKind === "ai_generated"
+            ? AI_INTERIM_STAGE_HINT
+            : pair.assistCopy.clipStageHint;
+    } else {
+      hintEl.textContent = "";
+    }
   }
 
   if (glossEl instanceof HTMLElement) {

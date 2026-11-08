@@ -111,18 +111,23 @@ e2e/extension/           Fixture smoke (no live YouTube)
 .github/workflows/pr.yml CI ready for later push
 ```
 
-## Clip pack / real video (v0.8)
+## Clip pack / dual paths (v0.9)
 
 **ASL assist / partial** only. Gloss/fingerspell is the **fallback** when no clip exists.
 
-| Path                         | Status                                                                    |
-| ---------------------------- | ------------------------------------------------------------------------- |
-| Volunteer Deaf clips         | Pipeline ready (`docs/volunteer/`) — bind only with release + Deaf QA     |
-| Remote link-out              | Overlay **Open sign video** (allowlisted creator/CC pages; no YT→CDN)     |
-| PopSign CC BY thin pack      | Flag `assist.popsign.v1` **off** — no media bytes until per-gloss Deaf QA |
-| AI-persona / NC research CDN | **Forbidden**                                                             |
+**Prefer order:** real Deaf → labeled AI interim → remote link-out → cues.
 
-Tier B ingest: `@asl/lexical` `bindPairClipPack` / `ingestOpenDemoPack`. See `apps/extension/assets/lexical/ATTRIBUTION.md`.
+| Path                      | Status                                                                                                               |
+| ------------------------- | -------------------------------------------------------------------------------------------------------------------- |
+| Volunteer Deaf clips      | **Preferred** — pipeline ready (`docs/volunteer/`); bind only with release + Deaf QA                                 |
+| Remote link-out           | Overlay **Open sign video** (allowlisted creator/CC pages; no YT→CDN)                                                |
+| PopSign CC BY thin pack   | Flag `assist.popsign.v1` **off** — no media bytes until per-gloss Deaf QA                                            |
+| Labeled AI interim        | Flag `assist.ai_generated.v1` **off** — scaffold + CI test-only fixtures; **zero** prod binds until Deaf disposition |
+| Silent synthetic / NC CDN | **Forbidden**                                                                                                        |
+
+Tier B + dual-path ingest: `@asl/lexical` `bindPairClipPack` / `ingestOpenDemoPack`. Real bind demotes AI for that gloss. See `apps/extension/assets/lexical/ATTRIBUTION.md`.
+
+Rebuild after pull: `npm install && npm run build`, then Chrome **Reload** on `apps/extension/dist` (see [`docs/build-and-reload.md`](docs/build-and-reload.md)).
 
 ## Critical-domain gate (Slice A stub)
 
@@ -134,7 +139,7 @@ Allowed: **ASL assist / partial**, captions-stay-on language, human interpretati
 
 Never: AI/digital interpreter for assist, accuracy %, “ASL captions” as the product, fluent-ASL-from-captions claims.
 
-While the clip pack is pending, do not claim Deaf-produced signing video is playing. Keep **ASL assist / partial**. Gaps show **No clip for this sign** and fall back to gloss/fingerspell.
+While the clip pack is pending, do not claim Deaf-produced signing video is playing. Keep **ASL assist / partial**. Gaps show **No clip for this sign** and fall back to gloss/fingerspell. AI (when eventually flagged on) must show **Partial · AI-generated · not an interpreter** — never gold/interpreter.
 
 ## License
 

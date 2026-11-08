@@ -31,4 +31,17 @@ describe("lint-copy", () => {
     const v = lintAssistCopy("Helps follow better than captions alone.", "assist");
     expect(v.some((x) => /captions/i.test(x.term))).toBe(true);
   });
+
+  it("flags dual-path forbidden AI marketing claims", () => {
+    expect(
+      lintAssistCopy("Our AI is as good as a person at ASL.", "assist").some(
+        (x) => x.term === "as good as a person",
+      ),
+    ).toBe(true);
+    expect(
+      lintAssistCopy("AI replaces volunteers for outreach.", "assist").some(
+        (x) => x.term === "AI replaces outreach",
+      ),
+    ).toBe(true);
+  });
 });

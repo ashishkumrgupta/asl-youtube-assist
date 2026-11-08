@@ -1,0 +1,8 @@
+{
+  "schemaVersion": 1,
+  "pairId": "en-ase",
+  "description": "Deaf QA / disposition log for AI-generated interim glosses. No AI gloss ships without a pass row. Current disposition: gates only — zero AI clips approved (AC-DP0.10 / DUAL-6). Flag assist.ai_generated.v1 stays OFF until a thin HF allowlist clears Deaf review.",
+  "flag": "assist.ai_generated.v1",
+  "prodDefault": "off",
+  "entries": []
+}

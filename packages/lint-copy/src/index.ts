@@ -72,6 +72,26 @@ const ASSIST_BANNED: ReadonlyArray<{ pattern: RegExp; term: string; reason: stri
     term: "useful entertainment assist",
     reason: "Phase 1 usefulness fitness claim blocked until cohort evidence",
   },
+  {
+    pattern: /\bas\s+good\s+as\s+a\s+person\b/i,
+    term: "as good as a person",
+    reason: "AI must not claim human/Deaf equivalence (AC-DP0.8)",
+  },
+  {
+    pattern: /\bai\s+replaces\s+(outreach|volunteers?)\b/i,
+    term: "AI replaces outreach",
+    reason: "AI interim must not replace volunteer / lab outreach",
+  },
+  {
+    pattern: /\bai[- ]?(generated\s+)?(gold|interpreter[- ]grade)\b/i,
+    term: "AI gold/interpreter-grade",
+    reason: "AI ≠ gold / never interpreter-grade (DUAL-5)",
+  },
+  {
+    pattern: /\bgold\s+(via\s+)?ai\b|\binterpreter[- ]grade\s+ai\b/i,
+    term: "AI gold/interpreter-grade",
+    reason: "AI ≠ gold / never interpreter-grade (DUAL-5)",
+  },
 ];
 
 const ALWAYS_BANNED_ON_TIER_A = new Set([

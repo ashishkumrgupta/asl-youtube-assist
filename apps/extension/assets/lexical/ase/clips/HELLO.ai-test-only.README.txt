@@ -1,0 +1,1 @@
+AI TEST-ONLY fixture — synthetic/AI path dry-run for CI only. Not Deaf video. Not gold. Do not market. Flag assist.ai_generated.v1 stays OFF in prod until Deaf disposition.

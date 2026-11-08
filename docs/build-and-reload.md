@@ -67,3 +67,25 @@ Host permission is pinned: `http://127.0.0.1:4173/*` only. See [`permissions.md`
 ---
 
 Both paths use the same content-script overlay. Prefer **YouTube** for real-world validation; prefer **local theater** for quick offline loops (owner, agents, CI, Deaf-user UAT).
+
+---
+
+## Dual paths (AI interim + real preferred)
+
+After `git pull` of dual-path-0:
+
+```bash
+npm install
+npm run build
+```
+
+Then **Reload** the unpacked extension (`apps/extension/dist`).
+
+| Expectation     | Detail                                                                          |
+| --------------- | ------------------------------------------------------------------------------- |
+| Default honesty | Pack pending · assist/partial · not an interpreter                              |
+| AI flag         | `assist.ai_generated.v1` **OFF** — no AI playback in prod defaults              |
+| Prefer-real     | When a real volunteer/open clip binds for a gloss, AI for that gloss is demoted |
+| CI fixtures     | `*.ai-test-only.webm` / `ai-hf-test-fixture` are dry-run only — **not gold**    |
+
+Do not expect AI signing video on YouTube or theater until Deaf clears a thin HF allowlist and the flag is allowlist-ON.

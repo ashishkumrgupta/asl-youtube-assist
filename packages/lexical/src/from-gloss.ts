@@ -1,21 +1,27 @@
 import { fingerspellToken } from "@asl/fingerspell";
+import { isEnabled } from "@asl/flags";
 import type { GlossResult } from "@asl/gloss";
-import {
-  CLIP_PACK_MANIFEST,
-  clipPackIsPending,
-  glossHasBoundClip,
-} from "./clip-source.js";
+import { CLIP_PACK_MANIFEST, clipPackIsPending } from "./clip-source.js";
 import { LEXICAL_LOOKUP } from "./dictionary.js";
-import type { AssistPlaylistStep, PlaylistBuildResult } from "./playlist.js";
-import { getBoundAssetPathForGloss, getRemoteUrlForGloss } from "./tier-b-ingest.js";
+import { resolveMediaForGloss } from "./dual-path.js";
+import type {
+  AssistPlaylistStep,
+  PlaylistBuildResult,
+  PlaylistMediaOptions,
+} from "./playlist.js";
 
 /**
  * Build playlist from conservative gloss tokens (Phase 1) instead of raw English order.
- * Local clips bind only for QA'd / release-cleared glosses in a loaded Tier B pack.
+ * Dual-path: prefer real → AI (flagged) → remote → cues. Never invent local files.
  */
-export function buildPlaylistFromGloss(gloss: GlossResult): PlaylistBuildResult {
+export function buildPlaylistFromGloss(
+  gloss: GlossResult,
+  mediaOptions?: PlaylistMediaOptions,
+): PlaylistBuildResult {
   const packPending = clipPackIsPending(CLIP_PACK_MANIFEST);
   const packLoaded = !packPending;
+  const aiFlagEnabled =
+    mediaOptions?.aiFlagEnabled ?? isEnabled("local", "assist.ai_generated.v1");
   const steps: AssistPlaylistStep[] = [];
   let lexicalHits = 0;
   let fingerspellTokens = 0;
@@ -24,18 +30,24 @@ export function buildPlaylistFromGloss(gloss: GlossResult): PlaylistBuildResult 
     const entry = LEXICAL_LOOKUP.get(token.surface);
     if (entry) {
       lexicalHits += 1;
-      const bound = packLoaded && glossHasBoundClip(entry.gloss);
-      // Only paths recorded by Tier B ingest — never invent a local file from dictionary alone.
-      const boundPath = bound ? getBoundAssetPathForGloss(entry.gloss) : null;
-      const remoteUrl = getRemoteUrlForGloss(entry.gloss);
-      const hasLocal = Boolean(boundPath);
-      const hasRemote = Boolean(remoteUrl);
+      const resolved = resolveMediaForGloss(entry.gloss, {
+        aiFlagEnabled,
+        allowTestOnlyAi: mediaOptions?.allowTestOnlyAi ?? true,
+      });
+      const assetPath =
+        resolved.kind === "real" || resolved.kind === "ai_generated"
+          ? resolved.assetPath
+          : null;
       steps.push({
         kind: "lexical",
         gloss: entry.gloss,
-        assetPath: hasLocal ? boundPath : null,
-        remoteUrl: hasRemote ? remoteUrl : null,
-        noClipFallback: !hasLocal && !hasRemote,
+        assetPath,
+        remoteUrl: resolved.remoteUrl,
+        noClipFallback: resolved.noClipFallback,
+        mediaKind: resolved.kind,
+        mediaProvenance: resolved.provenance,
+        honestyShortTag: resolved.honestyShortTag,
+        stageHint: resolved.stageHint,
         durationMs: entry.durationMs,
         surface: token.surface,
       });

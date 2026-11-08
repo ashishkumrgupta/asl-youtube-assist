@@ -17,6 +17,7 @@ const baseVolunteer = {
   license: null,
   deafProduced: true,
   syntheticPersona: false,
+  aiGenerated: false,
   attributionUrl: "https://example.com/credits",
   assetNamespace: "ase",
 };
@@ -66,6 +67,7 @@ describe("Tier B ingest fail-closed", () => {
       license: "CC BY 4.0",
       deafProduced: false,
       syntheticPersona: false,
+      aiGenerated: false,
       attributionUrl: "https://www.popsign.org/",
       glossFiles: [
         {
@@ -176,6 +178,7 @@ describe("Tier B ingest fail-closed", () => {
       license: null,
       deafProduced: false,
       syntheticPersona: false,
+      aiGenerated: false,
       attributionUrl: "https://www.popsign.org/",
       glossFiles: [
         {
@@ -205,6 +208,7 @@ describe("Tier B ingest fail-closed", () => {
       license: null,
       deafProduced: false,
       syntheticPersona: false,
+      aiGenerated: false,
       attributionUrl: "https://www.popsign.org/",
       glossFiles: [
         {

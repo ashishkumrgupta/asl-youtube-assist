@@ -18,6 +18,7 @@
   },
   "dependencies": {
     "@asl/fingerspell": "0.1.0",
+    "@asl/flags": "0.1.0",
     "@asl/gloss": "0.2.0",
     "@asl/shared-types": "0.1.0"
   }

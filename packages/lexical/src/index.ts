@@ -24,6 +24,7 @@ export {
   type AssistPlaylistStep,
   type LexicalClipStep,
   type PlaylistBuildResult,
+  type PlaylistMediaOptions,
 } from "./playlist.js";
 export { buildPlaylistFromGloss } from "./from-gloss.js";
 export {
@@ -54,6 +55,12 @@ export {
   type ResolvedLinkOut,
 } from "./remote-link.js";
 export {
+  AI_ABOUT_NOTE,
+  AI_INTERIM_STAGE_HINT,
+  AI_SOURCE_LINE,
+  AI_SOURCE_SHORT,
+  DEAF_PRODUCED_SOURCE_LINE,
+  DEAF_PRODUCED_SOURCE_SHORT,
   NO_CLIP_FOR_SIGN,
   PACK_PENDING_SHORT,
   POPSIGN_SOURCE_LINE,
@@ -64,3 +71,31 @@ export {
   provenanceShortTag,
   provenanceSourceLine,
 } from "./honesty.js";
+export {
+  bindAiGloss,
+  bindRealGloss,
+  bindRemoteGloss,
+  demoteAiForGloss,
+  demoteAiForGlosses,
+  dualPathSnapshot,
+  gapCueLabel,
+  getAiAllowlist,
+  getAiBinding,
+  getRealBinding,
+  getRemoteBinding,
+  isAiAllowlisted,
+  listAiBoundGlosses,
+  listRealBoundGlosses,
+  resetDualPathRuntime,
+  resolveMediaForGloss,
+  setAiAllowlist,
+  stopShippingAiForGloss,
+  stopShippingAiWave,
+  type AiDisposition,
+  type AiGlossBinding,
+  type RealClipProvenance,
+  type RealGlossBinding,
+  type ResolveMediaOptions,
+  type ResolvedGlossMedia,
+  type ResolvedMediaKind,
+} from "./dual-path.js";

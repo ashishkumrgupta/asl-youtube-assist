@@ -9,6 +9,10 @@ function lex(gloss: string, durationMs: number): AssistPlaylistStep {
     assetPath: null,
     remoteUrl: null,
     noClipFallback: true,
+    mediaKind: "none",
+    mediaProvenance: null,
+    honestyShortTag: "Partial · pack pending · not an interpreter",
+    stageHint: null,
     durationMs,
     surface: gloss.toLowerCase(),
   };

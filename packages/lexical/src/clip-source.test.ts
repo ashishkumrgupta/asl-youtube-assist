@@ -11,6 +11,8 @@ describe("clip source hold", () => {
   it("does not lock a loaded third-party or persona pack yet", () => {
     expect(CLIP_PACK_MANIFEST.status).toBe("pending");
     expect(CLIP_PACK_MANIFEST.syntheticPersona).toBe(false);
+    expect(CLIP_PACK_MANIFEST.aiGenerated).toBe(false);
+    expect(CLIP_PACK_MANIFEST.generatorModelId).toBeNull();
     expect(CLIP_PACK_MANIFEST.sourceId).toBeNull();
     expect(CLIP_PACK_MANIFEST.provenance).toBeNull();
     expect(CLIP_PACK_MANIFEST.boundGlosses).toEqual([]);
