@@ -117,13 +117,13 @@ e2e/extension/           Fixture smoke (no live YouTube)
 
 **Prefer order:** real Deaf → labeled AI interim → remote link-out → cues.
 
-| Path                      | Status                                                                                                               |
-| ------------------------- | -------------------------------------------------------------------------------------------------------------------- |
-| Volunteer Deaf clips      | **Preferred** — pipeline ready (`docs/volunteer/`); bind only with release + Deaf QA                                 |
-| Remote link-out           | Overlay **Open sign video** (allowlisted creator/CC pages; no YT→CDN)                                                |
-| PopSign CC BY thin pack   | Flag `assist.popsign.v1` **off** — no media bytes until per-gloss Deaf QA                                            |
-| Labeled AI interim        | Flag `assist.ai_generated.v1` **off** — scaffold + CI test-only fixtures; **zero** prod binds until Deaf disposition |
-| Silent synthetic / NC CDN | **Forbidden**                                                                                                        |
+| Path                      | Status                                                                                                                                      |
+| ------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------- |
+| Volunteer Deaf clips      | **Preferred** — pipeline ready (`docs/volunteer/`); bind only with release + Deaf QA                                                        |
+| Remote link-out           | Overlay **Open sign video** (allowlisted creator/CC pages; no YT→CDN)                                                                       |
+| PopSign CC BY thin pack   | Flag `assist.popsign.v1` **off** — no media bytes until per-gloss Deaf QA                                                                   |
+| Labeled AI interim        | Flag `assist.ai_generated.v1` **off** — ai-wave-1 prompts + pending QA stubs (`docs/ai-clips/`); **zero** prod binds until Deaf disposition |
+| Silent synthetic / NC CDN | **Forbidden**                                                                                                                               |
 
 Tier B + dual-path ingest: `@asl/lexical` `bindPairClipPack` / `ingestOpenDemoPack`. Real bind demotes AI for that gloss. See `apps/extension/assets/lexical/ATTRIBUTION.md`.
 

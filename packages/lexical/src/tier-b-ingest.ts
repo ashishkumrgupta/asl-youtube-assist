@@ -65,6 +65,11 @@ export const TIER_B_ALLOWED_SOURCE_IDS: readonly string[] = [
    * Production AI media stays unbound until Deaf disposition (AC-DP0.10).
    */
   "ai-hf-test-fixture",
+  /**
+   * ai-wave-1 thin HF set — allowlisted sourceId for future bind after Deaf pass.
+   * Pending stubs must not set qaPass; ingest still refuses non-pass disposition.
+   */
+  "ai-hf-wave-1",
 ] as const;
 
 export type TierBProvenance = Exclude<ClipPackProvenance, null>;
@@ -274,15 +279,18 @@ function runIngest(request: TierBIngestRequest): TierBIngestResult {
     );
   }
 
-  // Production AI source scaffolding: only test fixture sourceIds may bind without
-  // Deaf disposition rows today (AC-DP0.10 — zero AI clips approved).
-  if (
-    isAi &&
-    normalizeSourceId(request.sourceId) !== "ai-hf-test-fixture" &&
-    normalizeSourceId(request.sourceId) !== "test-fixture-only"
-  ) {
+  // Production AI source scaffolding (AC-DP0.10 / DUAL-6):
+  // - ai-hf-test-fixture / test-fixture-only: CI dry-run only
+  // - ai-hf-wave-1: wave pipeline sourceId — still requires per-gloss disposition pass
+  //   (pending stubs are rejected at gloss level; do not treat allowlist as bind approval)
+  const aiSource = normalizeSourceId(request.sourceId);
+  const aiSourceOk =
+    aiSource === "ai-hf-test-fixture" ||
+    aiSource === "test-fixture-only" ||
+    aiSource === "ai-hf-wave-1";
+  if (isAi && !aiSourceOk) {
     errors.push(
-      `AI sourceId "${request.sourceId}" refused — no production AI media bind until Deaf disposition (AC-DP0.10); use ai-hf-test-fixture for CI dry-run`,
+      `AI sourceId "${request.sourceId}" refused — no production AI media bind until Deaf disposition (AC-DP0.10); use ai-hf-test-fixture (CI) or ai-hf-wave-1 (wave pipeline after pass)`,
     );
   }
 

@@ -99,3 +99,16 @@ export {
   type ResolvedGlossMedia,
   type ResolvedMediaKind,
 } from "./dual-path.js";
+export {
+  AI_WAVE_1_GENERATOR_MODEL_ID_PENDING,
+  AI_WAVE_1_GLOSSES,
+  AI_WAVE_1_ID,
+  AI_WAVE_1_PAIR_ID,
+  AI_WAVE_1_SIGN_LANGUAGE_ISO,
+  AI_WAVE_1_SOURCE_ID,
+  aiWave1PendingAssetPath,
+  aiWave1ProductionAllowlist,
+  isAiWave1Gloss,
+  listAiWave1PendingPaths,
+  type AiWave1Gloss,
+} from "./ai-wave-1.js";
