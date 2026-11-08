@@ -87,5 +87,6 @@ Then **Reload** the unpacked extension (`apps/extension/dist`).
 | AI flag         | `assist.ai_generated.v1` **OFF** — no AI playback in prod defaults              |
 | Prefer-real     | When a real volunteer/open clip binds for a gloss, AI for that gloss is demoted |
 | CI fixtures     | `*.ai-test-only.webm` / `ai-hf-test-fixture` are dry-run only — **not gold**    |
+| ai-wave-1       | Prompts + pending QA stubs only (`docs/ai-clips/`); no prod AI media bound      |
 
 Do not expect AI signing video on YouTube or theater until Deaf clears a thin HF allowlist and the flag is allowlist-ON.

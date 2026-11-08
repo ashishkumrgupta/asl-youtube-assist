@@ -2,6 +2,22 @@
 
 All notable changes to this project are documented in this file.
 
+## [0.9.1] — 2026-11-08
+
+### Added (ai-wave-1 — thin HF AI citation stubs)
+
+- Thin HF allowlist constants: `HELLO` `THANKS` `YES` `NO` `PLEASE` `BAD` (`@asl/lexical` `AI_WAVE_1_*`)
+- Generation prompts + capture/spec under `docs/ai-clips/` (citation form, front torso+face, ≤2–3s, ASL `ase` only)
+- QA log stubs + unbound pack stub: `disposition: pending`, `qaPass: false`, not loaded into `CLIP_PACK`
+- SourceId `ai-hf-wave-1` recognized for future post-disposition ingest; pending glosses still refuse bind
+- Tests: pending AI never plays with flag OFF (or ON); prefer-real demotion still holds
+
+### Notes
+
+- **Flag `assist.ai_generated.v1` remains OFF.** No production AI bind. Not gold / not an interpreter.
+- **No AI WebM in this release** — environment has no video-gen API; do not substitute ffmpeg black frames for Deaf QA.
+- THANKS covers thank-you HF forms (no separate `THANK-YOU` gloss id).
+
 ## [0.9.0] — 2026-11-08
 
 ### Added (dual-path-0 — labeled AI interim + real preferred)

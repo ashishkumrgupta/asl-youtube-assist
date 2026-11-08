@@ -1,0 +1,28 @@
+{
+  "pairId": "en-ase",
+  "signLanguageIso": "ase",
+  "waveId": "ai-wave-1",
+  "status": "pending",
+  "sourceId": "ai-hf-wave-1",
+  "provenance": "ai_generated",
+  "license": null,
+  "deafProduced": false,
+  "syntheticPersona": false,
+  "aiGenerated": true,
+  "generatorModelId": "pending-external-video-gen/unspecified",
+  "attributionUrl": null,
+  "boundGlosses": [],
+  "qaPass": false,
+  "flag": "assist.ai_generated.v1",
+  "flagDefault": "off",
+  "intendedGlosses": ["HELLO", "THANKS", "YES", "NO", "PLEASE", "BAD"],
+  "intendedPaths": [
+    "lexical/ase/clips/HELLO.ai-pending.webm",
+    "lexical/ase/clips/THANKS.ai-pending.webm",
+    "lexical/ase/clips/YES.ai-pending.webm",
+    "lexical/ase/clips/NO.ai-pending.webm",
+    "lexical/ase/clips/PLEASE.ai-pending.webm",
+    "lexical/ase/clips/BAD.ai-pending.webm"
+  ],
+  "note": "ai-wave-1 pack STUB only — not loaded into CLIP_PACK.json. Disposition pending for all glosses. No WebM bytes in-repo (video-gen API unavailable; do not fake with black frames). Flag OFF. Not gold."
+}

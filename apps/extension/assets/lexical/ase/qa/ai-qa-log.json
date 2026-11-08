@@ -1,8 +1,95 @@
 {
   "schemaVersion": 1,
   "pairId": "en-ase",
-  "description": "Deaf QA / disposition log for AI-generated interim glosses. No AI gloss ships without a pass row. Current disposition: gates only — zero AI clips approved (AC-DP0.10 / DUAL-6). Flag assist.ai_generated.v1 stays OFF until a thin HF allowlist clears Deaf review.",
+  "description": "Deaf QA / disposition log for AI-generated interim glosses. No AI gloss ships without a pass row. ai-wave-1 stubs are disposition pending — zero production binds (AC-DP0.10 / DUAL-6). Flag assist.ai_generated.v1 stays OFF. Real AI media not yet generated in-repo (pipeline + prompts only).",
   "flag": "assist.ai_generated.v1",
   "prodDefault": "off",
-  "entries": []
+  "waveId": "ai-wave-1",
+  "sourceId": "ai-hf-wave-1",
+  "entries": [
+    {
+      "gloss": "HELLO",
+      "sourceId": "ai-hf-wave-1",
+      "waveId": "ai-wave-1",
+      "provenance": "ai_generated",
+      "relativePath": "lexical/ase/clips/HELLO.ai-pending.webm",
+      "disposition": "pending",
+      "qaPass": false,
+      "bound": false,
+      "generatorModelId": "pending-external-video-gen/unspecified",
+      "reviewer": null,
+      "date": null,
+      "notes": "ai-wave-1 stub — prompts in docs/ai-clips/prompts/HELLO.md; media not generated"
+    },
+    {
+      "gloss": "THANKS",
+      "sourceId": "ai-hf-wave-1",
+      "waveId": "ai-wave-1",
+      "provenance": "ai_generated",
+      "relativePath": "lexical/ase/clips/THANKS.ai-pending.webm",
+      "disposition": "pending",
+      "qaPass": false,
+      "bound": false,
+      "generatorModelId": "pending-external-video-gen/unspecified",
+      "reviewer": null,
+      "date": null,
+      "notes": "ai-wave-1 stub — HF THANKS covers thank-you forms; media not generated"
+    },
+    {
+      "gloss": "YES",
+      "sourceId": "ai-hf-wave-1",
+      "waveId": "ai-wave-1",
+      "provenance": "ai_generated",
+      "relativePath": "lexical/ase/clips/YES.ai-pending.webm",
+      "disposition": "pending",
+      "qaPass": false,
+      "bound": false,
+      "generatorModelId": "pending-external-video-gen/unspecified",
+      "reviewer": null,
+      "date": null,
+      "notes": "ai-wave-1 stub — media not generated"
+    },
+    {
+      "gloss": "NO",
+      "sourceId": "ai-hf-wave-1",
+      "waveId": "ai-wave-1",
+      "provenance": "ai_generated",
+      "relativePath": "lexical/ase/clips/NO.ai-pending.webm",
+      "disposition": "pending",
+      "qaPass": false,
+      "bound": false,
+      "generatorModelId": "pending-external-video-gen/unspecified",
+      "reviewer": null,
+      "date": null,
+      "notes": "ai-wave-1 stub — media not generated"
+    },
+    {
+      "gloss": "PLEASE",
+      "sourceId": "ai-hf-wave-1",
+      "waveId": "ai-wave-1",
+      "provenance": "ai_generated",
+      "relativePath": "lexical/ase/clips/PLEASE.ai-pending.webm",
+      "disposition": "pending",
+      "qaPass": false,
+      "bound": false,
+      "generatorModelId": "pending-external-video-gen/unspecified",
+      "reviewer": null,
+      "date": null,
+      "notes": "ai-wave-1 stub — media not generated"
+    },
+    {
+      "gloss": "BAD",
+      "sourceId": "ai-hf-wave-1",
+      "waveId": "ai-wave-1",
+      "provenance": "ai_generated",
+      "relativePath": "lexical/ase/clips/BAD.ai-pending.webm",
+      "disposition": "pending",
+      "qaPass": false,
+      "bound": false,
+      "generatorModelId": "pending-external-video-gen/unspecified",
+      "reviewer": null,
+      "date": null,
+      "notes": "ai-wave-1 stub — media not generated"
+    }
+  ]
 }

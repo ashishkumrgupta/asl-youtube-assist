@@ -53,14 +53,17 @@ Until Deaf QA disposition on a named gloss list: attribution scaffold only — *
 - Show host + creator credit; “Opening creator-hosted media — not our pack · not an interpreter”
 - Static allowlist only (see `@asl/lexical` `REMOTE_LINK_ALLOWLIST`)
 
-## AI interim (dual-path-0)
+## AI interim (dual-path-0 + ai-wave-1)
 
 - Provenance `ai_generated` + `aiGenerated: true` + `generatorModelId` (About disclosure)
 - Flag `assist.ai_generated.v1` **default off** until thin HF allowlist clears Deaf review
 - Compact honesty: `Partial · AI-generated · not an interpreter`
 - Stage hint: `AI interim — not Deaf video`
 - Never gold / interpreter / silent synthetic; never under ISL (`ins`)
-- QA log: `lexical/ase/qa/ai-qa-log.json` (empty until disposition)
+- QA log: `lexical/ase/qa/ai-qa-log.json` — **ai-wave-1** six glosses stubbed `disposition: pending` (not pass)
+- Pack stub: `lexical/ase/qa/ai-wave-1-pack-stub.json` (unbound; not loaded)
+- Prompts / capture: `docs/ai-clips/`
+- Intended unbound media: `*.ai-pending.webm` — **not present** until a real video-gen path drops files (no black-frame fakes)
 
 ## When a pack loads
 
