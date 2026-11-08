@@ -25,11 +25,13 @@ describe("feature flags", () => {
     expect(laterPhaseFlagsOffInProd("production")).toBe(true);
   });
 
-  it("real-video-0: PopSign + volunteer media flags off; link-out on (no CDN)", () => {
+  it("real-video-0 / dual-path-0: PopSign + volunteer + AI media flags off; link-out on (no CDN)", () => {
     expect(isEnabled("production", "assist.popsign.v1")).toBe(false);
     expect(isEnabled("production", "assist.volunteer.v1")).toBe(false);
+    expect(isEnabled("production", "assist.ai_generated.v1")).toBe(false);
     expect(isEnabled("local", "assist.popsign.v1")).toBe(false);
     expect(isEnabled("local", "assist.volunteer.v1")).toBe(false);
+    expect(isEnabled("local", "assist.ai_generated.v1")).toBe(false);
     expect(isEnabled("production", "assist.remote_link.v1")).toBe(true);
     expect(realVideoMediaFlagsOffInProd("production")).toBe(true);
   });

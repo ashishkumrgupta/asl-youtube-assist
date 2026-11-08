@@ -1,6 +1,10 @@
 import { describe, expect, it } from "vitest";
 import { getLanguagePair } from "@asl/language-pairs";
 import {
+  AI_ABOUT_NOTE,
+  AI_INTERIM_STAGE_HINT,
+  AI_SOURCE_SHORT,
+  DEAF_PRODUCED_SOURCE_SHORT,
   PACK_PENDING_SHORT,
   POPSIGN_SOURCE_SHORT,
   REMOTE_SOURCE_LINE,
@@ -49,6 +53,22 @@ describe("extension user-facing copy honesty", () => {
       VOLUNTEER_SOURCE_SHORT,
       POPSIGN_SOURCE_SHORT,
       REMOTE_SOURCE_LINE,
+    ]) {
+      expect(lintAssistCopy(surface, "assist")).toEqual([]);
+    }
+  });
+
+  it("dual-path AI honesty strings match Deaf §1 and pass assist copy lint", () => {
+    expect(AI_SOURCE_SHORT).toBe("Partial · AI-generated · not an interpreter");
+    expect(AI_INTERIM_STAGE_HINT).toBe("AI interim — not Deaf video");
+    expect(DEAF_PRODUCED_SOURCE_SHORT).toBe(
+      "Partial · Deaf-produced · not an interpreter",
+    );
+    for (const surface of [
+      AI_SOURCE_SHORT,
+      AI_INTERIM_STAGE_HINT,
+      AI_ABOUT_NOTE,
+      DEAF_PRODUCED_SOURCE_SHORT,
     ]) {
       expect(lintAssistCopy(surface, "assist")).toEqual([]);
     }

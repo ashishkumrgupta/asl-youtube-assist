@@ -8,6 +8,7 @@
   "exclude": ["src/**/*.test.ts"],
   "references": [
     { "path": "../fingerspell" },
+    { "path": "../flags" },
     { "path": "../shared-types" },
     { "path": "../gloss" }
   ]

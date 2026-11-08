@@ -1,27 +1,31 @@
 # Lexical clip pack — attribution & status
 
-## Decision (real-video-0)
+## Decision (real-video-0 + dual-path-0)
 
-| Choice                                                     | Status                                                                                         |
-| ---------------------------------------------------------- | ---------------------------------------------------------------------------------------------- |
-| AI-persona / video-gen signer pack as default              | **Forbidden** (Deaf-user stop-ship)                                                            |
-| WLASL / MS-ASL / ASL Citizen research dumps as product CDN | **No** without commercial license (mostly NC)                                                  |
-| YouTube / creator bytes → our CDN                          | **Stop-ship** without written redistrib OK                                                     |
-| **Volunteer Deaf clips**                                   | Preferred $0 path — written release + credits + Deaf QA before bind                            |
-| **PopSign (CC BY 4.0)**                                    | Thin pack **only** after per-gloss Deaf QA; flag `assist.popsign.v1` default **off**; not gold |
-| **Remote link-out**                                        | Creator-hosted URL with credit; provenance `remote_link`; no silent CDN mirror                 |
-| Current binding                                            | **`pending`** — gloss / fingerspell fallback; pipeline ready for first donor                   |
+| Choice                                                     | Status                                                                                                                                                    |
+| ---------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Silent AI-persona / unlabeled video-gen as default         | **Forbidden** (Deaf-user stop-ship)                                                                                                                       |
+| **Labeled AI interim** (`ai_generated`)                    | Scaffold only — flag `assist.ai_generated.v1` **OFF**; zero production binds until Deaf disposition; always `Partial · AI-generated · not an interpreter` |
+| WLASL / MS-ASL / ASL Citizen research dumps as product CDN | **No** without commercial license (mostly NC)                                                                                                             |
+| YouTube / creator bytes → our CDN                          | **Stop-ship** without written redistrib OK                                                                                                                |
+| **Volunteer Deaf clips**                                   | **Preferred** over AI — written release + credits + Deaf QA before bind                                                                                   |
+| **PopSign (CC BY 4.0)**                                    | Thin pack **only** after per-gloss Deaf QA; flag `assist.popsign.v1` default **off**; not gold                                                            |
+| **Remote link-out**                                        | Creator-hosted URL with credit; provenance `remote_link`; after AI in fallback chain                                                                      |
+| Current binding                                            | **`pending`** — gloss / fingerspell fallback; pipeline ready for first donor                                                                              |
 
-Sources: Project `docs/zero-cost-clip-path.md`, `docs/asl-clip-sources.md`, Deaf `real-video-0-constraints.md`.
+**Resolver:** real → AI (flag + disposition) → remote_link → cues. Real bind for gloss G **demotes AI** for G.
+
+Sources: Project `docs/zero-cost-clip-path.md`, `docs/asl-clip-sources.md`, Deaf dual-path + real-video-0 constraints.
 
 ## What ships in the extension today
 
-- Lexical **index** + caption→playlist (`@asl/lexical`) with Tier B **fail-closed ingest**
+- Lexical **index** + caption→playlist (`@asl/lexical`) with Tier B **fail-closed ingest** + dual-path prefer-real resolver
 - Volunteer release form + capture guide (`docs/volunteer/`)
-- Empty `CREDITS.json` + QA log schema under `lexical/ase/`
+- Empty `CREDITS.json` + QA log schemas under `lexical/ase/qa/` (volunteer + AI)
 - Overlay **Open sign video** link-out chrome (allowlisted discovery URLs)
 - **No** PopSign media bytes bound (QA list not yet disposed)
-- **No** synthetic persona videos
+- **No** production AI media bound (AC-DP0.10 — gates only)
+- CI may dry-run `*.ai-test-only.webm` / `ai-hf-test-fixture` — **not gold**
 
 ## Volunteer
 
@@ -49,9 +53,19 @@ Until Deaf QA disposition on a named gloss list: attribution scaffold only — *
 - Show host + creator credit; “Opening creator-hosted media — not our pack · not an interpreter”
 - Static allowlist only (see `@asl/lexical` `REMOTE_LINK_ALLOWLIST`)
 
+## AI interim (dual-path-0)
+
+- Provenance `ai_generated` + `aiGenerated: true` + `generatorModelId` (About disclosure)
+- Flag `assist.ai_generated.v1` **default off** until thin HF allowlist clears Deaf review
+- Compact honesty: `Partial · AI-generated · not an interpreter`
+- Stage hint: `AI interim — not Deaf video`
+- Never gold / interpreter / silent synthetic; never under ISL (`ins`)
+- QA log: `lexical/ase/qa/ai-qa-log.json` (empty until disposition)
+
 ## When a pack loads
 
 1. Place rights-clear media under `lexical/ase/clips/` (never `ins/`).
-2. Ingest via `bindPairClipPack` / `ingestOpenDemoPack` with QA/release fields.
+2. Ingest via `bindPairClipPack` / `ingestOpenDemoPack` with QA/release/disposition fields.
 3. Keep UI **ASL assist / partial**; never interpreter / fluent-discourse claims.
 4. Gaps → “No clip for this sign” + gloss/fingerspell fallback.
+5. Prefer-real: real ingest automatically demotes AI for the same gloss.

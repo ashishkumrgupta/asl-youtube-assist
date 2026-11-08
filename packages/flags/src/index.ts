@@ -14,6 +14,11 @@ export type FlagName =
   | "assist.remote_link.v1"
   /** PopSign CC BY thin pack — prod off; bind only after per-gloss Deaf QA. */
   | "assist.popsign.v1"
+  /**
+   * Labeled AI-generated interim clips — prod off until thin HF wave clears Deaf
+   * disposition; then allowlist-only (dual-path-0 / AC-DP0.4 / DUAL-6).
+   */
+  | "assist.ai_generated.v1"
   | "avatar.neural"
   | "catalog.tierA"
   | "catalog.tierA.ingest"
@@ -41,6 +46,7 @@ const LOCAL: FlagDefaults = {
   "assist.volunteer.v1": false,
   "assist.remote_link.v1": true,
   "assist.popsign.v1": false,
+  "assist.ai_generated.v1": false,
   "avatar.neural": false,
   "catalog.tierA": false,
   "catalog.tierA.ingest": false,
@@ -62,6 +68,7 @@ const PRODUCTION: FlagDefaults = {
   "assist.volunteer.v1": false,
   "assist.remote_link.v1": true,
   "assist.popsign.v1": false,
+  "assist.ai_generated.v1": false,
   "avatar.neural": false,
   "catalog.tierA": false,
   "catalog.tierA.ingest": false,
@@ -128,10 +135,15 @@ export function laterPhaseFlagsOffInProd(env: EnvName): boolean {
 }
 
 /**
- * real-video-0 media binds fail-closed in production:
- * volunteer + PopSign off until release/QA; link-out may stay on (no bytes cached).
+ * real-video-0 / dual-path-0 media binds fail-closed in production:
+ * volunteer + PopSign + AI off until release/QA/Deaf disposition;
+ * link-out may stay on (no bytes cached).
  */
 export function realVideoMediaFlagsOffInProd(env: EnvName): boolean {
   const d = defaultsForEnv(env);
-  return d["assist.volunteer.v1"] === false && d["assist.popsign.v1"] === false;
+  return (
+    d["assist.volunteer.v1"] === false &&
+    d["assist.popsign.v1"] === false &&
+    d["assist.ai_generated.v1"] === false
+  );
 }

@@ -23,9 +23,10 @@ describe("Phase 0 fixture smoke", () => {
     expect(lintAssistCopy(ASSIST_DISCLAIMER, "assist")).toEqual([]);
   });
 
-  it("clip pack remains pending (no persona / third-party lock-in)", () => {
+  it("clip pack remains pending (no persona / third-party lock-in; AI flag path unbound)", () => {
     expect(CLIP_PACK_MANIFEST.status).toBe("pending");
     expect(CLIP_PACK_MANIFEST.syntheticPersona).toBe(false);
+    expect(CLIP_PACK_MANIFEST.aiGenerated).toBe(false);
   });
 
   it("caption fixture sync + lexical playlist smoke", () => {

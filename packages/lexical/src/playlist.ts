@@ -1,11 +1,12 @@
 import { fingerspellToken, type FingerspellStep } from "@asl/fingerspell";
+import { isEnabled } from "@asl/flags";
 import {
   CLIP_PACK_MANIFEST,
   clipPackIsPending,
-  glossHasBoundClip,
+  type ClipPackProvenance,
 } from "./clip-source.js";
 import { LEXICAL_LOOKUP, type LexicalEntry } from "./dictionary.js";
-import { getBoundAssetPathForGloss, getRemoteUrlForGloss } from "./tier-b-ingest.js";
+import { resolveMediaForGloss, type ResolvedMediaKind } from "./dual-path.js";
 
 export interface LexicalClipStep {
   readonly kind: "lexical";
@@ -15,6 +16,13 @@ export interface LexicalClipStep {
   readonly remoteUrl: string | null;
   /** True when pack is loaded but this gloss has no local clip (honest gap). */
   readonly noClipFallback: boolean;
+  /** Which dual-path media won (real → AI → remote → none). */
+  readonly mediaKind: ResolvedMediaKind;
+  readonly mediaProvenance: ClipPackProvenance;
+  /** Compact honesty for the active media path. */
+  readonly honestyShortTag: string;
+  /** Optional stage hint (e.g. AI interim). */
+  readonly stageHint: string | null;
   readonly durationMs: number;
   readonly surface: string;
 }
@@ -68,21 +76,41 @@ export function tokenizeCaption(text: string): string[] {
     .filter((t) => t.length > 0);
 }
 
-function lexicalStep(entry: LexicalEntry, surface: string): LexicalClipStep {
-  const packPending = clipPackIsPending(CLIP_PACK_MANIFEST);
-  const bound = !packPending && glossHasBoundClip(entry.gloss);
-  // Only paths recorded by Tier B ingest — never invent a local file from dictionary alone.
-  const boundPath = bound ? getBoundAssetPathForGloss(entry.gloss) : null;
-  const remoteUrl = getRemoteUrlForGloss(entry.gloss);
-  const hasLocal = Boolean(boundPath);
-  const hasRemote = Boolean(remoteUrl);
+export interface PlaylistMediaOptions {
+  /** Override AI flag (defaults to `assist.ai_generated.v1` for local env). */
+  readonly aiFlagEnabled?: boolean;
+  readonly allowTestOnlyAi?: boolean;
+}
+
+function resolveOptions(options?: PlaylistMediaOptions) {
+  return {
+    aiFlagEnabled: options?.aiFlagEnabled ?? isEnabled("local", "assist.ai_generated.v1"),
+    // Default false — content-script must not auto-play CI fixtures if flag flips ON.
+    allowTestOnlyAi: options?.allowTestOnlyAi ?? false,
+  };
+}
+
+function lexicalStep(
+  entry: LexicalEntry,
+  surface: string,
+  mediaOptions?: PlaylistMediaOptions,
+): LexicalClipStep {
+  const resolved = resolveMediaForGloss(entry.gloss, resolveOptions(mediaOptions));
+  // Prefer-real resolver; never invent a local file from dictionary alone.
+  const assetPath =
+    resolved.kind === "real" || resolved.kind === "ai_generated"
+      ? resolved.assetPath
+      : null;
   return {
     kind: "lexical",
     gloss: entry.gloss,
-    assetPath: hasLocal ? boundPath : null,
-    remoteUrl: hasRemote ? remoteUrl : null,
-    // Gap honesty when pack is pending OR gloss not bound (and no remote).
-    noClipFallback: !hasLocal && !hasRemote,
+    assetPath,
+    remoteUrl: resolved.remoteUrl,
+    noClipFallback: resolved.noClipFallback,
+    mediaKind: resolved.kind,
+    mediaProvenance: resolved.provenance,
+    honestyShortTag: resolved.honestyShortTag,
+    stageHint: resolved.stageHint,
     durationMs: entry.durationMs,
     surface,
   };
@@ -90,12 +118,12 @@ function lexicalStep(entry: LexicalEntry, surface: string): LexicalClipStep {
 
 /**
  * Caption → assist playlist (gloss cues + fingerspell OOV).
- * Local media paths bind only for QA'd glosses in a loaded Tier B pack.
- * Gloss/fingerspell remains the fallback when no clip exists.
+ * Dual-path: real → AI (flagged) → remote → cues. Gloss/fingerspell remains the gap fallback.
  */
 export function buildAssistPlaylist(
   captionText: string,
   lookup: ReadonlyMap<string, LexicalEntry> = LEXICAL_LOOKUP,
+  mediaOptions?: PlaylistMediaOptions,
 ): PlaylistBuildResult {
   const packPending = clipPackIsPending(CLIP_PACK_MANIFEST);
   const packLoaded = !packPending;
@@ -112,7 +140,7 @@ export function buildAssistPlaylist(
     const entry = lookup.get(token);
     if (entry) {
       lexicalHits += 1;
-      steps.push(lexicalStep(entry, token));
+      steps.push(lexicalStep(entry, token, mediaOptions));
       continue;
     }
     const fs = fingerspellToken(token, 450, packLoaded);
